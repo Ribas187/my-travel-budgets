@@ -1,6 +1,12 @@
 {
   "$schema": "https://turborepo.dev/schema.json",
-  "globalEnv": ["DATABASE_URL", "JWT_SECRET", "RESEND_API_KEY", "CLOUDINARY_URL"],
+  "globalEnv": [
+      "DATABASE_URL",
+      "JWT_SECRET",
+      "JWT_EXPIRES_IN",
+      "RESEND_API_KEY",
+      "CLOUDINARY_URL"
+    ],
   "tasks": {
     "build": {
       "dependsOn": ["^build", "^db:generate"],

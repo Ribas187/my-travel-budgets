@@ -1,0 +1,55 @@
+import { Test } from '@nestjs/testing'
+import { ConfigModule } from '@nestjs/config'
+import { validateEnv } from './env.validation'
+
+describe('validateEnv', () => {
+  it('throws when required variables are missing', () => {
+    expect(() => validateEnv({})).toThrow(/Environment validation failed/)
+  })
+
+  it('accepts all required variables', () => {
+    const env = validateEnv({
+      DATABASE_URL: 'postgresql://localhost:5432/x',
+      JWT_SECRET: 'secret',
+      JWT_EXPIRES_IN: '30d',
+      RESEND_API_KEY: 're_test',
+      PORT: '3000',
+    })
+    expect(env.PORT).toBe('3000')
+    expect(env.JWT_EXPIRES_IN).toBe('30d')
+  })
+
+  it('rejects Nest ConfigModule bootstrap when required env vars are missing', async () => {
+    const keys = [
+      'DATABASE_URL',
+      'JWT_SECRET',
+      'JWT_EXPIRES_IN',
+      'RESEND_API_KEY',
+      'PORT',
+    ] as const
+    const backup: Partial<Record<(typeof keys)[number], string | undefined>> =
+      {}
+    for (const key of keys) {
+      backup[key] = process.env[key]
+      delete process.env[key]
+    }
+
+    await expect(
+      Test.createTestingModule({
+        imports: [
+          ConfigModule.forRoot({
+            ignoreEnvFile: true,
+            validate: validateEnv,
+          }),
+        ],
+      }).compile(),
+    ).rejects.toThrow(/Environment validation failed/)
+
+    for (const key of keys) {
+      const v = backup[key]
+      if (v !== undefined) {
+        process.env[key] = v
+      }
+    }
+  })
+})
