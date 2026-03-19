@@ -16,3 +16,11 @@ src/apps/**/*.d.ts
 src/apps/**/*.d.ts.map
 !src/apps/**/vite.config.ts
 !src/apps/**/babel.config.js
+
+# Documentation
+docs/design/screenshots/
+docs/plans/
+
+
+# Caching
+__pycache__/

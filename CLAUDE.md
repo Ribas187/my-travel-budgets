@@ -28,3 +28,7 @@ pnpm typecheck        # Type-check all packages
 - [Architecture & Monorepo](.claude/architecture.md)
 - [Code Conventions](.claude/code-conventions.md)
 - [Testing](.claude/testing.md)
+
+## Implementation Rules
+
+- For the Frontend, always start by Web and then go to Mobile.
