@@ -1,0 +1,12 @@
+{
+  "expo": {
+    "name": "My Travel Budgets",
+    "slug": "my-travel-budgets",
+    "version": "1.0.0",
+    "scheme": "mybudgets",
+    "platforms": ["ios", "android"],
+    "experiments": {
+      "typedRoutes": true
+    }
+  }
+}
