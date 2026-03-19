@@ -1,0 +1,91 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        String   @id @default(uuid())
+  email     String   @unique
+  name      String
+  avatarUrl String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  travels    Travel[]
+  memberships TravelMember[]
+}
+
+model Travel {
+  id          String   @id @default(uuid())
+  name        String
+  description String?
+  imageUrl    String?
+  currency    String
+  budget      Decimal  @db.Decimal(12, 2)
+  startDate   DateTime @db.Date
+  endDate     DateTime @db.Date
+  createdById String
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  createdBy  User           @relation(fields: [createdById], references: [id])
+  members    TravelMember[]
+  categories Category[]
+  expenses   Expense[]
+}
+
+model TravelMember {
+  id        String   @id @default(uuid())
+  travelId  String
+  userId    String?
+  guestName String?
+  role      String   @default("member")
+  createdAt DateTime @default(now())
+
+  travel   Travel    @relation(fields: [travelId], references: [id], onDelete: Cascade)
+  user     User?     @relation(fields: [userId], references: [id])
+  expenses Expense[]
+
+  @@unique([travelId, userId])
+}
+
+model Category {
+  id          String   @id @default(uuid())
+  travelId    String
+  name        String
+  budgetLimit Decimal? @db.Decimal(12, 2)
+  icon        String
+  color       String
+  createdAt   DateTime @default(now())
+
+  travel   Travel    @relation(fields: [travelId], references: [id], onDelete: Cascade)
+  expenses Expense[]
+}
+
+model Expense {
+  id          String   @id @default(uuid())
+  travelId    String
+  categoryId  String
+  memberId    String
+  amount      Decimal  @db.Decimal(12, 2)
+  description String
+  date        DateTime @db.Date
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  travel   Travel       @relation(fields: [travelId], references: [id], onDelete: Cascade)
+  category Category     @relation(fields: [categoryId], references: [id])
+  member   TravelMember @relation(fields: [memberId], references: [id])
+}
+
+model MagicLink {
+  id        String    @id @default(uuid())
+  email     String
+  token     String    @unique
+  expiresAt DateTime
+  usedAt    DateTime?
+}
