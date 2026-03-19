@@ -1,0 +1,29 @@
+{
+  "name": "@app/web",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "lint": "tsc --noEmit",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0",
+    "tamagui": "^1.141.5",
+    "@tamagui/vite-plugin": "^1.141.5",
+    "@repo/ui": "workspace:*",
+    "@repo/core": "workspace:*",
+    "@repo/api-client": "workspace:*"
+  },
+  "devDependencies": {
+    "@repo/typescript-config": "workspace:*",
+    "@types/react": "^19.0.0",
+    "@types/react-dom": "^19.0.0",
+    "@vitejs/plugin-react": "^4.4.0",
+    "typescript": "^5.7.0",
+    "vite": "^6.0.0"
+  }
+}
