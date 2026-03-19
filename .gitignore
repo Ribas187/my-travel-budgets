@@ -10,9 +10,9 @@ coverage/
 *.tsbuildinfo
 
 # Generated JS/DTS from TS source in apps
-apps/**/*.js
-apps/**/*.js.map
-apps/**/*.d.ts
-apps/**/*.d.ts.map
-!apps/**/vite.config.ts
-!apps/**/babel.config.js
+src/apps/**/*.js
+src/apps/**/*.js.map
+src/apps/**/*.d.ts
+src/apps/**/*.d.ts.map
+!src/apps/**/vite.config.ts
+!src/apps/**/babel.config.js
