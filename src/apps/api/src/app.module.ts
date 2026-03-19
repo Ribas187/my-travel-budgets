@@ -2,6 +2,7 @@ import { Module } from '@nestjs/common'
 import { ConfigModule } from '@nestjs/config'
 import { AppController } from './app.controller'
 import { validateEnv } from './config/env.validation'
+import { AuthModule } from './modules/auth/auth.module'
 import { EmailModule } from './modules/common/email/email.module'
 import { PrismaModule } from './modules/prisma/prisma.module'
 
@@ -14,6 +15,7 @@ import { PrismaModule } from './modules/prisma/prisma.module'
     }),
     PrismaModule,
     EmailModule,
+    AuthModule,
   ],
   controllers: [AppController],
 })
