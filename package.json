@@ -6,11 +6,15 @@
     "build": "turbo run build",
     "dev": "turbo run dev",
     "lint": "turbo run lint",
+    "typecheck": "turbo run typecheck",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
     "test": "turbo run test",
     "db:generate": "turbo run db:generate",
     "db:migrate": "turbo run db:migrate"
   },
   "devDependencies": {
+    "prettier": "^3.5.0",
     "turbo": "^2.4.4"
   }
 }

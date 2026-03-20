@@ -29,11 +29,13 @@ tasks/prd-travels-backend/
 tasks/prd-travels-members-categories-expenses/
 tasks/prd-web-frontend-mvp/
 tasks/prd-frontend-remaining-features/
+qa-screenshots/
 
 
 # Playwright
 test-results/
 playwright-report/
+.playwright-mcp/
 
 # Caching
 __pycache__/

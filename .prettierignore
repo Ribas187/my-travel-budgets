@@ -1,0 +1,14 @@
+node_modules/
+dist/
+.turbo/
+.expo/
+.tamagui/
+coverage/
+pnpm-lock.yaml
+*.tsbuildinfo
+**/routeTree.gen.ts
+.agents/
+.claude/
+tasks/
+templates/
+docs/

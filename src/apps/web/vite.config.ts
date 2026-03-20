@@ -1,8 +1,8 @@
-import { defineConfig } from 'vite'
-import react from '@vitejs/plugin-react'
-import { tamaguiPlugin } from '@tamagui/vite-plugin'
-import { TanStackRouterVite } from '@tanstack/router-plugin/vite'
-import path from 'path'
+import { defineConfig } from 'vite';
+import react from '@vitejs/plugin-react';
+import { tamaguiPlugin } from '@tamagui/vite-plugin';
+import { TanStackRouterVite } from '@tanstack/router-plugin/vite';
+import path from 'path';
 
 export default defineConfig({
   plugins: [
@@ -25,4 +25,4 @@ export default defineConfig({
   test: {
     exclude: ['e2e/**', 'node_modules/**'],
   },
-})
+});
