@@ -161,5 +161,12 @@
   "summary.topSpender": "Maior Gastador",
   "summary.biggestCategory": "Maior Categoria",
   "summary.biggestDay": "Maior Dia",
-  "summary.perPerson": "Por Pessoa"
+  "summary.perPerson": "Por Pessoa",
+  "summary.topSpenderDesc": "{{name}} gastou {{amount}} ({{percentage}}% do total)",
+  "summary.biggestCategoryDesc": "{{name}} — {{amount}} em gastos",
+  "summary.biggestDayDesc": "{{date}} — {{amount}} gasto",
+  "summary.expensesLogged": "{{count}} despesas registradas",
+  "summary.tripComplete": "VIAGEM CONCLUÍDA",
+  "summary.days": "{{count}} dias",
+  "summary.travelers": "{{count}} viajantes"
 }
