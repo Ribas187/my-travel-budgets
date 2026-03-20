@@ -5,6 +5,7 @@ import { styled, XStack, YStack, View } from 'tamagui'
 import { FAB, PrimaryButton, Heading, Body } from '@repo/ui'
 import { useTravelDetail } from '@/hooks/useTravelDetail'
 import { AddExpenseModal } from '@/features/expenses/AddExpenseModal'
+import { ExpenseList } from '@/features/expenses/ExpenseList'
 
 export const Route = createFileRoute('/_authenticated/travels/$travelId/')({
   component: TravelDetailPage,
@@ -56,8 +57,8 @@ function TravelDetailPage() {
         </View>
       </XStack>
 
-      {/* Content area — expense list will be added in Task 10 */}
-      <YStack flex={1} testID="travel-detail-content" />
+      {/* Expense list */}
+      <ExpenseList travel={travel} />
 
       {/* Mobile: FAB */}
       <FABContainer>
