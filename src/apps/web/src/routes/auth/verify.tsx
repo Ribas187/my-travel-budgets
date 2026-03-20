@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { createFileRoute, useNavigate, useSearch } from '@tanstack/react-router'
 import { YStack, Text, Spinner } from 'tamagui'
 import { useTranslation } from 'react-i18next'
@@ -22,6 +22,7 @@ function VerifyPage() {
   const navigate = useNavigate()
   const { t } = useTranslation()
   const [error, setError] = useState<string | null>(null)
+  const verifiedRef = useRef(false)
 
   useEffect(() => {
     if (!token) {
@@ -29,27 +30,20 @@ function VerifyPage() {
       return
     }
 
-    let cancelled = false
+    if (verifiedRef.current) return
+    verifiedRef.current = true
 
     async function verify() {
       try {
         const session = await apiClient.auth.verify(token)
-        if (!cancelled) {
-          login(session.accessToken)
-          navigate({ to: '/travels' })
-        }
+        login(session.accessToken)
+        navigate({ to: '/travels' })
       } catch {
-        if (!cancelled) {
-          setError(t('auth.verifyError'))
-        }
+        setError(t('auth.verifyError'))
       }
     }
 
     verify()
-
-    return () => {
-      cancelled = true
-    }
   }, [token, login, navigate, t])
 
   if (error) {
