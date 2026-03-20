@@ -1,86 +1,101 @@
-import { useMemo } from 'react'
-import { useTranslation } from 'react-i18next'
-import { XStack, YStack, Text, View } from 'tamagui'
-import { StatCard, InsightCard, AvatarChip, Heading, Body } from '@repo/ui'
-import type { MemberSpending } from '@repo/api-client'
-import { useTravelContext } from '@/contexts/TravelContext'
-import { useDashboard } from '@/hooks/useDashboard'
-import { useTravelExpenses } from '@/hooks/useTravelExpenses'
-import { computeTripInsights } from './computeTripInsights'
+import { useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
+import { XStack, YStack, Text, View } from 'tamagui';
+import { StatCard, InsightCard, AvatarChip, Heading, Body } from '@repo/ui';
+import type { MemberSpending } from '@repo/api-client';
+
+import { computeTripInsights } from './computeTripInsights';
+
+import { useTravelContext } from '@/contexts/TravelContext';
+import { useDashboard } from '@/hooks/useDashboard';
+import { useTravelExpenses } from '@/hooks/useTravelExpenses';
 
 const AVATAR_COLORS = [
-  '#FF6B35', '#0EA5E9', '#8B5CF6', '#EC4899',
-  '#14B8A6', '#F59E0B', '#EF4444', '#6366F1',
-]
+  '#FF6B35',
+  '#0EA5E9',
+  '#8B5CF6',
+  '#EC4899',
+  '#14B8A6',
+  '#F59E0B',
+  '#EF4444',
+  '#6366F1',
+];
 
 function formatCurrency(amount: number, currency: string, locale: string): string {
   return new Intl.NumberFormat(locale, {
     style: 'currency',
     currency,
     maximumFractionDigits: 0,
-  }).format(amount)
+  }).format(amount);
 }
 
 function formatDateRange(startDate: string, endDate: string, locale: string): string {
-  const opts: Intl.DateTimeFormatOptions = { month: 'short', day: 'numeric' }
-  const start = new Intl.DateTimeFormat(locale, opts).format(new Date(startDate))
-  const end = new Intl.DateTimeFormat(locale, { ...opts, year: 'numeric' }).format(new Date(endDate))
-  return `${start} – ${end}`
+  const opts: Intl.DateTimeFormatOptions = { month: 'short', day: 'numeric' };
+  const start = new Intl.DateTimeFormat(locale, opts).format(new Date(startDate));
+  const end = new Intl.DateTimeFormat(locale, { ...opts, year: 'numeric' }).format(
+    new Date(endDate),
+  );
+  return `${start} – ${end}`;
 }
 
 function formatDate(dateStr: string, locale: string): string {
   return new Intl.DateTimeFormat(locale, {
     month: 'short',
     day: 'numeric',
-  }).format(new Date(dateStr + 'T00:00:00'))
+  }).format(new Date(dateStr + 'T00:00:00'));
 }
 
 function getDayCount(startDate: string, endDate: string): number {
-  const start = new Date(startDate)
-  const end = new Date(endDate)
-  return Math.max(1, Math.round((end.getTime() - start.getTime()) / (1000 * 60 * 60 * 24)) + 1)
+  const start = new Date(startDate);
+  const end = new Date(endDate);
+  return Math.max(1, Math.round((end.getTime() - start.getTime()) / (1000 * 60 * 60 * 24)) + 1);
 }
 
 export function TripSummaryPage() {
-  const { t, i18n } = useTranslation()
-  const { travel } = useTravelContext()
-  const locale = i18n.language
+  const { t, i18n } = useTranslation();
+  const { travel } = useTravelContext();
+  const locale = i18n.language;
 
-  const { data: dashboard } = useDashboard(travel.id)
-  const { data: expenses } = useTravelExpenses(travel.id)
+  const { data: dashboard } = useDashboard(travel.id);
+  const { data: expenses } = useTravelExpenses(travel.id);
 
-  const isComplete = useMemo(() => new Date(travel.endDate) < new Date(), [travel.endDate])
-  const dayCount = useMemo(() => getDayCount(travel.startDate, travel.endDate), [travel.startDate, travel.endDate])
-  const dateRange = useMemo(() => formatDateRange(travel.startDate, travel.endDate, locale), [travel.startDate, travel.endDate, locale])
+  const isComplete = useMemo(() => new Date(travel.endDate) < new Date(), [travel.endDate]);
+  const dayCount = useMemo(
+    () => getDayCount(travel.startDate, travel.endDate),
+    [travel.startDate, travel.endDate],
+  );
+  const dateRange = useMemo(
+    () => formatDateRange(travel.startDate, travel.endDate, locale),
+    [travel.startDate, travel.endDate, locale],
+  );
 
   const insights = useMemo(() => {
-    if (!dashboard || !expenses) return []
+    if (!dashboard || !expenses) return [];
     return computeTripInsights(dashboard, expenses, {
       formatAmount: (amount) => formatCurrency(amount, travel.currency, locale),
       formatDate: (dateStr) => formatDate(dateStr, locale),
       t,
-    })
-  }, [dashboard, expenses, travel.currency, locale, t])
+    });
+  }, [dashboard, expenses, travel.currency, locale, t]);
 
   const memberSpendingMap = useMemo(() => {
-    if (!dashboard) return new Map<string, MemberSpending>()
-    const map = new Map<string, MemberSpending>()
+    if (!dashboard) return new Map<string, MemberSpending>();
+    const map = new Map<string, MemberSpending>();
     for (const ms of dashboard.memberSpending) {
-      map.set(ms.memberId, ms)
+      map.set(ms.memberId, ms);
     }
-    return map
-  }, [dashboard])
+    return map;
+  }, [dashboard]);
 
-  if (!dashboard) return null
+  if (!dashboard) return null;
 
-  const { overall } = dashboard
-  const remaining = overall.budget - overall.totalSpent
-  const isUnderBudget = remaining >= 0
-  const budgetDiff = Math.abs(remaining)
-  const budgetUsed = overall.budget > 0
-    ? Math.round((overall.totalSpent / overall.budget) * 100)
-    : 0
-  const avgPerDay = overall.totalSpent / Math.max(1, dayCount)
+  const { overall } = dashboard;
+  const remaining = overall.budget - overall.totalSpent;
+  const isUnderBudget = remaining >= 0;
+  const budgetDiff = Math.abs(remaining);
+  const budgetUsed =
+    overall.budget > 0 ? Math.round((overall.totalSpent / overall.budget) * 100) : 0;
+  const avgPerDay = overall.totalSpent / Math.max(1, dayCount);
 
   return (
     <YStack
@@ -105,9 +120,12 @@ export function TripSummaryPage() {
             {t('summary.tripComplete')}
           </Text>
         )}
-        <Heading level={2} textAlign="center">{travel.name}</Heading>
+        <Heading level={2} textAlign="center">
+          {travel.name}
+        </Heading>
         <Body size="secondary" color="$textTertiary" textAlign="center">
-          {dateRange} · {t('summary.days', { count: dayCount })} · {t('summary.travelers', { count: travel.members.length })}
+          {dateRange} · {t('summary.days', { count: dayCount })} ·{' '}
+          {t('summary.travelers', { count: travel.members.length })}
         </Body>
       </YStack>
 
@@ -137,16 +155,10 @@ export function TripSummaryPage() {
           />
         </YStack>
         <YStack flex={1}>
-          <StatCard
-            label={t('summary.totalExpenses')}
-            value={String(expenses?.length ?? 0)}
-          />
+          <StatCard label={t('summary.totalExpenses')} value={String(expenses?.length ?? 0)} />
         </YStack>
         <YStack flex={1}>
-          <StatCard
-            label={t('summary.budgetUsed')}
-            value={`${budgetUsed}%`}
-          />
+          <StatCard label={t('summary.budgetUsed')} value={`${budgetUsed}%`} />
         </YStack>
       </XStack>
 
@@ -170,9 +182,9 @@ export function TripSummaryPage() {
       <YStack gap="$md" data-testid="per-person-section">
         <Heading level={4}>{t('summary.perPerson')}</Heading>
         {travel.members.map((member, index) => {
-          const displayName = member.user?.name ?? member.guestName ?? member.user?.email ?? ''
-          const initial = displayName.charAt(0).toUpperCase()
-          const spending = memberSpendingMap.get(member.id)
+          const displayName = member.user?.name ?? member.guestName ?? member.user?.email ?? '';
+          const initial = displayName.charAt(0).toUpperCase();
+          const spending = memberSpendingMap.get(member.id);
 
           return (
             <XStack
@@ -195,9 +207,9 @@ export function TripSummaryPage() {
                 </Text>
               </YStack>
             </XStack>
-          )
+          );
         })}
       </YStack>
     </YStack>
-  )
+  );
 }

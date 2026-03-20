@@ -1,6 +1,6 @@
-import { TamaguiProvider } from 'tamagui'
-import { View, Text, StyleSheet } from 'react-native'
-import { config } from '@repo/ui'
+import { TamaguiProvider } from 'tamagui';
+import { View, Text, StyleSheet } from 'react-native';
+import { config } from '@repo/ui';
 
 const styles = StyleSheet.create({
   container: {
@@ -13,7 +13,7 @@ const styles = StyleSheet.create({
     fontSize: 24,
     fontWeight: 'bold',
   },
-})
+});
 
 export default function HomeScreen() {
   return (
@@ -23,5 +23,5 @@ export default function HomeScreen() {
         <Text>Mobile app is running.</Text>
       </View>
     </TamaguiProvider>
-  )
+  );
 }

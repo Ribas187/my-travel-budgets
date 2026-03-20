@@ -1,27 +1,28 @@
-import { useMemo } from 'react'
-import { useTranslation } from 'react-i18next'
-import { useNavigate } from '@tanstack/react-router'
-import { XStack, YStack, View, Text, useMedia } from 'tamagui'
-import { CategoryDetailCard, Heading, Body } from '@repo/ui'
-import type { CategorySpending, Expense } from '@repo/api-client'
-import { useTravelContext } from '@/contexts/TravelContext'
-import { useDashboard } from '@/hooks/useDashboard'
-import { useTravelExpenses } from '@/hooks/useTravelExpenses'
+import { useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
+import { useNavigate } from '@tanstack/react-router';
+import { XStack, YStack, View, Text, useMedia } from 'tamagui';
+import { CategoryDetailCard, Heading, Body } from '@repo/ui';
+import type { CategorySpending, Expense } from '@repo/api-client';
+
+import { useTravelContext } from '@/contexts/TravelContext';
+import { useDashboard } from '@/hooks/useDashboard';
+import { useTravelExpenses } from '@/hooks/useTravelExpenses';
 
 function formatCurrency(amount: number, currency: string, locale: string): string {
   return new Intl.NumberFormat(locale, {
     style: 'currency',
     currency,
     maximumFractionDigits: 0,
-  }).format(amount)
+  }).format(amount);
 }
 
 function getExpenseCountByCategory(expenses: Expense[]): Record<string, number> {
-  const counts: Record<string, number> = {}
+  const counts: Record<string, number> = {};
   for (const exp of expenses) {
-    counts[exp.categoryId] = (counts[exp.categoryId] ?? 0) + 1
+    counts[exp.categoryId] = (counts[exp.categoryId] ?? 0) + 1;
   }
-  return counts
+  return counts;
 }
 
 // --- Skeleton ---
@@ -35,18 +36,23 @@ function SkeletonBox({ width, height }: { width: number | string; height: number
       borderRadius="$md"
       opacity={0.6}
     />
-  )
+  );
 }
 
 function BudgetSkeleton() {
   return (
-    <YStack gap="$xl" padding="$screenPaddingHorizontal" paddingTop="$2xl" data-testid="budget-skeleton">
+    <YStack
+      gap="$xl"
+      padding="$screenPaddingHorizontal"
+      paddingTop="$2xl"
+      data-testid="budget-skeleton"
+    >
       <SkeletonBox width="100%" height={120} />
       <SkeletonBox width="100%" height={160} />
       <SkeletonBox width="100%" height={160} />
       <SkeletonBox width="100%" height={160} />
     </YStack>
-  )
+  );
 }
 
 // --- Stacked Bar ---
@@ -55,18 +61,13 @@ function StackedBar({
   categories,
   totalSpent,
 }: {
-  categories: CategorySpending[]
-  totalSpent: number
+  categories: CategorySpending[];
+  totalSpent: number;
 }) {
-  if (totalSpent === 0) return null
+  if (totalSpent === 0) return null;
 
   return (
-    <XStack
-      height={8}
-      borderRadius={4}
-      overflow="hidden"
-      data-testid="stacked-bar"
-    >
+    <XStack height={8} borderRadius={4} overflow="hidden" data-testid="stacked-bar">
       {categories
         .filter((cat) => cat.totalSpent > 0)
         .map((cat) => (
@@ -79,7 +80,7 @@ function StackedBar({
           />
         ))}
     </XStack>
-  )
+  );
 }
 
 // --- Color Legend ---
@@ -89,9 +90,9 @@ function ColorLegend({
   currency,
   locale,
 }: {
-  categories: CategorySpending[]
-  currency: string
-  locale: string
+  categories: CategorySpending[];
+  currency: string;
+  locale: string;
 }) {
   return (
     <XStack flexWrap="wrap" gap="$md" data-testid="color-legend">
@@ -99,19 +100,14 @@ function ColorLegend({
         .filter((cat) => cat.totalSpent > 0)
         .map((cat) => (
           <XStack key={cat.categoryId} alignItems="center" gap="$xs">
-            <View
-              width={10}
-              height={10}
-              borderRadius={5}
-              backgroundColor={cat.color}
-            />
+            <View width={10} height={10} borderRadius={5} backgroundColor={cat.color} />
             <Text fontFamily="$body" fontSize={13} color="$textTertiary">
               {cat.name} {formatCurrency(cat.totalSpent, currency, locale)}
             </Text>
           </XStack>
         ))}
     </XStack>
-  )
+  );
 }
 
 // --- Summary Card ---
@@ -124,12 +120,12 @@ function SummaryCard({
   locale,
   t,
 }: {
-  totalBudget: number
-  totalSpent: number
-  categories: CategorySpending[]
-  currency: string
-  locale: string
-  t: (key: string) => string
+  totalBudget: number;
+  totalSpent: number;
+  categories: CategorySpending[];
+  currency: string;
+  locale: string;
+  t: (key: string) => string;
 }) {
   return (
     <YStack
@@ -172,7 +168,7 @@ function SummaryCard({
       {/* Color Legend */}
       <ColorLegend categories={categories} currency={currency} locale={locale} />
     </YStack>
-  )
+  );
 }
 
 // --- Section Header ---
@@ -182,11 +178,11 @@ function SectionHeader({
   action,
   onAction,
 }: {
-  title?: string
-  action?: string
-  onAction?: () => void
+  title?: string;
+  action?: string;
+  onAction?: () => void;
 }) {
-  if (!title) return null
+  if (!title) return null;
   return (
     <XStack justifyContent="space-between" alignItems="center" paddingVertical="$sm">
       {title && <Heading level={4}>{title}</Heading>}
@@ -204,40 +200,40 @@ function SectionHeader({
         </Text>
       )}
     </XStack>
-  )
+  );
 }
 
 // --- Main Component ---
 
 export function BudgetBreakdownPage() {
-  const { t, i18n } = useTranslation()
-  const { travel } = useTravelContext()
-  const locale = i18n.language
-  const navigate = useNavigate()
-  const media = useMedia()
-  const isDesktop = media.gtTablet
+  const { t, i18n } = useTranslation();
+  const { travel } = useTravelContext();
+  const locale = i18n.language;
+  const navigate = useNavigate();
+  const media = useMedia();
+  const isDesktop = media.gtTablet;
 
-  const { data: dashboard, isLoading } = useDashboard(travel.id)
-  const { data: expenses } = useTravelExpenses(travel.id)
+  const { data: dashboard, isLoading } = useDashboard(travel.id);
+  const { data: expenses } = useTravelExpenses(travel.id);
 
   const expenseCountByCategory = useMemo(
     () => getExpenseCountByCategory(expenses ?? []),
     [expenses],
-  )
+  );
 
   if (isLoading) {
-    return <BudgetSkeleton />
+    return <BudgetSkeleton />;
   }
 
   if (!dashboard) {
-    return null
+    return null;
   }
 
-  const { overall, categorySpending, currency } = dashboard
+  const { overall, categorySpending, currency } = dashboard;
 
   const handleNavigateToCategories = () => {
-    navigate({ to: '/travels/$travelId/categories', params: { travelId: travel.id } })
-  }
+    navigate({ to: '/travels/$travelId/categories', params: { travelId: travel.id } });
+  };
 
   return (
     <YStack
@@ -283,5 +279,5 @@ export function BudgetBreakdownPage() {
         ))}
       </YStack>
     </YStack>
-  )
+  );
 }

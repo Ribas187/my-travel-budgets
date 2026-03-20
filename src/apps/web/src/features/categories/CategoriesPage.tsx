@@ -1,15 +1,17 @@
-import { useState, useCallback } from 'react'
-import { useTranslation } from 'react-i18next'
-import { styled, XStack, YStack, Text, View, Spinner } from 'tamagui'
-import { CategoryEditCard, PrimaryButton, Heading, Body } from '@repo/ui'
-import type { Category, CreateCategoryInput, UpdateCategoryInput } from '@repo/api-client'
-import type { TravelDetail } from '@repo/api-client'
-import { useCreateCategory } from '@/hooks/useCreateCategory'
-import { useUpdateCategory } from '@/hooks/useUpdateCategory'
-import { useDeleteCategory } from '@/hooks/useDeleteCategory'
-import { useTravelExpenses } from '@/hooks/useTravelExpenses'
-import { showToast } from '@/lib/toast'
-import { DeleteCategoryDialog } from './DeleteCategoryDialog'
+import { useState, useCallback } from 'react';
+import { useTranslation } from 'react-i18next';
+import { styled, XStack, YStack, Text, View, Spinner } from 'tamagui';
+import { CategoryEditCard, PrimaryButton, Heading, Body } from '@repo/ui';
+import type { Category, CreateCategoryInput, UpdateCategoryInput } from '@repo/api-client';
+import type { TravelDetail } from '@repo/api-client';
+
+import { DeleteCategoryDialog } from './DeleteCategoryDialog';
+
+import { useCreateCategory } from '@/hooks/useCreateCategory';
+import { useUpdateCategory } from '@/hooks/useUpdateCategory';
+import { useDeleteCategory } from '@/hooks/useDeleteCategory';
+import { useTravelExpenses } from '@/hooks/useTravelExpenses';
+import { showToast } from '@/lib/toast';
 
 const ICON_PRESETS = [
   { icon: '🍔', color: '#F59E0B' },
@@ -17,7 +19,7 @@ const ICON_PRESETS = [
   { icon: '🏨', color: '#8B5CF6' },
   { icon: '🎭', color: '#EC4899' },
   { icon: '🛍️', color: '#10B981' },
-]
+];
 
 const AddButton = styled(Text, {
   fontFamily: '$body',
@@ -28,7 +30,7 @@ const AddButton = styled(Text, {
   pressStyle: {
     opacity: 0.7,
   },
-})
+});
 
 const IconOption = styled(View, {
   width: 44,
@@ -50,18 +52,18 @@ const IconOption = styled(View, {
       },
     },
   } as const,
-})
+});
 
 const FormField = styled(YStack, {
   gap: '$xs',
-})
+});
 
 const FormLabel = styled(Text, {
   fontFamily: '$body',
   fontSize: 13,
   fontWeight: '600',
   color: '$textSecondary',
-})
+});
 
 const FormInput = styled(View, {
   borderWidth: 1,
@@ -70,13 +72,13 @@ const FormInput = styled(View, {
   paddingHorizontal: '$md',
   paddingVertical: '$sm',
   backgroundColor: '$white',
-})
+});
 
 const InputText = styled(Text, {
   fontFamily: '$body',
   fontSize: 15,
   color: '$textPrimary',
-})
+});
 
 const DestructiveLink = styled(Text, {
   fontFamily: '$body',
@@ -87,7 +89,7 @@ const DestructiveLink = styled(Text, {
   pressStyle: {
     opacity: 0.7,
   },
-})
+});
 
 const EmptyContainer = styled(YStack, {
   flex: 1,
@@ -95,83 +97,83 @@ const EmptyContainer = styled(YStack, {
   justifyContent: 'center',
   padding: '$2xl',
   gap: '$lg',
-})
+});
 
 interface CategoryFormState {
-  name: string
-  budgetLimit: string
-  selectedPresetIndex: number
+  name: string;
+  budgetLimit: string;
+  selectedPresetIndex: number;
 }
 
 const DEFAULT_FORM: CategoryFormState = {
   name: '',
   budgetLimit: '',
   selectedPresetIndex: 0,
-}
+};
 
 function getFormFromCategory(category: Category): CategoryFormState {
   const presetIndex = ICON_PRESETS.findIndex(
     (p) => p.icon === category.icon && p.color === category.color,
-  )
+  );
   return {
     name: category.name,
     budgetLimit: category.budgetLimit != null ? String(category.budgetLimit) : '',
     selectedPresetIndex: presetIndex >= 0 ? presetIndex : 0,
-  }
+  };
 }
 
 interface CategoriesPageProps {
-  travel: TravelDetail
-  isOwner: boolean
+  travel: TravelDetail;
+  isOwner: boolean;
 }
 
 export function CategoriesPage({ travel, isOwner }: CategoriesPageProps) {
-  const { t } = useTranslation()
-  const categories = travel.categories ?? []
-  const travelId = travel.id
+  const { t } = useTranslation();
+  const categories = travel.categories ?? [];
+  const travelId = travel.id;
 
-  const createCategory = useCreateCategory(travelId)
-  const updateCategory = useUpdateCategory(travelId)
-  const deleteCategory = useDeleteCategory(travelId)
-  const { data: expenses } = useTravelExpenses(travelId)
+  const createCategory = useCreateCategory(travelId);
+  const updateCategory = useUpdateCategory(travelId);
+  const deleteCategory = useDeleteCategory(travelId);
+  const { data: expenses } = useTravelExpenses(travelId);
 
   // Accordion state: expanded card ID or 'new' for a new card
-  const [expandedId, setExpandedId] = useState<string | null>(null)
+  const [expandedId, setExpandedId] = useState<string | null>(null);
   // Form state for the currently expanded card
-  const [form, setForm] = useState<CategoryFormState>(DEFAULT_FORM)
+  const [form, setForm] = useState<CategoryFormState>(DEFAULT_FORM);
   // Delete dialog state
-  const [deleteTarget, setDeleteTarget] = useState<Category | null>(null)
+  const [deleteTarget, setDeleteTarget] = useState<Category | null>(null);
 
   const handleToggle = useCallback(
     (id: string, category?: Category) => {
       if (expandedId === id) {
-        setExpandedId(null)
+        setExpandedId(null);
       } else {
-        setExpandedId(id)
+        setExpandedId(id);
         if (category) {
-          setForm(getFormFromCategory(category))
+          setForm(getFormFromCategory(category));
         } else {
-          setForm(DEFAULT_FORM)
+          setForm(DEFAULT_FORM);
         }
       }
     },
     [expandedId],
-  )
+  );
 
   const handleCancel = useCallback(() => {
-    setExpandedId(null)
-  }, [])
+    setExpandedId(null);
+  }, []);
 
   const handleAddNew = useCallback(() => {
-    setExpandedId('new')
-    setForm(DEFAULT_FORM)
-  }, [])
+    setExpandedId('new');
+    setForm(DEFAULT_FORM);
+  }, []);
 
   const handleSave = useCallback(() => {
-    const preset = ICON_PRESETS[form.selectedPresetIndex]!
-    const budgetLimit = form.budgetLimit ? Number(form.budgetLimit) : null
+    const preset = ICON_PRESETS[form.selectedPresetIndex]!;
+    const budgetLimit = form.budgetLimit ? Number(form.budgetLimit) : null;
 
-    if (!form.name.trim()) return
+    if (!form.name.trim()) return;
 
     if (expandedId === 'new') {
       const data: CreateCategoryInput = {
@@ -179,52 +181,52 @@ export function CategoriesPage({ travel, isOwner }: CategoriesPageProps) {
         icon: preset.icon,
         color: preset.color,
         budgetLimit,
-      }
+      };
       createCategory.mutate(data, {
         onSuccess: () => {
-          showToast(t('category.created'))
-          setExpandedId(null)
+          showToast(t('category.created'));
+          setExpandedId(null);
         },
-      })
+      });
     } else if (expandedId) {
       const data: UpdateCategoryInput = {
         name: form.name.trim(),
         icon: preset.icon,
         color: preset.color,
         budgetLimit,
-      }
+      };
       updateCategory.mutate(
         { catId: expandedId, data },
         {
           onSuccess: () => {
-            showToast(t('category.saved'))
-            setExpandedId(null)
+            showToast(t('category.saved'));
+            setExpandedId(null);
           },
         },
-      )
+      );
     }
-  }, [expandedId, form, createCategory, updateCategory, t])
+  }, [expandedId, form, createCategory, updateCategory, t]);
 
   const handleDeleteConfirm = useCallback(() => {
-    if (!deleteTarget) return
+    if (!deleteTarget) return;
     deleteCategory.mutate(deleteTarget.id, {
       onSuccess: () => {
-        showToast(t('category.deleted'))
-        setDeleteTarget(null)
-        setExpandedId(null)
+        showToast(t('category.deleted'));
+        setDeleteTarget(null);
+        setExpandedId(null);
       },
-    })
-  }, [deleteTarget, deleteCategory, t])
+    });
+  }, [deleteTarget, deleteCategory, t]);
 
   const getExpenseCountForCategory = useCallback(
     (categoryId: string) => {
-      if (!expenses) return 0
-      return expenses.filter((e) => e.categoryId === categoryId).length
+      if (!expenses) return 0;
+      return expenses.filter((e) => e.categoryId === categoryId).length;
     },
     [expenses],
-  )
+  );
 
-  const isSaving = createCategory.isPending || updateCategory.isPending
+  const isSaving = createCategory.isPending || updateCategory.isPending;
 
   const renderForm = () => (
     <YStack gap="$md">
@@ -256,9 +258,7 @@ export function CategoriesPage({ travel, isOwner }: CategoriesPageProps) {
           <input
             type="number"
             value={form.budgetLimit}
-            onChange={(e) =>
-              setForm((f) => ({ ...f, budgetLimit: e.target.value }))
-            }
+            onChange={(e) => setForm((f) => ({ ...f, budgetLimit: e.target.value }))}
             placeholder={t('category.budgetLimitPlaceholder')}
             style={{
               border: 'none',
@@ -284,9 +284,7 @@ export function CategoriesPage({ travel, isOwner }: CategoriesPageProps) {
               key={`${preset.icon}-${preset.color}`}
               selected={form.selectedPresetIndex === index}
               backgroundColor={preset.color + '22'}
-              onPress={() =>
-                setForm((f) => ({ ...f, selectedPresetIndex: index }))
-              }
+              onPress={() => setForm((f) => ({ ...f, selectedPresetIndex: index }))}
               role="radio"
               aria-checked={form.selectedPresetIndex === index}
               aria-label={preset.icon}
@@ -298,7 +296,7 @@ export function CategoriesPage({ travel, isOwner }: CategoriesPageProps) {
         </XStack>
       </FormField>
     </YStack>
-  )
+  );
 
   const renderActions = (categoryId?: string) => (
     <YStack gap="$md">
@@ -344,8 +342,8 @@ export function CategoriesPage({ travel, isOwner }: CategoriesPageProps) {
       {categoryId && (
         <DestructiveLink
           onPress={() => {
-            const cat = categories.find((c) => c.id === categoryId)
-            if (cat) setDeleteTarget(cat)
+            const cat = categories.find((c) => c.id === categoryId);
+            if (cat) setDeleteTarget(cat);
           }}
           testID="category-delete-link"
         >
@@ -353,17 +351,13 @@ export function CategoriesPage({ travel, isOwner }: CategoriesPageProps) {
         </DestructiveLink>
       )}
     </YStack>
-  )
+  );
 
   // Empty state
   if (categories.length === 0 && expandedId !== 'new') {
     return (
       <YStack flex={1}>
-        <XStack
-          justifyContent="space-between"
-          alignItems="center"
-          marginBottom="$2xl"
-        >
+        <XStack justifyContent="space-between" alignItems="center" marginBottom="$2xl">
           <Heading level={2}>{t('category.manage')}</Heading>
           {isOwner && (
             <AddButton
@@ -390,16 +384,12 @@ export function CategoriesPage({ travel, isOwner }: CategoriesPageProps) {
           )}
         </EmptyContainer>
       </YStack>
-    )
+    );
   }
 
   return (
     <YStack flex={1}>
-      <XStack
-        justifyContent="space-between"
-        alignItems="center"
-        marginBottom="$2xl"
-      >
+      <XStack justifyContent="space-between" alignItems="center" marginBottom="$2xl">
         <Heading level={2}>{t('category.manage')}</Heading>
         {isOwner && (
           <AddButton
@@ -419,14 +409,8 @@ export function CategoriesPage({ travel, isOwner }: CategoriesPageProps) {
           <CategoryEditCard
             name={form.name || t('category.name')}
             expanded
-            icon={
-              <Text fontSize={22}>
-                {ICON_PRESETS[form.selectedPresetIndex]?.icon}
-              </Text>
-            }
-            iconBackgroundColor={
-              ICON_PRESETS[form.selectedPresetIndex]?.color + '22'
-            }
+            icon={<Text fontSize={22}>{ICON_PRESETS[form.selectedPresetIndex]?.icon}</Text>}
+            iconBackgroundColor={ICON_PRESETS[form.selectedPresetIndex]?.color + '22'}
             actions={renderActions()}
           >
             {renderForm()}
@@ -435,11 +419,11 @@ export function CategoriesPage({ travel, isOwner }: CategoriesPageProps) {
 
         {/* Existing categories */}
         {categories.map((category) => {
-          const isExpanded = expandedId === category.id
+          const isExpanded = expandedId === category.id;
           const budgetLabel =
             category.budgetLimit != null
               ? `${t('category.budgetLimit')}: ${category.budgetLimit}`
-              : undefined
+              : undefined;
 
           return (
             <CategoryEditCard
@@ -447,31 +431,25 @@ export function CategoriesPage({ travel, isOwner }: CategoriesPageProps) {
               name={isExpanded ? form.name || category.name : category.name}
               budgetLabel={budgetLabel}
               expanded={isExpanded}
-              onToggle={
-                isOwner
-                  ? () => handleToggle(category.id, category)
-                  : undefined
-              }
+              onToggle={isOwner ? () => handleToggle(category.id, category) : undefined}
               icon={<Text fontSize={22}>{category.icon}</Text>}
               iconBackgroundColor={category.color + '22'}
               actions={isExpanded ? renderActions(category.id) : undefined}
             >
               {isExpanded ? renderForm() : undefined}
             </CategoryEditCard>
-          )
+          );
         })}
       </YStack>
 
       <DeleteCategoryDialog
         open={!!deleteTarget}
         categoryName={deleteTarget?.name ?? ''}
-        expenseCount={
-          deleteTarget ? getExpenseCountForCategory(deleteTarget.id) : 0
-        }
+        expenseCount={deleteTarget ? getExpenseCountForCategory(deleteTarget.id) : 0}
         loading={deleteCategory.isPending}
         onConfirm={handleDeleteConfirm}
         onCancel={() => setDeleteTarget(null)}
       />
     </YStack>
-  )
+  );
 }

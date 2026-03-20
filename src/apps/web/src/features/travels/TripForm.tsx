@@ -1,26 +1,28 @@
-import { useState, useCallback } from 'react'
-import { useForm, Controller } from 'react-hook-form'
-import { zodResolver } from '@hookform/resolvers/zod'
-import { useTranslation } from 'react-i18next'
-import { styled, XStack, YStack, Text, View, Input, Select } from 'tamagui'
-import { AvatarChip, PrimaryButton, Heading, Body, Label } from '@repo/ui'
-import { createTravelSchema } from '@repo/core'
-import { SUPPORTED_CURRENCIES } from '@repo/core'
-import type { TravelDetail, TravelMember } from '@repo/api-client'
-import type { CreateTravelInput } from '@repo/api-client'
-import { useAddMember } from '@/hooks/useAddMember'
-import { useRemoveMember } from '@/hooks/useRemoveMember'
-import { showToast } from '@/lib/toast'
-import { InviteMemberForm } from './InviteMemberForm'
-import { DeleteTripDialog } from './DeleteTripDialog'
+import { useState, useCallback } from 'react';
+import { useForm, Controller } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { useTranslation } from 'react-i18next';
+import { styled, XStack, YStack, Text, View, Input, Select } from 'tamagui';
+import { AvatarChip, PrimaryButton, Heading, Body, Label } from '@repo/ui';
+import { createTravelSchema } from '@repo/core';
+import { SUPPORTED_CURRENCIES } from '@repo/core';
+import type { TravelDetail, TravelMember } from '@repo/api-client';
+import type { CreateTravelInput } from '@repo/api-client';
+
+import { InviteMemberForm } from './InviteMemberForm';
+import { DeleteTripDialog } from './DeleteTripDialog';
+
+import { useAddMember } from '@/hooks/useAddMember';
+import { useRemoveMember } from '@/hooks/useRemoveMember';
+import { showToast } from '@/lib/toast';
 
 interface TripFormProps {
-  travel?: TravelDetail
-  expenseCount?: number
-  saving: boolean
-  deleting?: boolean
-  onSave: (data: CreateTravelInput) => void
-  onDelete?: () => void
+  travel?: TravelDetail;
+  expenseCount?: number;
+  saving: boolean;
+  deleting?: boolean;
+  onSave: (data: CreateTravelInput) => void;
+  onDelete?: () => void;
 }
 
 const FormInput = styled(Input, {
@@ -33,13 +35,13 @@ const FormInput = styled(Input, {
   paddingHorizontal: '$lg',
   color: '$textPrimary',
   minHeight: 48,
-})
+});
 
 const ErrorText = styled(Text, {
   fontFamily: '$body',
   fontSize: 13,
   color: '$statusDanger',
-})
+});
 
 const SectionLabel = styled(Text, {
   fontFamily: '$body',
@@ -48,13 +50,13 @@ const SectionLabel = styled(Text, {
   color: '$textTertiary',
   textTransform: 'uppercase' as const,
   letterSpacing: 0.5,
-})
+});
 
 const Divider = styled(View, {
   height: 1,
   backgroundColor: '$borderDefault',
   marginVertical: '$lg',
-})
+});
 
 const DeleteButton = styled(View, {
   borderWidth: 1,
@@ -68,7 +70,7 @@ const DeleteButton = styled(View, {
   pressStyle: {
     opacity: 0.85,
   },
-})
+});
 
 const InviteLink = styled(Text, {
   fontFamily: '$body',
@@ -76,7 +78,7 @@ const InviteLink = styled(Text, {
   fontWeight: '600',
   color: '$brandPrimary',
   cursor: 'pointer',
-})
+});
 
 const CurrencySelect = styled(View, {
   borderWidth: 1,
@@ -86,26 +88,34 @@ const CurrencySelect = styled(View, {
   justifyContent: 'center',
   paddingHorizontal: '$lg',
   position: 'relative' as const,
-})
+});
 
 const AVATAR_COLORS = [
-  '#C2410C', '#0D9488', '#7C3AED', '#2563EB', '#D97706',
-  '#DC2626', '#059669', '#4F46E5', '#0284C7', '#9333EA',
-]
+  '#C2410C',
+  '#0D9488',
+  '#7C3AED',
+  '#2563EB',
+  '#D97706',
+  '#DC2626',
+  '#059669',
+  '#4F46E5',
+  '#0284C7',
+  '#9333EA',
+];
 
 function getMemberDisplayName(member: TravelMember): string {
-  if (member.user?.name) return member.user.name
-  if (member.guestName) return member.guestName
-  return member.user?.email ?? 'Unknown'
+  if (member.user?.name) return member.user.name;
+  if (member.guestName) return member.guestName;
+  return member.user?.email ?? 'Unknown';
 }
 
 function getMemberInitial(member: TravelMember): string {
-  const name = getMemberDisplayName(member)
-  return name.charAt(0).toUpperCase()
+  const name = getMemberDisplayName(member);
+  return name.charAt(0).toUpperCase();
 }
 
 function formatDateForInput(iso: string): string {
-  return iso.includes('T') ? iso.split('T')[0] : iso
+  return iso.includes('T') ? iso.split('T')[0] : iso;
 }
 
 function getDefaultFormValues(travel?: TravelDetail): CreateTravelInput {
@@ -117,7 +127,7 @@ function getDefaultFormValues(travel?: TravelDetail): CreateTravelInput {
       budget: travel.budget,
       startDate: formatDateForInput(travel.startDate),
       endDate: formatDateForInput(travel.endDate),
-    }
+    };
   }
   return {
     name: '',
@@ -126,7 +136,7 @@ function getDefaultFormValues(travel?: TravelDetail): CreateTravelInput {
     budget: 0,
     startDate: '',
     endDate: '',
-  }
+  };
 }
 
 export function TripForm({
@@ -137,14 +147,14 @@ export function TripForm({
   onSave,
   onDelete,
 }: TripFormProps) {
-  const { t } = useTranslation()
-  const isEditMode = !!travel
-  const [showInviteForm, setShowInviteForm] = useState(false)
-  const [showDeleteDialog, setShowDeleteDialog] = useState(false)
-  const [showCurrencyDropdown, setShowCurrencyDropdown] = useState(false)
+  const { t } = useTranslation();
+  const isEditMode = !!travel;
+  const [showInviteForm, setShowInviteForm] = useState(false);
+  const [showDeleteDialog, setShowDeleteDialog] = useState(false);
+  const [showCurrencyDropdown, setShowCurrencyDropdown] = useState(false);
 
-  const addMember = travel ? useAddMember(travel.id) : null
-  const removeMember = travel ? useRemoveMember(travel.id) : null
+  const addMember = useAddMember(travel?.id ?? '');
+  const removeMember = useRemoveMember(travel?.id ?? '');
 
   const {
     control,
@@ -156,66 +166,66 @@ export function TripForm({
     resolver: zodResolver(createTravelSchema),
     defaultValues: getDefaultFormValues(travel),
     mode: 'onChange',
-  })
+  });
 
-  const watchedCurrency = watch('currency')
+  const watchedCurrency = watch('currency');
 
   const onSubmit = useCallback(
     (data: CreateTravelInput) => {
-      onSave(data)
+      onSave(data);
     },
     [onSave],
-  )
+  );
 
   const handleInviteByEmail = useCallback(
     (email: string) => {
-      if (!addMember) return
+      if (!addMember) return;
       addMember.mutate(
         { email },
         {
           onSuccess: () => {
-            showToast(t('member.added'))
-            setShowInviteForm(false)
+            showToast(t('member.added'));
+            setShowInviteForm(false);
           },
         },
-      )
+      );
     },
     [addMember, t],
-  )
+  );
 
   const handleAddGuest = useCallback(
     (guestName: string) => {
-      if (!addMember) return
+      if (!addMember) return;
       addMember.mutate(
         { guestName },
         {
           onSuccess: () => {
-            showToast(t('member.added'))
-            setShowInviteForm(false)
+            showToast(t('member.added'));
+            setShowInviteForm(false);
           },
         },
-      )
+      );
     },
     [addMember, t],
-  )
+  );
 
   const handleRemoveMember = useCallback(
     (memberId: string) => {
-      if (!removeMember) return
+      if (!removeMember) return;
       removeMember.mutate(memberId, {
         onSuccess: () => {
-          showToast(t('member.removed'))
+          showToast(t('member.removed'));
         },
-      })
+      });
     },
     [removeMember, t],
-  )
+  );
 
   const handleDeleteConfirm = useCallback(() => {
-    if (onDelete) onDelete()
-  }, [onDelete])
+    if (onDelete) onDelete();
+  }, [onDelete]);
 
-  const isSaveDisabled = !isValid || saving
+  const isSaveDisabled = !isValid || saving;
 
   return (
     <YStack gap="$lg" testID="trip-form">
@@ -236,11 +246,7 @@ export function TripForm({
             />
           )}
         />
-        {errors.name && (
-          <ErrorText testID="trip-name-error">
-            {errors.name.message}
-          </ErrorText>
-        )}
+        {errors.name && <ErrorText testID="trip-name-error">{errors.name.message}</ErrorText>}
       </YStack>
 
       {/* Destination (description) */}
@@ -295,9 +301,7 @@ export function TripForm({
             )}
           />
           {errors.startDate && (
-            <ErrorText testID="trip-start-date-error">
-              {errors.startDate.message}
-            </ErrorText>
+            <ErrorText testID="trip-start-date-error">{errors.startDate.message}</ErrorText>
           )}
         </YStack>
         <YStack gap="$sm" flex={1}>
@@ -317,9 +321,7 @@ export function TripForm({
             )}
           />
           {errors.endDate && (
-            <ErrorText testID="trip-end-date-error">
-              {errors.endDate.message}
-            </ErrorText>
+            <ErrorText testID="trip-end-date-error">{errors.endDate.message}</ErrorText>
           )}
         </YStack>
       </XStack>
@@ -362,21 +364,15 @@ export function TripForm({
                         paddingVertical="$sm"
                         paddingHorizontal="$lg"
                         cursor="pointer"
-                        backgroundColor={
-                          value === currency.code ? '$parchment' : '$white'
-                        }
+                        backgroundColor={value === currency.code ? '$parchment' : '$white'}
                         hoverStyle={{ backgroundColor: '$parchment' }}
                         onPress={() => {
-                          onChange(currency.code)
-                          setShowCurrencyDropdown(false)
+                          onChange(currency.code);
+                          setShowCurrencyDropdown(false);
                         }}
                         testID={`currency-option-${currency.code}`}
                       >
-                        <Text
-                          fontFamily="$body"
-                          fontSize={14}
-                          color="$textPrimary"
-                        >
+                        <Text fontFamily="$body" fontSize={14} color="$textPrimary">
                           {currency.code} ({currency.symbol})
                         </Text>
                       </View>
@@ -397,9 +393,9 @@ export function TripForm({
                 testID="trip-budget-input"
                 value={value ? String(value) : ''}
                 onChangeText={(text: string) => {
-                  const cleaned = text.replace(/[^0-9.]/g, '')
-                  const num = parseFloat(cleaned)
-                  onChange(isNaN(num) ? 0 : num)
+                  const cleaned = text.replace(/[^0-9.]/g, '');
+                  const num = parseFloat(cleaned);
+                  onChange(isNaN(num) ? 0 : num);
                 }}
                 placeholder="0.00"
                 placeholderTextColor="$textTertiary"
@@ -409,9 +405,7 @@ export function TripForm({
             )}
           />
           {errors.budget && (
-            <ErrorText testID="trip-budget-error">
-              {errors.budget.message}
-            </ErrorText>
+            <ErrorText testID="trip-budget-error">{errors.budget.message}</ErrorText>
           )}
         </YStack>
       </XStack>
@@ -422,10 +416,7 @@ export function TripForm({
           <XStack justifyContent="space-between" alignItems="center">
             <SectionLabel>{t('travel.travelers')}</SectionLabel>
             {!showInviteForm && (
-              <InviteLink
-                onPress={() => setShowInviteForm(true)}
-                testID="invite-member-link"
-              >
+              <InviteLink onPress={() => setShowInviteForm(true)} testID="invite-member-link">
                 + {t('member.invite')}
               </InviteLink>
             )}
@@ -483,11 +474,7 @@ export function TripForm({
               role="button"
               aria-label={t('travel.deleteTrip')}
             >
-              <Text
-                fontFamily="$body"
-                fontWeight="600"
-                color="$statusDanger"
-              >
+              <Text fontFamily="$body" fontWeight="600" color="$statusDanger">
                 {t('travel.deleteTrip')}
               </Text>
             </DeleteButton>
@@ -507,5 +494,5 @@ export function TripForm({
         </>
       )}
     </YStack>
-  )
+  );
 }

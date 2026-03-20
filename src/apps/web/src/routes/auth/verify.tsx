@@ -1,50 +1,51 @@
-import { useEffect, useRef, useState } from 'react'
-import { createFileRoute, useNavigate, useSearch } from '@tanstack/react-router'
-import { YStack, Text, Spinner } from 'tamagui'
-import { useTranslation } from 'react-i18next'
-import { Heading } from '@repo/ui'
-import { useAuth } from '@/providers/AuthProvider'
-import { apiClient } from '@/apiClient'
-import { z } from 'zod'
+import { useEffect, useRef, useState } from 'react';
+import { createFileRoute, useNavigate, useSearch } from '@tanstack/react-router';
+import { YStack, Text, Spinner } from 'tamagui';
+import { useTranslation } from 'react-i18next';
+import { Heading } from '@repo/ui';
+import { z } from 'zod';
+
+import { useAuth } from '@/providers/AuthProvider';
+import { apiClient } from '@/apiClient';
 
 const verifySearchSchema = z.object({
   token: z.string(),
-})
+});
 
 export const Route = createFileRoute('/auth/verify')({
   validateSearch: verifySearchSchema,
   component: VerifyPage,
-})
+});
 
 function VerifyPage() {
-  const { token } = useSearch({ from: '/auth/verify' })
-  const { login } = useAuth()
-  const navigate = useNavigate()
-  const { t } = useTranslation()
-  const [error, setError] = useState<string | null>(null)
-  const verifiedRef = useRef(false)
+  const { token } = useSearch({ from: '/auth/verify' });
+  const { login } = useAuth();
+  const navigate = useNavigate();
+  const { t } = useTranslation();
+  const [error, setError] = useState<string | null>(null);
+  const verifiedRef = useRef(false);
 
   useEffect(() => {
     if (!token) {
-      setError(t('auth.verifyError'))
-      return
+      setError(t('auth.verifyError'));
+      return;
     }
 
-    if (verifiedRef.current) return
-    verifiedRef.current = true
+    if (verifiedRef.current) return;
+    verifiedRef.current = true;
 
     async function verify() {
       try {
-        const session = await apiClient.auth.verify(token)
-        login(session.accessToken)
-        navigate({ to: '/travels' })
+        const session = await apiClient.auth.verify(token);
+        login(session.accessToken);
+        navigate({ to: '/travels' });
       } catch {
-        setError(t('auth.verifyError'))
+        setError(t('auth.verifyError'));
       }
     }
 
-    verify()
-  }, [token, login, navigate, t])
+    verify();
+  }, [token, login, navigate, t]);
 
   if (error) {
     return (
@@ -60,7 +61,7 @@ function VerifyPage() {
           {t('auth.login')}
         </Text>
       </YStack>
-    )
+    );
   }
 
   return (
@@ -70,5 +71,5 @@ function VerifyPage() {
         {t('auth.verifying')}
       </Text>
     </YStack>
-  )
+  );
 }

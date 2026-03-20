@@ -1,13 +1,14 @@
-import { createFileRoute, useNavigate } from '@tanstack/react-router'
-import { useTranslation } from 'react-i18next'
-import { styled, XStack, YStack, Text } from 'tamagui'
-import { Heading, Body, PrimaryButton } from '@repo/ui'
-import type { Travel } from '@repo/api-client'
-import { useTravels } from '@/hooks/useTravels'
+import { createFileRoute, useNavigate } from '@tanstack/react-router';
+import { useTranslation } from 'react-i18next';
+import { styled, XStack, YStack, Text } from 'tamagui';
+import { Heading, Body, PrimaryButton } from '@repo/ui';
+import type { Travel } from '@repo/api-client';
+
+import { useTravels } from '@/hooks/useTravels';
 
 export const Route = createFileRoute('/_authenticated/travels/')({
   component: TravelsPage,
-})
+});
 
 // ---------------------------------------------------------------------------
 // TravelCard
@@ -25,25 +26,27 @@ const CardFrame = styled(YStack, {
     opacity: 0.92,
     scale: 0.99,
   },
-})
+});
 
 const ProgressBarTrack = styled(XStack, {
   height: 6,
   borderRadius: '$full',
   backgroundColor: '$sand',
   overflow: 'hidden',
-})
+});
 
 interface TravelCardProps {
-  travel: Travel
-  onPress: () => void
+  travel: Travel;
+  onPress: () => void;
 }
 
 function formatDateRange(startDate: string, endDate: string, locale: string): string {
-  const opts: Intl.DateTimeFormatOptions = { month: 'short', day: 'numeric' }
-  const start = new Intl.DateTimeFormat(locale, opts).format(new Date(startDate))
-  const end = new Intl.DateTimeFormat(locale, { ...opts, year: 'numeric' }).format(new Date(endDate))
-  return `${start} – ${end}`
+  const opts: Intl.DateTimeFormatOptions = { month: 'short', day: 'numeric' };
+  const start = new Intl.DateTimeFormat(locale, opts).format(new Date(startDate));
+  const end = new Intl.DateTimeFormat(locale, { ...opts, year: 'numeric' }).format(
+    new Date(endDate),
+  );
+  return `${start} – ${end}`;
 }
 
 function formatBudget(amount: number, currency: string, locale: string): string {
@@ -51,19 +54,19 @@ function formatBudget(amount: number, currency: string, locale: string): string 
     style: 'currency',
     currency,
     maximumFractionDigits: 0,
-  }).format(amount)
+  }).format(amount);
 }
 
 export function TravelCard({ travel, onPress }: TravelCardProps) {
-  const { i18n } = useTranslation()
-  const locale = i18n.language
+  const { i18n } = useTranslation();
+  const locale = i18n.language;
 
-  const dateRange = formatDateRange(travel.startDate, travel.endDate, locale)
-  const budgetFormatted = formatBudget(travel.budget, travel.currency, locale)
+  const dateRange = formatDateRange(travel.startDate, travel.endDate, locale);
+  const budgetFormatted = formatBudget(travel.budget, travel.currency, locale);
 
   // Budget progress — we don't have totalSpent from the list endpoint,
   // so we show the budget amount. Progress bar stays at 0 until dashboard data is available.
-  const progress = 0
+  const progress = 0;
 
   return (
     <CardFrame
@@ -84,12 +87,14 @@ export function TravelCard({ travel, onPress }: TravelCardProps) {
         <XStack
           height="100%"
           width={`${Math.min(progress, 100)}%`}
-          backgroundColor={progress >= 100 ? '$statusDanger' : progress >= 70 ? '$statusWarning' : '$statusSafe'}
+          backgroundColor={
+            progress >= 100 ? '$statusDanger' : progress >= 70 ? '$statusWarning' : '$statusSafe'
+          }
           borderRadius="$full"
         />
       </ProgressBarTrack>
     </CardFrame>
-  )
+  );
 }
 
 // ---------------------------------------------------------------------------
@@ -100,7 +105,7 @@ const SkeletonBox = styled(YStack, {
   backgroundColor: '$sand',
   borderRadius: '$sm',
   overflow: 'hidden',
-})
+});
 
 const SkeletonCard = styled(YStack, {
   backgroundColor: '$white',
@@ -109,7 +114,7 @@ const SkeletonCard = styled(YStack, {
   borderColor: '$borderDefault',
   padding: '$cardPadding',
   gap: '$md',
-})
+});
 
 function TravelCardSkeleton() {
   return (
@@ -122,7 +127,7 @@ function TravelCardSkeleton() {
       </XStack>
       <SkeletonBox height={6} width="100%" borderRadius="$full" />
     </SkeletonCard>
-  )
+  );
 }
 
 function TravelsSkeletonList() {
@@ -132,7 +137,7 @@ function TravelsSkeletonList() {
       <TravelCardSkeleton />
       <TravelCardSkeleton />
     </YStack>
-  )
+  );
 }
 
 // ---------------------------------------------------------------------------
@@ -140,11 +145,11 @@ function TravelsSkeletonList() {
 // ---------------------------------------------------------------------------
 
 interface EmptyStateProps {
-  onCreateTrip: () => void
+  onCreateTrip: () => void;
 }
 
 function TravelsEmptyState({ onCreateTrip }: EmptyStateProps) {
-  const { t } = useTranslation()
+  const { t } = useTranslation();
 
   return (
     <YStack
@@ -155,11 +160,13 @@ function TravelsEmptyState({ onCreateTrip }: EmptyStateProps) {
       padding="$2xl"
       testID="travels-empty-state"
     >
-      <Text fontSize={48} role="img" aria-label="airplane">✈️</Text>
+      <Text fontSize={48} role="img" aria-label="airplane">
+        ✈️
+      </Text>
       <Heading level={3}>{t('travel.emptyState')}</Heading>
       <PrimaryButton label={t('travel.emptyStateCta')} onPress={onCreateTrip} />
     </YStack>
-  )
+  );
 }
 
 // ---------------------------------------------------------------------------
@@ -167,28 +174,25 @@ function TravelsEmptyState({ onCreateTrip }: EmptyStateProps) {
 // ---------------------------------------------------------------------------
 
 function TravelsPage() {
-  const { t } = useTranslation()
-  const navigate = useNavigate()
-  const { data: travels, isLoading } = useTravels()
+  const { t } = useTranslation();
+  const navigate = useNavigate();
+  const { data: travels, isLoading } = useTravels();
 
   const handleCreateTrip = () => {
-    navigate({ to: '/travels/new' })
-  }
+    navigate({ to: '/travels/new' });
+  };
 
   const handleTravelPress = (travelId: string) => {
     // Route will be created in a future task
-    navigate({ to: `/travels/${travelId}` as string })
-  }
+    navigate({ to: `/travels/${travelId}` as string });
+  };
 
   return (
     <YStack flex={1} padding="$screenPaddingHorizontal" paddingTop="$2xl">
       <XStack justifyContent="space-between" alignItems="center" marginBottom="$2xl">
         <Heading level={2}>{t('travel.myTravels')}</Heading>
         {!isLoading && travels && travels.length > 0 && (
-          <PrimaryButton
-            label={t('travel.create')}
-            onPress={handleCreateTrip}
-          />
+          <PrimaryButton label={t('travel.create')} onPress={handleCreateTrip} />
         )}
       </XStack>
 
@@ -208,5 +212,5 @@ function TravelsPage() {
         </YStack>
       )}
     </YStack>
-  )
+  );
 }

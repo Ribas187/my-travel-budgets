@@ -1,42 +1,43 @@
-import { useState } from 'react'
-import { createFileRoute, useNavigate } from '@tanstack/react-router'
-import { YStack, Text, Input, Spinner } from 'tamagui'
-import { useTranslation } from 'react-i18next'
-import { Heading, PrimaryButton } from '@repo/ui'
-import { useAuth } from '@/providers/AuthProvider'
-import { apiClient } from '@/apiClient'
+import { useState } from 'react';
+import { createFileRoute, useNavigate } from '@tanstack/react-router';
+import { YStack, Text, Input, Spinner } from 'tamagui';
+import { useTranslation } from 'react-i18next';
+import { Heading, PrimaryButton } from '@repo/ui';
+
+import { useAuth } from '@/providers/AuthProvider';
+import { apiClient } from '@/apiClient';
 
 export const Route = createFileRoute('/login')({
   component: LoginPage,
-})
+});
 
 function LoginPage() {
-  const { isAuthenticated } = useAuth()
-  const navigate = useNavigate()
-  const { t } = useTranslation()
+  const { isAuthenticated } = useAuth();
+  const navigate = useNavigate();
+  const { t } = useTranslation();
 
-  const [email, setEmail] = useState('')
-  const [sent, setSent] = useState(false)
-  const [loading, setLoading] = useState(false)
-  const [error, setError] = useState<string | null>(null)
+  const [email, setEmail] = useState('');
+  const [sent, setSent] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   // Redirect authenticated users to travels
   if (isAuthenticated) {
-    navigate({ to: '/travels' })
-    return null
+    navigate({ to: '/travels' });
+    return null;
   }
 
   async function handleSendMagicLink() {
-    if (!email.trim()) return
-    setLoading(true)
-    setError(null)
+    if (!email.trim()) return;
+    setLoading(true);
+    setError(null);
     try {
-      await apiClient.auth.requestMagicLink(email.trim())
-      setSent(true)
+      await apiClient.auth.requestMagicLink(email.trim());
+      setSent(true);
     } catch {
-      setError(t('common.error'))
+      setError(t('common.error'));
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
   }
 
@@ -62,14 +63,14 @@ function LoginPage() {
           color="$brandPrimary"
           cursor="pointer"
           onPress={() => {
-            setSent(false)
-            setError(null)
+            setSent(false);
+            setError(null);
           }}
         >
           {t('auth.magicLink')}
         </Text>
       </YStack>
-    )
+    );
   }
 
   return (
@@ -80,7 +81,16 @@ function LoginPage() {
       </Text>
 
       <YStack width="100%" maxWidth={360} gap="$md">
-        <label htmlFor="login-email" style={{ position: 'absolute', width: 1, height: 1, overflow: 'hidden', clip: 'rect(0,0,0,0)' }}>
+        <label
+          htmlFor="login-email"
+          style={{
+            position: 'absolute',
+            width: 1,
+            height: 1,
+            overflow: 'hidden',
+            clip: 'rect(0,0,0,0)',
+          }}
+        >
           {t('auth.emailPlaceholder')}
         </label>
         <Input
@@ -115,5 +125,5 @@ function LoginPage() {
         />
       </YStack>
     </YStack>
-  )
+  );
 }

@@ -1,28 +1,35 @@
-import { useState, useMemo, useCallback } from 'react'
-import { useTranslation } from 'react-i18next'
-import { XStack, YStack, Text, View } from 'tamagui'
-import { AvatarChip, Heading, PrimaryButton } from '@repo/ui'
-import type { TravelMember, MemberSpending } from '@repo/api-client'
-import { useTravelContext } from '@/contexts/TravelContext'
-import { useDashboard } from '@/hooks/useDashboard'
-import { useAddMember } from '@/hooks/useAddMember'
-import { useRemoveMember } from '@/hooks/useRemoveMember'
-import { InviteMemberForm } from '@/features/travels/InviteMemberForm'
-import { showToast } from '@/lib/toast'
+import { useState, useMemo, useCallback } from 'react';
+import { useTranslation } from 'react-i18next';
+import { XStack, YStack, Text, View } from 'tamagui';
+import { AvatarChip, Heading, PrimaryButton } from '@repo/ui';
+import type { TravelMember, MemberSpending } from '@repo/api-client';
+
+import { useTravelContext } from '@/contexts/TravelContext';
+import { useDashboard } from '@/hooks/useDashboard';
+import { useAddMember } from '@/hooks/useAddMember';
+import { useRemoveMember } from '@/hooks/useRemoveMember';
+import { InviteMemberForm } from '@/features/travels/InviteMemberForm';
+import { showToast } from '@/lib/toast';
 
 const AVATAR_COLORS = [
-  '#FF6B35', '#0EA5E9', '#8B5CF6', '#EC4899',
-  '#14B8A6', '#F59E0B', '#EF4444', '#6366F1',
-]
+  '#FF6B35',
+  '#0EA5E9',
+  '#8B5CF6',
+  '#EC4899',
+  '#14B8A6',
+  '#F59E0B',
+  '#EF4444',
+  '#6366F1',
+];
 
 function getAvatarColor(index: number): string {
-  return AVATAR_COLORS[index % AVATAR_COLORS.length]
+  return AVATAR_COLORS[index % AVATAR_COLORS.length];
 }
 
 function getMemberDisplayName(member: TravelMember): string {
-  if (member.user?.name) return member.user.name
-  if (member.guestName) return member.guestName
-  return member.user?.email ?? ''
+  if (member.user?.name) return member.user.name;
+  if (member.guestName) return member.guestName;
+  return member.user?.email ?? '';
 }
 
 function formatCurrency(amount: number, currency: string, locale: string): string {
@@ -30,7 +37,7 @@ function formatCurrency(amount: number, currency: string, locale: string): strin
     style: 'currency',
     currency,
     maximumFractionDigits: 0,
-  }).format(amount)
+  }).format(amount);
 }
 
 // --- Confirmation Dialog ---
@@ -41,10 +48,10 @@ function ConfirmDialog({
   onCancel,
   t,
 }: {
-  message: string
-  onConfirm: () => void
-  onCancel: () => void
-  t: (key: string) => string
+  message: string;
+  onConfirm: () => void;
+  onCancel: () => void;
+  t: (key: string) => string;
 }) {
   return (
     <YStack
@@ -99,7 +106,7 @@ function ConfirmDialog({
         </XStack>
       </YStack>
     </YStack>
-  )
+  );
 }
 
 // --- Member Row ---
@@ -115,28 +122,23 @@ function MemberRow({
   onRemove,
   t,
 }: {
-  member: TravelMember
-  index: number
-  spending?: MemberSpending
-  currency: string
-  locale: string
-  isOwner: boolean
-  isCurrentUserOwner: boolean
-  onRemove: () => void
-  t: (key: string) => string
+  member: TravelMember;
+  index: number;
+  spending?: MemberSpending;
+  currency: string;
+  locale: string;
+  isOwner: boolean;
+  isCurrentUserOwner: boolean;
+  onRemove: () => void;
+  t: (key: string) => string;
 }) {
-  const displayName = getMemberDisplayName(member)
-  const initial = displayName.charAt(0).toUpperCase()
-  const roleBadge = member.role === 'owner' ? t('member.owner') : t('member.member')
-  const canRemove = isCurrentUserOwner && !isOwner
+  const displayName = getMemberDisplayName(member);
+  const initial = displayName.charAt(0).toUpperCase();
+  const roleBadge = member.role === 'owner' ? t('member.owner') : t('member.member');
+  const canRemove = isCurrentUserOwner && !isOwner;
 
   return (
-    <XStack
-      alignItems="center"
-      paddingVertical="$md"
-      gap="$md"
-      data-testid="member-row"
-    >
+    <XStack alignItems="center" paddingVertical="$md" gap="$md" data-testid="member-row">
       <XStack flex={1} alignItems="center" gap="$md">
         <AvatarChip
           name={displayName}
@@ -170,31 +172,31 @@ function MemberRow({
         </Text>
       )}
     </XStack>
-  )
+  );
 }
 
 // --- Main Component ---
 
 export function MembersPage() {
-  const { t, i18n } = useTranslation()
-  const { travel, isOwner, currentUserId } = useTravelContext()
-  const locale = i18n.language
+  const { t, i18n } = useTranslation();
+  const { travel, isOwner, currentUserId } = useTravelContext();
+  const locale = i18n.language;
 
-  const { data: dashboard } = useDashboard(travel.id)
-  const addMember = useAddMember(travel.id)
-  const removeMember = useRemoveMember(travel.id)
+  const { data: dashboard } = useDashboard(travel.id);
+  const addMember = useAddMember(travel.id);
+  const removeMember = useRemoveMember(travel.id);
 
-  const [showInviteForm, setShowInviteForm] = useState(false)
-  const [memberToRemove, setMemberToRemove] = useState<TravelMember | null>(null)
+  const [showInviteForm, setShowInviteForm] = useState(false);
+  const [memberToRemove, setMemberToRemove] = useState<TravelMember | null>(null);
 
   const memberSpendingMap = useMemo(() => {
-    if (!dashboard) return new Map<string, MemberSpending>()
-    const map = new Map<string, MemberSpending>()
+    if (!dashboard) return new Map<string, MemberSpending>();
+    const map = new Map<string, MemberSpending>();
     for (const ms of dashboard.memberSpending) {
-      map.set(ms.memberId, ms)
+      map.set(ms.memberId, ms);
     }
-    return map
-  }, [dashboard])
+    return map;
+  }, [dashboard]);
 
   const handleInviteByEmail = useCallback(
     (email: string) => {
@@ -202,14 +204,14 @@ export function MembersPage() {
         { email },
         {
           onSuccess: () => {
-            showToast(t('member.added'), 'success')
-            setShowInviteForm(false)
+            showToast(t('member.added'), 'success');
+            setShowInviteForm(false);
           },
         },
-      )
+      );
     },
     [addMember, t],
-  )
+  );
 
   const handleAddGuest = useCallback(
     (guestName: string) => {
@@ -217,24 +219,24 @@ export function MembersPage() {
         { guestName },
         {
           onSuccess: () => {
-            showToast(t('member.added'), 'success')
-            setShowInviteForm(false)
+            showToast(t('member.added'), 'success');
+            setShowInviteForm(false);
           },
         },
-      )
+      );
     },
     [addMember, t],
-  )
+  );
 
   const handleConfirmRemove = useCallback(() => {
-    if (!memberToRemove) return
+    if (!memberToRemove) return;
     removeMember.mutate(memberToRemove.id, {
       onSuccess: () => {
-        showToast(t('member.removed'), 'success')
-        setMemberToRemove(null)
+        showToast(t('member.removed'), 'success');
+        setMemberToRemove(null);
       },
-    })
-  }, [memberToRemove, removeMember, t])
+    });
+  }, [memberToRemove, removeMember, t]);
 
   return (
     <YStack
@@ -269,7 +271,7 @@ export function MembersPage() {
       {/* Member List */}
       <YStack data-testid="member-list">
         {travel.members.map((member, index) => {
-          const isMemberOwner = member.role === 'owner'
+          const isMemberOwner = member.role === 'owner';
           return (
             <MemberRow
               key={member.id}
@@ -283,7 +285,7 @@ export function MembersPage() {
               onRemove={() => setMemberToRemove(member)}
               t={t}
             />
-          )
+          );
         })}
       </YStack>
 
@@ -297,5 +299,5 @@ export function MembersPage() {
         />
       )}
     </YStack>
-  )
+  );
 }

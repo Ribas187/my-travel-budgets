@@ -1,12 +1,13 @@
-import { useState, useCallback } from 'react'
-import { useTranslation } from 'react-i18next'
-import { useNavigate } from '@tanstack/react-router'
-import { styled, XStack, YStack, Text, View, Input } from 'tamagui'
-import { Heading, Body, PrimaryButton } from '@repo/ui'
-import { useAuth } from '@/providers/AuthProvider'
-import { useUserMe } from '@/hooks/useUserMe'
-import { useUpdateUser } from '@/hooks/useUpdateUser'
-import { showToast } from '@/lib/toast'
+import { useState, useCallback } from 'react';
+import { useTranslation } from 'react-i18next';
+import { useNavigate } from '@tanstack/react-router';
+import { styled, XStack, YStack, Text, View, Input } from 'tamagui';
+import { Heading, Body, PrimaryButton } from '@repo/ui';
+
+import { useAuth } from '@/providers/AuthProvider';
+import { useUserMe } from '@/hooks/useUserMe';
+import { useUpdateUser } from '@/hooks/useUpdateUser';
+import { showToast } from '@/lib/toast';
 
 const AvatarCircle = styled(XStack, {
   width: 80,
@@ -15,14 +16,14 @@ const AvatarCircle = styled(XStack, {
   alignItems: 'center',
   justifyContent: 'center',
   backgroundColor: '$brandPrimary',
-})
+});
 
 const AvatarInitial = styled(Text, {
   fontFamily: '$heading',
   fontSize: 32,
   fontWeight: '700',
   color: '$white',
-})
+});
 
 const SectionCard = styled(YStack, {
   backgroundColor: '$white',
@@ -31,7 +32,7 @@ const SectionCard = styled(YStack, {
   borderColor: '$borderDefault',
   padding: '$lg',
   gap: '$md',
-})
+});
 
 const SectionLabel = styled(Text, {
   fontFamily: '$body',
@@ -40,7 +41,7 @@ const SectionLabel = styled(Text, {
   color: '$textTertiary',
   textTransform: 'uppercase' as const,
   letterSpacing: 0.5,
-})
+});
 
 const NameInput = styled(Input, {
   fontFamily: '$body',
@@ -52,7 +53,7 @@ const NameInput = styled(Input, {
   paddingHorizontal: '$lg',
   color: '$textPrimary',
   minHeight: 48,
-})
+});
 
 const LanguageOption = styled(XStack, {
   paddingVertical: '$md',
@@ -62,7 +63,7 @@ const LanguageOption = styled(XStack, {
   cursor: 'pointer',
   alignItems: 'center',
   gap: '$sm',
-})
+});
 
 const LogoutButton = styled(XStack, {
   paddingVertical: '$md',
@@ -73,58 +74,58 @@ const LogoutButton = styled(XStack, {
   alignItems: 'center',
   justifyContent: 'center',
   cursor: 'pointer',
-})
+});
 
 export function ProfilePage() {
-  const { t, i18n } = useTranslation()
-  const navigate = useNavigate()
-  const { logout } = useAuth()
-  const { data: user } = useUserMe()
-  const updateUser = useUpdateUser()
+  const { t, i18n } = useTranslation();
+  const navigate = useNavigate();
+  const { logout } = useAuth();
+  const { data: user } = useUserMe();
+  const updateUser = useUpdateUser();
 
-  const [isEditingName, setIsEditingName] = useState(false)
-  const [nameValue, setNameValue] = useState('')
+  const [isEditingName, setIsEditingName] = useState(false);
+  const [nameValue, setNameValue] = useState('');
 
   const handleStartEdit = useCallback(() => {
-    setNameValue(user?.name ?? '')
-    setIsEditingName(true)
-  }, [user])
+    setNameValue(user?.name ?? '');
+    setIsEditingName(true);
+  }, [user]);
 
   const handleSaveName = useCallback(() => {
-    const trimmed = nameValue.trim()
-    if (!trimmed || trimmed.length > 100) return
+    const trimmed = nameValue.trim();
+    if (!trimmed || trimmed.length > 100) return;
     updateUser.mutate(
       { name: trimmed },
       {
         onSuccess: () => {
-          showToast(t('profile.nameSaved'), 'success')
-          setIsEditingName(false)
+          showToast(t('profile.nameSaved'), 'success');
+          setIsEditingName(false);
         },
       },
-    )
-  }, [nameValue, updateUser, t])
+    );
+  }, [nameValue, updateUser, t]);
 
   const handleCancelEdit = useCallback(() => {
-    setIsEditingName(false)
-    setNameValue('')
-  }, [])
+    setIsEditingName(false);
+    setNameValue('');
+  }, []);
 
   const handleChangeLanguage = useCallback(
     (lng: string) => {
-      i18n.changeLanguage(lng)
+      i18n.changeLanguage(lng);
     },
     [i18n],
-  )
+  );
 
   const handleLogout = useCallback(() => {
-    logout()
-    setTimeout(() => navigate({ to: '/login' }), 0)
-  }, [logout, navigate])
+    logout();
+    setTimeout(() => navigate({ to: '/login' }), 0);
+  }, [logout, navigate]);
 
-  if (!user) return null
+  if (!user) return null;
 
-  const initial = user.name.charAt(0).toUpperCase()
-  const currentLanguage = i18n.language
+  const initial = user.name.charAt(0).toUpperCase();
+  const currentLanguage = i18n.language;
 
   return (
     <YStack
@@ -146,7 +147,9 @@ export function ProfilePage() {
           <AvatarInitial>{initial}</AvatarInitial>
         </AvatarCircle>
         <Heading level={3}>{user.name}</Heading>
-        <Body size="secondary" color="$textTertiary">{user.email}</Body>
+        <Body size="secondary" color="$textTertiary">
+          {user.email}
+        </Body>
       </YStack>
 
       {/* Name Section */}
@@ -241,5 +244,5 @@ export function ProfilePage() {
         </Text>
       </LogoutButton>
     </YStack>
-  )
+  );
 }

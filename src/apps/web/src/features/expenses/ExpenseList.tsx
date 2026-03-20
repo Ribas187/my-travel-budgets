@@ -1,11 +1,13 @@
-import { useState, useMemo, useCallback } from 'react'
-import { useTranslation } from 'react-i18next'
-import { styled, XStack, YStack, Text, ScrollView, Input, View } from 'tamagui'
-import { ExpenseRow, DayGroupHeader, FilterChip, Heading, Body } from '@repo/ui'
-import type { TravelDetail, Expense, Category, ExpenseFilters } from '@repo/api-client'
-import { useTravelExpenses } from '@/hooks/useTravelExpenses'
-import { groupExpensesByDay } from '@/utils/groupExpensesByDay'
-import { AddExpenseModal } from './AddExpenseModal'
+import { useState, useMemo, useCallback } from 'react';
+import { useTranslation } from 'react-i18next';
+import { styled, XStack, YStack, Text, ScrollView, Input, View } from 'tamagui';
+import { ExpenseRow, DayGroupHeader, FilterChip, Heading, Body } from '@repo/ui';
+import type { TravelDetail, Expense, Category, ExpenseFilters } from '@repo/api-client';
+
+import { AddExpenseModal } from './AddExpenseModal';
+
+import { useTravelExpenses } from '@/hooks/useTravelExpenses';
+import { groupExpensesByDay } from '@/utils/groupExpensesByDay';
 
 // ---------------------------------------------------------------------------
 // Helpers
@@ -17,34 +19,34 @@ function formatAmount(amount: number, currency: string, locale: string): string 
     currency,
     minimumFractionDigits: 2,
     maximumFractionDigits: 2,
-  }).format(amount)
+  }).format(amount);
 }
 
 function formatDayLabel(dateStr: string, locale: string): string {
-  const date = new Date(dateStr + 'T00:00:00')
+  const date = new Date(dateStr + 'T00:00:00');
   return new Intl.DateTimeFormat(locale, {
     weekday: 'long',
     month: 'short',
     day: 'numeric',
-  }).format(date)
+  }).format(date);
 }
 
 function formatTime(dateStr: string, locale: string): string {
-  const date = new Date(dateStr)
+  const date = new Date(dateStr);
   return new Intl.DateTimeFormat(locale, {
     hour: '2-digit',
     minute: '2-digit',
-  }).format(date)
+  }).format(date);
 }
 
 function getMemberName(memberId: string, travel: TravelDetail): string {
-  const member = (travel.members ?? []).find((m) => m.id === memberId)
-  if (!member) return ''
-  return member.user?.name ?? member.guestName ?? member.user?.email ?? ''
+  const member = (travel.members ?? []).find((m) => m.id === memberId);
+  if (!member) return '';
+  return member.user?.name ?? member.guestName ?? member.user?.email ?? '';
 }
 
 function getCategoryById(categoryId: string, categories: Category[]): Category | undefined {
-  return categories.find((c) => c.id === categoryId)
+  return categories.find((c) => c.id === categoryId);
 }
 
 // ---------------------------------------------------------------------------
@@ -54,12 +56,12 @@ function getCategoryById(categoryId: string, categories: Category[]): Category |
 const FilterBar = styled(ScrollView, {
   flexDirection: 'row',
   marginBottom: '$md',
-})
+});
 
 const FilterBarContent = styled(XStack, {
   gap: '$sm',
   paddingVertical: '$xs',
-})
+});
 
 const SearchContainer = styled(XStack, {
   marginBottom: '$md',
@@ -69,7 +71,7 @@ const SearchContainer = styled(XStack, {
   borderWidth: 1,
   borderColor: '$borderDefault',
   paddingHorizontal: '$md',
-})
+});
 
 const SearchInput = styled(Input, {
   flex: 1,
@@ -78,7 +80,7 @@ const SearchInput = styled(Input, {
   borderWidth: 0,
   backgroundColor: 'transparent',
   paddingVertical: '$sm',
-})
+});
 
 const SearchToggle = styled(XStack, {
   cursor: 'pointer',
@@ -87,19 +89,19 @@ const SearchToggle = styled(XStack, {
   justifyContent: 'center',
   minWidth: 44,
   minHeight: 44,
-})
+});
 
 const Divider = styled(YStack, {
   height: 1,
   backgroundColor: '$borderDefault',
   marginVertical: '$xs',
-})
+});
 
 const SkeletonBox = styled(YStack, {
   backgroundColor: '$sand',
   borderRadius: '$sm',
   overflow: 'hidden',
-})
+});
 
 // ---------------------------------------------------------------------------
 // Sub-components
@@ -121,27 +123,35 @@ function ExpenseRowSkeleton() {
       </YStack>
       <SkeletonBox height={18} width={60} />
     </XStack>
-  )
+  );
 }
 
 function ExpenseListSkeleton() {
   return (
     <YStack testID="expense-list-skeleton">
-      <XStack justifyContent="space-between" paddingVertical="$sm" paddingHorizontal="$listItemPaddingHorizontal">
+      <XStack
+        justifyContent="space-between"
+        paddingVertical="$sm"
+        paddingHorizontal="$listItemPaddingHorizontal"
+      >
         <SkeletonBox height={14} width={120} />
         <SkeletonBox height={14} width={60} />
       </XStack>
       <ExpenseRowSkeleton />
       <ExpenseRowSkeleton />
       <ExpenseRowSkeleton />
-      <XStack justifyContent="space-between" paddingVertical="$sm" paddingHorizontal="$listItemPaddingHorizontal">
+      <XStack
+        justifyContent="space-between"
+        paddingVertical="$sm"
+        paddingHorizontal="$listItemPaddingHorizontal"
+      >
         <SkeletonBox height={14} width={100} />
         <SkeletonBox height={14} width={50} />
       </XStack>
       <ExpenseRowSkeleton />
       <ExpenseRowSkeleton />
     </YStack>
-  )
+  );
 }
 
 // ---------------------------------------------------------------------------
@@ -149,52 +159,52 @@ function ExpenseListSkeleton() {
 // ---------------------------------------------------------------------------
 
 interface ExpenseListProps {
-  travel: TravelDetail
+  travel: TravelDetail;
 }
 
 export function ExpenseList({ travel }: ExpenseListProps) {
-  const { t, i18n } = useTranslation()
-  const locale = i18n.language
+  const { t, i18n } = useTranslation();
+  const locale = i18n.language;
 
-  const [selectedCategoryId, setSelectedCategoryId] = useState<string | undefined>(undefined)
-  const [searchOpen, setSearchOpen] = useState(false)
-  const [searchText, setSearchText] = useState('')
-  const [debouncedSearch, setDebouncedSearch] = useState('')
-  const [selectedExpense, setSelectedExpense] = useState<Expense | null>(null)
+  const [selectedCategoryId, setSelectedCategoryId] = useState<string | undefined>(undefined);
+  const [searchOpen, setSearchOpen] = useState(false);
+  const [searchText, setSearchText] = useState('');
+  const [debouncedSearch, setDebouncedSearch] = useState('');
+  const [selectedExpense, setSelectedExpense] = useState<Expense | null>(null);
 
   // Debounce search
   const handleSearchChange = useCallback((text: string) => {
-    setSearchText(text)
+    setSearchText(text);
     // Simple debounce using setTimeout
     const timeout = setTimeout(() => {
-      setDebouncedSearch(text)
-    }, 300)
-    return () => clearTimeout(timeout)
-  }, [])
+      setDebouncedSearch(text);
+    }, 300);
+    return () => clearTimeout(timeout);
+  }, []);
 
   const filters: ExpenseFilters | undefined = selectedCategoryId
     ? { categoryId: selectedCategoryId }
-    : undefined
+    : undefined;
 
-  const { data: expenses = [], isLoading } = useTravelExpenses(travel.id, filters)
+  const { data: expenses = [], isLoading } = useTravelExpenses(travel.id, filters);
 
   // Client-side search filtering (API doesn't support search param)
   const filteredExpenses = useMemo(() => {
-    if (!expenses.length) return []
-    if (!debouncedSearch.trim()) return expenses
-    const query = debouncedSearch.toLowerCase()
-    return expenses.filter((e) => e.description.toLowerCase().includes(query))
-  }, [expenses, debouncedSearch])
+    if (!expenses.length) return [];
+    if (!debouncedSearch.trim()) return expenses;
+    const query = debouncedSearch.toLowerCase();
+    return expenses.filter((e) => e.description.toLowerCase().includes(query));
+  }, [expenses, debouncedSearch]);
 
-  const dayGroups = useMemo(() => groupExpensesByDay(filteredExpenses), [filteredExpenses])
+  const dayGroups = useMemo(() => groupExpensesByDay(filteredExpenses), [filteredExpenses]);
 
-  const hasExpenses = expenses.length > 0
-  const hasFilteredResults = filteredExpenses.length > 0
-  const isFiltering = !!selectedCategoryId || !!debouncedSearch.trim()
+  const hasExpenses = expenses.length > 0;
+  const hasFilteredResults = filteredExpenses.length > 0;
+  const isFiltering = !!selectedCategoryId || !!debouncedSearch.trim();
 
   const selectedCategory = selectedCategoryId
     ? getCategoryById(selectedCategoryId, travel.categories ?? [])
-    : undefined
+    : undefined;
 
   return (
     <YStack flex={1} testID="expense-list-container">
@@ -203,10 +213,10 @@ export function ExpenseList({ travel }: ExpenseListProps) {
         <Heading level={3}>{t('nav.expenses')}</Heading>
         <SearchToggle
           onPress={() => {
-            setSearchOpen((prev) => !prev)
+            setSearchOpen((prev) => !prev);
             if (searchOpen) {
-              setSearchText('')
-              setDebouncedSearch('')
+              setSearchText('');
+              setDebouncedSearch('');
             }
           }}
           role="button"
@@ -264,7 +274,9 @@ export function ExpenseList({ travel }: ExpenseListProps) {
           padding="$2xl"
           testID="expense-empty-state"
         >
-          <Text fontSize={48} role="img" aria-label="receipt">🧾</Text>
+          <Text fontSize={48} role="img" aria-label="receipt">
+            🧾
+          </Text>
           <Body size="secondary">{t('expense.emptyState')}</Body>
         </YStack>
       ) : !hasFilteredResults && isFiltering ? (
@@ -277,7 +289,9 @@ export function ExpenseList({ travel }: ExpenseListProps) {
           padding="$2xl"
           testID="expense-filtered-empty-state"
         >
-          <Text fontSize={48} role="img" aria-label="search">🔍</Text>
+          <Text fontSize={48} role="img" aria-label="search">
+            🔍
+          </Text>
           <Body size="secondary">
             {selectedCategory
               ? t('expense.emptyFilterState', { category: selectedCategory.name })
@@ -295,7 +309,7 @@ export function ExpenseList({ travel }: ExpenseListProps) {
                 total={formatAmount(group.dailyTotal, travel.currency, locale)}
               />
               {group.expenses.map((expense) => {
-                const category = getCategoryById(expense.categoryId, travel.categories ?? [])
+                const category = getCategoryById(expense.categoryId, travel.categories ?? []);
                 return (
                   <View
                     key={expense.id}
@@ -313,7 +327,7 @@ export function ExpenseList({ travel }: ExpenseListProps) {
                       iconBackgroundColor={category?.color ? `${category.color}20` : undefined}
                     />
                   </View>
-                )
+                );
               })}
             </YStack>
           ))}
@@ -328,5 +342,5 @@ export function ExpenseList({ travel }: ExpenseListProps) {
         expense={selectedExpense}
       />
     </YStack>
-  )
+  );
 }

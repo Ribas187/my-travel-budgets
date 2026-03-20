@@ -1,15 +1,15 @@
-import { useCallback } from 'react'
-import { useTranslation } from 'react-i18next'
-import { styled, XStack, YStack, Text, View } from 'tamagui'
-import { PrimaryButton, Body, Heading } from '@repo/ui'
+import { useCallback } from 'react';
+import { useTranslation } from 'react-i18next';
+import { styled, XStack, YStack, Text, View } from 'tamagui';
+import { PrimaryButton, Body, Heading } from '@repo/ui';
 
 interface DeleteTripDialogProps {
-  open: boolean
-  tripName: string
-  expenseCount: number
-  loading: boolean
-  onConfirm: () => void
-  onCancel: () => void
+  open: boolean;
+  tripName: string;
+  expenseCount: number;
+  loading: boolean;
+  onConfirm: () => void;
+  onCancel: () => void;
 }
 
 const Overlay = styled(View, {
@@ -22,7 +22,7 @@ const Overlay = styled(View, {
   zIndex: 9000,
   justifyContent: 'center',
   alignItems: 'center',
-})
+});
 
 const DialogCard = styled(YStack, {
   backgroundColor: '$white',
@@ -31,7 +31,7 @@ const DialogCard = styled(YStack, {
   width: '100%',
   maxWidth: 400,
   gap: '$lg',
-})
+});
 
 const DangerButton = styled(View, {
   backgroundColor: '$statusDanger',
@@ -45,7 +45,7 @@ const DangerButton = styled(View, {
   pressStyle: {
     opacity: 0.85,
   },
-})
+});
 
 const CancelButton = styled(View, {
   borderWidth: 1,
@@ -59,7 +59,7 @@ const CancelButton = styled(View, {
   pressStyle: {
     opacity: 0.85,
   },
-})
+});
 
 export function DeleteTripDialog({
   open,
@@ -69,13 +69,13 @@ export function DeleteTripDialog({
   onConfirm,
   onCancel,
 }: DeleteTripDialogProps) {
-  const { t } = useTranslation()
+  const { t } = useTranslation();
 
   const handleOverlayPress = useCallback(() => {
-    if (!loading) onCancel()
-  }, [loading, onCancel])
+    if (!loading) onCancel();
+  }, [loading, onCancel]);
 
-  if (!open) return null
+  if (!open) return null;
 
   return (
     <Overlay onPress={handleOverlayPress} testID="delete-trip-overlay">
@@ -120,5 +120,5 @@ export function DeleteTripDialog({
         </XStack>
       </DialogCard>
     </Overlay>
-  )
+  );
 }

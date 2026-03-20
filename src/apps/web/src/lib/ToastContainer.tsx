@@ -1,7 +1,8 @@
-import { useState, useEffect } from 'react'
-import { styled, YStack, XStack, Text } from 'tamagui'
-import { subscribe, getToasts } from './toast'
-import type { Toast } from './toast'
+import { useState, useEffect } from 'react';
+import { styled, YStack, XStack, Text } from 'tamagui';
+
+import { subscribe, getToasts } from './toast';
+import type { Toast } from './toast';
 
 const ToastFrame = styled(XStack, {
   backgroundColor: '$ink',
@@ -20,21 +21,21 @@ const ToastFrame = styled(XStack, {
       },
     },
   } as const,
-})
+});
 
 const ToastText = styled(Text, {
   fontFamily: '$body',
   fontSize: 14,
   fontWeight: '600',
   color: '$white',
-})
+});
 
 export function ToastContainer() {
-  const [toasts, setToasts] = useState<Toast[]>(getToasts)
+  const [toasts, setToasts] = useState<Toast[]>(getToasts);
 
-  useEffect(() => subscribe(setToasts), [])
+  useEffect(() => subscribe(setToasts), []);
 
-  if (toasts.length === 0) return null
+  if (toasts.length === 0) return null;
 
   return (
     <YStack
@@ -58,5 +59,5 @@ export function ToastContainer() {
         </ToastFrame>
       ))}
     </YStack>
-  )
+  );
 }

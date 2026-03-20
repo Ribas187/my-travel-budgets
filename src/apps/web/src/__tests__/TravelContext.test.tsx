@@ -1,7 +1,8 @@
-import { describe, it, expect } from 'vitest'
-import React from 'react'
-import { TravelProvider, useTravelContext } from '@/contexts/TravelContext'
-import type { TravelDetail } from '@repo/api-client'
+import { describe, it, expect } from 'vitest';
+import React from 'react';
+import type { TravelDetail } from '@repo/api-client';
+
+import { TravelProvider, useTravelContext } from '@/contexts/TravelContext';
 
 const mockTravel: TravelDetail = {
   id: 'travel-1',
@@ -21,13 +22,20 @@ const mockTravel: TravelDetail = {
       userId: 'u1',
       guestName: null,
       role: 'owner',
-      user: { id: 'u1', email: 'user@test.com', name: 'Test User', avatarUrl: null, createdAt: '', updatedAt: '' },
+      user: {
+        id: 'u1',
+        email: 'user@test.com',
+        name: 'Test User',
+        avatarUrl: null,
+        createdAt: '',
+        updatedAt: '',
+      },
       createdAt: '',
       updatedAt: '',
     },
   ],
   categories: [],
-}
+};
 
 describe('TravelProvider', () => {
   it('creates a provider element', () => {
@@ -36,12 +44,12 @@ describe('TravelProvider', () => {
       isOwner: true,
       currentUserId: 'u1',
       children: React.createElement('div', null, 'child'),
-    })
-    expect(element).toBeDefined()
-    expect(element.props.travel).toBe(mockTravel)
-    expect(element.props.isOwner).toBe(true)
-    expect(element.props.currentUserId).toBe('u1')
-  })
+    });
+    expect(element).toBeDefined();
+    expect(element.props.travel).toBe(mockTravel);
+    expect(element.props.isOwner).toBe(true);
+    expect(element.props.currentUserId).toBe('u1');
+  });
 
   it('provides travel data to children', () => {
     const element = React.createElement(TravelProvider, {
@@ -49,20 +57,20 @@ describe('TravelProvider', () => {
       isOwner: false,
       currentUserId: 'u2',
       children: React.createElement('div', null, 'test'),
-    })
-    expect(element.props.travel.name).toBe('Test Trip')
-    expect(element.props.isOwner).toBe(false)
-    expect(element.props.currentUserId).toBe('u2')
-  })
-})
+    });
+    expect(element.props.travel.name).toBe('Test Trip');
+    expect(element.props.isOwner).toBe(false);
+    expect(element.props.currentUserId).toBe('u2');
+  });
+});
 
 describe('useTravelContext', () => {
   it('is defined as a function', () => {
-    expect(typeof useTravelContext).toBe('function')
-  })
+    expect(typeof useTravelContext).toBe('function');
+  });
 
   it('throws when used outside React component', () => {
     // useContext can't be called outside React render tree
-    expect(() => useTravelContext()).toThrow()
-  })
-})
+    expect(() => useTravelContext()).toThrow();
+  });
+});

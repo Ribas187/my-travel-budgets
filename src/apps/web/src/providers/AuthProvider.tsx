@@ -1,52 +1,60 @@
-import { createContext, useCallback, useContext, useEffect, useMemo, useState, type ReactNode } from 'react'
+import {
+  createContext,
+  useCallback,
+  useContext,
+  useEffect,
+  useMemo,
+  useState,
+  type ReactNode,
+} from 'react';
 
-const AUTH_TOKEN_KEY = 'auth_token'
+const AUTH_TOKEN_KEY = 'auth_token';
 
 interface AuthContextValue {
-  token: string | null
-  isAuthenticated: boolean
-  isLoading: boolean
-  login: (token: string) => void
-  logout: () => void
-  getToken: () => string | null
+  token: string | null;
+  isAuthenticated: boolean;
+  isLoading: boolean;
+  login: (token: string) => void;
+  logout: () => void;
+  getToken: () => string | null;
 }
 
-const AuthContext = createContext<AuthContextValue | null>(null)
+const AuthContext = createContext<AuthContextValue | null>(null);
 
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [token, setToken] = useState<string | null>(() => {
     try {
-      return localStorage.getItem(AUTH_TOKEN_KEY)
+      return localStorage.getItem(AUTH_TOKEN_KEY);
     } catch {
-      return null
+      return null;
     }
-  })
-  const [isLoading, setIsLoading] = useState(true)
+  });
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     // Finished initializing from localStorage
-    setIsLoading(false)
-  }, [])
+    setIsLoading(false);
+  }, []);
 
   const login = useCallback((newToken: string) => {
-    setToken(newToken)
+    setToken(newToken);
     try {
-      localStorage.setItem(AUTH_TOKEN_KEY, newToken)
+      localStorage.setItem(AUTH_TOKEN_KEY, newToken);
     } catch {
       // localStorage unavailable, token stays in memory only
     }
-  }, [])
+  }, []);
 
   const logout = useCallback(() => {
-    setToken(null)
+    setToken(null);
     try {
-      localStorage.removeItem(AUTH_TOKEN_KEY)
+      localStorage.removeItem(AUTH_TOKEN_KEY);
     } catch {
       // ignore
     }
-  }, [])
+  }, []);
 
-  const getToken = useCallback(() => token, [token])
+  const getToken = useCallback(() => token, [token]);
 
   const value = useMemo<AuthContextValue>(
     () => ({
@@ -58,15 +66,15 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       getToken,
     }),
     [token, isLoading, login, logout, getToken],
-  )
+  );
 
-  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>
+  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 }
 
 export function useAuth() {
-  const context = useContext(AuthContext)
+  const context = useContext(AuthContext);
   if (!context) {
-    throw new Error('useAuth must be used within an AuthProvider')
+    throw new Error('useAuth must be used within an AuthProvider');
   }
-  return context
+  return context;
 }

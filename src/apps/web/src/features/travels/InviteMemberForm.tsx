@@ -1,15 +1,15 @@
-import { useState, useCallback } from 'react'
-import { useTranslation } from 'react-i18next'
-import { styled, XStack, YStack, Text, Input, View } from 'tamagui'
-import { PrimaryButton } from '@repo/ui'
+import { useState, useCallback } from 'react';
+import { useTranslation } from 'react-i18next';
+import { styled, XStack, YStack, Text, Input, View } from 'tamagui';
+import { PrimaryButton } from '@repo/ui';
 
-type InviteMode = 'email' | 'guest'
+type InviteMode = 'email' | 'guest';
 
 interface InviteMemberFormProps {
-  loading: boolean
-  onInviteByEmail: (email: string) => void
-  onAddGuest: (guestName: string) => void
-  onCancel: () => void
+  loading: boolean;
+  onInviteByEmail: (email: string) => void;
+  onAddGuest: (guestName: string) => void;
+  onCancel: () => void;
 }
 
 const FormInput = styled(Input, {
@@ -22,7 +22,7 @@ const FormInput = styled(Input, {
   paddingHorizontal: '$lg',
   color: '$textPrimary',
   minHeight: 48,
-})
+});
 
 const TabButton = styled(View, {
   paddingVertical: '$sm',
@@ -39,7 +39,7 @@ const TabButton = styled(View, {
       },
     },
   } as const,
-})
+});
 
 export function InviteMemberForm({
   loading,
@@ -47,27 +47,30 @@ export function InviteMemberForm({
   onAddGuest,
   onCancel,
 }: InviteMemberFormProps) {
-  const { t } = useTranslation()
-  const [mode, setMode] = useState<InviteMode>('email')
-  const [value, setValue] = useState('')
+  const { t } = useTranslation();
+  const [mode, setMode] = useState<InviteMode>('email');
+  const [value, setValue] = useState('');
 
   const handleSubmit = useCallback(() => {
-    const trimmed = value.trim()
-    if (!trimmed) return
+    const trimmed = value.trim();
+    if (!trimmed) return;
     if (mode === 'email') {
-      onInviteByEmail(trimmed)
+      onInviteByEmail(trimmed);
     } else {
-      onAddGuest(trimmed)
+      onAddGuest(trimmed);
     }
-    setValue('')
-  }, [mode, value, onInviteByEmail, onAddGuest])
+    setValue('');
+  }, [mode, value, onInviteByEmail, onAddGuest]);
 
   return (
     <YStack gap="$md" testID="invite-member-form">
       <XStack gap="$sm">
         <TabButton
           active={mode === 'email'}
-          onPress={() => { setMode('email'); setValue('') }}
+          onPress={() => {
+            setMode('email');
+            setValue('');
+          }}
           role="tab"
           aria-selected={mode === 'email'}
           testID="invite-tab-email"
@@ -83,7 +86,10 @@ export function InviteMemberForm({
         </TabButton>
         <TabButton
           active={mode === 'guest'}
-          onPress={() => { setMode('guest'); setValue('') }}
+          onPress={() => {
+            setMode('guest');
+            setValue('');
+          }}
           role="tab"
           aria-selected={mode === 'guest'}
           testID="invite-tab-guest"
@@ -101,20 +107,12 @@ export function InviteMemberForm({
       <FormInput
         value={value}
         onChangeText={setValue}
-        placeholder={
-          mode === 'email'
-            ? t('member.emailPlaceholder')
-            : t('member.guestPlaceholder')
-        }
+        placeholder={mode === 'email' ? t('member.emailPlaceholder') : t('member.guestPlaceholder')}
         placeholderTextColor="$textTertiary"
         keyboardType={mode === 'email' ? 'email-address' : 'default'}
         autoCapitalize={mode === 'email' ? 'none' : 'words'}
         testID="invite-member-input"
-        aria-label={
-          mode === 'email'
-            ? t('member.emailPlaceholder')
-            : t('member.guestPlaceholder')
-        }
+        aria-label={mode === 'email' ? t('member.emailPlaceholder') : t('member.guestPlaceholder')}
       />
       <XStack gap="$md" justifyContent="flex-end">
         <Text
@@ -137,5 +135,5 @@ export function InviteMemberForm({
         />
       </XStack>
     </YStack>
-  )
+  );
 }

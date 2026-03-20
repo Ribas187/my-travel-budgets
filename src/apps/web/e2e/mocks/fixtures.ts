@@ -7,7 +7,7 @@ export const TEST_USER = {
   avatarUrl: null,
   createdAt: '2026-01-01T00:00:00.000Z',
   updatedAt: '2026-01-01T00:00:00.000Z',
-}
+};
 
 export const TEST_TOKEN =
   // JWT with { sub: "<user-uuid>" } payload — base64url encoded
@@ -18,19 +18,19 @@ export const TEST_TOKEN =
       exp: 9999999999,
     }),
   ) +
-  '.fake-signature'
+  '.fake-signature';
 
 export const TEST_AUTH_SESSION = {
   accessToken: TEST_TOKEN,
   tokenType: 'Bearer',
   expiresIn: 2592000,
-}
+};
 
-export const MEMBER_ID = '00000000-0000-4000-8000-000000000010'
-export const TRAVEL_ID = '00000000-0000-4000-8000-000000000100'
-export const CAT_FOOD_ID = '00000000-0000-4000-8000-000000001000'
-export const CAT_TRANSPORT_ID = '00000000-0000-4000-8000-000000002000'
-export const EXPENSE_ID = '00000000-0000-4000-8000-000000010000'
+export const MEMBER_ID = '00000000-0000-4000-8000-000000000010';
+export const TRAVEL_ID = '00000000-0000-4000-8000-000000000100';
+export const CAT_FOOD_ID = '00000000-0000-4000-8000-000000001000';
+export const CAT_TRANSPORT_ID = '00000000-0000-4000-8000-000000002000';
+export const EXPENSE_ID = '00000000-0000-4000-8000-000000010000';
 
 export const TEST_MEMBER_OWNER = {
   id: MEMBER_ID,
@@ -41,7 +41,7 @@ export const TEST_MEMBER_OWNER = {
   user: TEST_USER,
   createdAt: '2026-01-01T00:00:00.000Z',
   updatedAt: '2026-01-01T00:00:00.000Z',
-}
+};
 
 export const TEST_CATEGORY_FOOD = {
   id: CAT_FOOD_ID,
@@ -52,7 +52,7 @@ export const TEST_CATEGORY_FOOD = {
   budgetLimit: 500,
   createdAt: '2026-01-01T00:00:00.000Z',
   updatedAt: '2026-01-01T00:00:00.000Z',
-}
+};
 
 export const TEST_CATEGORY_TRANSPORT = {
   id: CAT_TRANSPORT_ID,
@@ -63,7 +63,7 @@ export const TEST_CATEGORY_TRANSPORT = {
   budgetLimit: 300,
   createdAt: '2026-01-01T00:00:00.000Z',
   updatedAt: '2026-01-01T00:00:00.000Z',
-}
+};
 
 export const TEST_TRAVEL = {
   id: TRAVEL_ID,
@@ -76,19 +76,19 @@ export const TEST_TRAVEL = {
   endDate: '2026-06-15',
   createdAt: '2026-01-01T00:00:00.000Z',
   updatedAt: '2026-01-01T00:00:00.000Z',
-}
+};
 
 export const TEST_TRAVEL_DETAIL = {
   ...TEST_TRAVEL,
   members: [TEST_MEMBER_OWNER],
-  categories: [] as typeof TEST_CATEGORY_FOOD[],
-}
+  categories: [] as (typeof TEST_CATEGORY_FOOD)[],
+};
 
 export const TEST_TRAVEL_DETAIL_WITH_CATEGORIES = {
   ...TEST_TRAVEL,
   members: [TEST_MEMBER_OWNER],
   categories: [TEST_CATEGORY_FOOD, TEST_CATEGORY_TRANSPORT],
-}
+};
 
 export const TEST_EXPENSE = {
   id: EXPENSE_ID,
@@ -100,9 +100,9 @@ export const TEST_EXPENSE = {
   date: '2026-06-02',
   createdAt: '2026-06-02T12:30:00.000Z',
   updatedAt: '2026-06-02T12:30:00.000Z',
-}
+};
 
-export const EXPENSE_ID_2 = '00000000-0000-4000-8000-000000020000'
+export const EXPENSE_ID_2 = '00000000-0000-4000-8000-000000020000';
 
 export const TEST_EXPENSE_2 = {
   id: EXPENSE_ID_2,
@@ -114,7 +114,7 @@ export const TEST_EXPENSE_2 = {
   date: '2026-06-03',
   createdAt: '2026-06-03T09:00:00.000Z',
   updatedAt: '2026-06-03T09:00:00.000Z',
-}
+};
 
 export const TEST_USER_ME = {
   id: TEST_USER.id,
@@ -123,7 +123,7 @@ export const TEST_USER_ME = {
   avatarUrl: null,
   createdAt: TEST_USER.createdAt,
   updatedAt: TEST_USER.updatedAt,
-}
+};
 
 export const TEST_DASHBOARD = {
   currency: 'EUR',
@@ -159,4 +159,4 @@ export const TEST_DASHBOARD = {
       status: 'ok' as const,
     },
   ],
-}
+};

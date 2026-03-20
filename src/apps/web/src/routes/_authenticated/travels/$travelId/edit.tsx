@@ -1,72 +1,67 @@
-import { useCallback } from 'react'
-import { createFileRoute, useNavigate } from '@tanstack/react-router'
-import { useTranslation } from 'react-i18next'
-import { styled, XStack, YStack, Text } from 'tamagui'
-import { Heading } from '@repo/ui'
-import type { CreateTravelInput } from '@repo/api-client'
-import { useUpdateTravel } from '@/hooks/useUpdateTravel'
-import { useDeleteTravel } from '@/hooks/useDeleteTravel'
-import { useTravelExpenses } from '@/hooks/useTravelExpenses'
-import { useTravelContext } from '@/contexts/TravelContext'
-import { showToast } from '@/lib/toast'
-import { TripForm } from '@/features/travels/TripForm'
+import { useCallback } from 'react';
+import { createFileRoute, useNavigate } from '@tanstack/react-router';
+import { useTranslation } from 'react-i18next';
+import { styled, XStack, YStack, Text } from 'tamagui';
+import { Heading } from '@repo/ui';
+import type { CreateTravelInput } from '@repo/api-client';
 
-export const Route = createFileRoute(
-  '/_authenticated/travels/$travelId/edit',
-)({
+import { useUpdateTravel } from '@/hooks/useUpdateTravel';
+import { useDeleteTravel } from '@/hooks/useDeleteTravel';
+import { useTravelExpenses } from '@/hooks/useTravelExpenses';
+import { useTravelContext } from '@/contexts/TravelContext';
+import { showToast } from '@/lib/toast';
+import { TripForm } from '@/features/travels/TripForm';
+
+export const Route = createFileRoute('/_authenticated/travels/$travelId/edit')({
   component: EditTripPage,
-})
+});
 
 const CloseButton = styled(Text, {
   fontSize: 24,
   color: '$textTertiary',
   cursor: 'pointer',
   padding: '$xs',
-})
+});
 
 function EditTripPage() {
-  const { t } = useTranslation()
-  const navigate = useNavigate()
-  const { travelId } = Route.useParams()
-  const { travel } = useTravelContext()
-  const { data: expenses } = useTravelExpenses(travelId)
-  const updateTravel = useUpdateTravel(travelId)
-  const deleteTravel = useDeleteTravel()
+  const { t } = useTranslation();
+  const navigate = useNavigate();
+  const { travelId } = Route.useParams();
+  const { travel } = useTravelContext();
+  const { data: expenses } = useTravelExpenses(travelId);
+  const updateTravel = useUpdateTravel(travelId);
+  const deleteTravel = useDeleteTravel();
 
-  const expenseCount = expenses?.length ?? 0
+  const expenseCount = expenses?.length ?? 0;
 
   const handleSave = useCallback(
     (data: CreateTravelInput) => {
       updateTravel.mutate(data, {
         onSuccess: () => {
-          showToast(t('travel.saved'))
-          navigate({ to: '/travels/$travelId', params: { travelId } })
+          showToast(t('travel.saved'));
+          navigate({ to: '/travels/$travelId', params: { travelId } });
         },
-      })
+      });
     },
     [updateTravel, navigate, travelId, t],
-  )
+  );
 
   const handleDelete = useCallback(() => {
     deleteTravel.mutate(travelId, {
       onSuccess: () => {
-        showToast(t('travel.deleted'))
-        navigate({ to: '/travels' })
+        showToast(t('travel.deleted'));
+        navigate({ to: '/travels' });
       },
-    })
-  }, [deleteTravel, travelId, navigate, t])
+    });
+  }, [deleteTravel, travelId, navigate, t]);
 
   const handleClose = useCallback(() => {
-    navigate({ to: '/travels/$travelId', params: { travelId } })
-  }, [navigate, travelId])
+    navigate({ to: '/travels/$travelId', params: { travelId } });
+  }, [navigate, travelId]);
 
   return (
     <YStack flex={1} padding="$screenPaddingHorizontal" paddingTop="$2xl">
-      <XStack
-        justifyContent="space-between"
-        alignItems="center"
-        marginBottom="$2xl"
-      >
+      <XStack justifyContent="space-between" alignItems="center" marginBottom="$2xl">
         <Heading level={2}>{t('travel.editTrip')}</Heading>
         <CloseButton
           onPress={handleClose}
@@ -87,5 +82,5 @@ function EditTripPage() {
         onDelete={handleDelete}
       />
     </YStack>
-  )
+  );
 }

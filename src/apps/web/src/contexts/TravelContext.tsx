@@ -1,13 +1,13 @@
-import { createContext, useContext, type ReactNode } from 'react'
-import type { TravelDetail } from '@repo/api-client'
+import { createContext, useContext, type ReactNode } from 'react';
+import type { TravelDetail } from '@repo/api-client';
 
 interface TravelContextValue {
-  travel: TravelDetail
-  isOwner: boolean
-  currentUserId: string | null
+  travel: TravelDetail;
+  isOwner: boolean;
+  currentUserId: string | null;
 }
 
-const TravelContext = createContext<TravelContextValue | null>(null)
+const TravelContext = createContext<TravelContextValue | null>(null);
 
 export function TravelProvider({
   travel,
@@ -19,13 +19,13 @@ export function TravelProvider({
     <TravelContext.Provider value={{ travel, isOwner, currentUserId }}>
       {children}
     </TravelContext.Provider>
-  )
+  );
 }
 
 export function useTravelContext(): TravelContextValue {
-  const ctx = useContext(TravelContext)
+  const ctx = useContext(TravelContext);
   if (!ctx) {
-    throw new Error('useTravelContext must be used within a TravelProvider')
+    throw new Error('useTravelContext must be used within a TravelProvider');
   }
-  return ctx
+  return ctx;
 }

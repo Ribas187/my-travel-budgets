@@ -1,6 +1,6 @@
-import { describe, it, expect } from 'vitest'
-import React from 'react'
-import type { DashboardData, TravelDetail } from '@repo/api-client'
+import { describe, it, expect } from 'vitest';
+import React from 'react';
+import type { DashboardData, TravelDetail } from '@repo/api-client';
 
 // Mock data factories
 
@@ -22,7 +22,14 @@ const mockTravel: TravelDetail = {
       userId: 'u1',
       guestName: null,
       role: 'owner',
-      user: { id: 'u1', email: 'user@test.com', name: 'Alice', avatarUrl: null, createdAt: '', updatedAt: '' },
+      user: {
+        id: 'u1',
+        email: 'user@test.com',
+        name: 'Alice',
+        avatarUrl: null,
+        createdAt: '',
+        updatedAt: '',
+      },
       createdAt: '',
       updatedAt: '',
     },
@@ -59,7 +66,7 @@ const mockTravel: TravelDetail = {
       updatedAt: '',
     },
   ],
-}
+};
 
 const mockDashboard: DashboardData = {
   currency: 'EUR',
@@ -97,10 +104,8 @@ const mockDashboard: DashboardData = {
       status: 'ok',
     },
   ],
-  memberSpending: [
-    { memberId: 'm1', displayName: 'Alice', totalSpent: 2140 },
-  ],
-}
+  memberSpending: [{ memberId: 'm1', displayName: 'Alice', totalSpent: 2140 }],
+};
 
 const mockExpenses = [
   {
@@ -158,19 +163,19 @@ const mockExpenses = [
     createdAt: '2026-03-16T14:00:00Z',
     updatedAt: '2026-03-16T14:00:00Z',
   },
-]
+];
 
 describe('DashboardPage', () => {
   it('exports DashboardPage component', async () => {
-    const { DashboardPage } = await import('@/features/dashboard/DashboardPage')
-    expect(DashboardPage).toBeDefined()
-    expect(typeof DashboardPage).toBe('function')
-  })
+    const { DashboardPage } = await import('@/features/dashboard/DashboardPage');
+    expect(DashboardPage).toBeDefined();
+    expect(typeof DashboardPage).toBe('function');
+  });
 
   describe('renders BudgetRing with correct props from dashboard data', () => {
     it('BudgetRing component accepts total, spent, currency, locale props', async () => {
-      const { BudgetRing } = await import('@repo/ui')
-      expect(BudgetRing).toBeDefined()
+      const { BudgetRing } = await import('@repo/ui');
+      expect(BudgetRing).toBeDefined();
 
       // Verify we can create a BudgetRing element with dashboard data
       const element = React.createElement(BudgetRing, {
@@ -178,17 +183,17 @@ describe('DashboardPage', () => {
         spent: mockDashboard.overall.totalSpent,
         currency: mockDashboard.currency,
         locale: 'en',
-      })
-      expect(element.props.total).toBe(3000)
-      expect(element.props.spent).toBe(2140)
-      expect(element.props.currency).toBe('EUR')
-    })
-  })
+      });
+      expect(element.props.total).toBe(3000);
+      expect(element.props.spent).toBe(2140);
+      expect(element.props.currency).toBe('EUR');
+    });
+  });
 
   describe('renders correct number of CategoryProgressRow items', () => {
     it('CategoryProgressRow can be created for each category spending entry', async () => {
-      const { CategoryProgressRow } = await import('@repo/ui')
-      expect(CategoryProgressRow).toBeDefined()
+      const { CategoryProgressRow } = await import('@repo/ui');
+      expect(CategoryProgressRow).toBeDefined();
 
       const elements = mockDashboard.categorySpending.map((cat) =>
         React.createElement(CategoryProgressRow, {
@@ -201,28 +206,28 @@ describe('DashboardPage', () => {
           budget: cat.budgetLimit,
           currency: mockDashboard.currency,
           locale: 'en',
-        })
-      )
-      expect(elements).toHaveLength(3)
-      expect(elements[0].props.name).toBe('Food & Drinks')
-      expect(elements[0].props.spent).toBe(380)
-      expect(elements[0].props.budget).toBe(500)
-    })
-  })
+        }),
+      );
+      expect(elements).toHaveLength(3);
+      expect(elements[0].props.name).toBe('Food & Drinks');
+      expect(elements[0].props.spent).toBe(380);
+      expect(elements[0].props.budget).toBe(500);
+    });
+  });
 
   describe('renders up to 5 ExpenseRow items', () => {
     it('ExpenseRow can be created for each recent expense', async () => {
-      const { ExpenseRow } = await import('@repo/ui')
-      expect(ExpenseRow).toBeDefined()
+      const { ExpenseRow } = await import('@repo/ui');
+      expect(ExpenseRow).toBeDefined();
 
       const recentExpenses = [...mockExpenses]
         .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
-        .slice(0, 5)
+        .slice(0, 5);
 
-      expect(recentExpenses).toHaveLength(5)
+      expect(recentExpenses).toHaveLength(5);
 
       const elements = recentExpenses.map((expense) => {
-        const category = mockTravel.categories.find((c) => c.id === expense.categoryId)
+        const category = mockTravel.categories.find((c) => c.id === expense.categoryId);
         return React.createElement(ExpenseRow, {
           key: expense.id,
           title: expense.description,
@@ -231,12 +236,12 @@ describe('DashboardPage', () => {
           paidBy: 'Alice',
           amount: `€${expense.amount.toFixed(2)}`,
           icon: React.createElement('span', null, category?.icon ?? '📝'),
-        })
-      })
-      expect(elements).toHaveLength(5)
-      expect(elements[0].props.title).toBe('Lunch at Time Out Market')
-    })
-  })
+        });
+      });
+      expect(elements).toHaveLength(5);
+      expect(elements[0].props.title).toBe('Lunch at Time Out Market');
+    });
+  });
 
   describe('shows empty state when no expenses', () => {
     it('detects empty state when totalSpent is 0 and no expenses', () => {
@@ -244,58 +249,62 @@ describe('DashboardPage', () => {
         ...mockDashboard,
         overall: { budget: 3000, totalSpent: 0, status: 'ok' },
         categorySpending: [],
-      }
-      const noExpenses: typeof mockExpenses = []
+      };
+      const noExpenses: typeof mockExpenses = [];
 
-      const isEmpty = emptyDashboard.overall.totalSpent === 0 && noExpenses.length === 0
-      expect(isEmpty).toBe(true)
-    })
+      const isEmpty = emptyDashboard.overall.totalSpent === 0 && noExpenses.length === 0;
+      expect(isEmpty).toBe(true);
+    });
 
     it('does not show empty state when expenses exist', () => {
-      const isEmpty = mockDashboard.overall.totalSpent === 0 && mockExpenses.length === 0
-      expect(isEmpty).toBe(false)
-    })
-  })
+      const isEmpty = mockDashboard.overall.totalSpent === 0 && mockExpenses.length === 0;
+      expect(isEmpty).toBe(false);
+    });
+  });
 
   describe('desktop layout', () => {
     it('StatCard can be created with dashboard data for desktop row', async () => {
-      const { StatCard } = await import('@repo/ui')
-      expect(StatCard).toBeDefined()
+      const { StatCard } = await import('@repo/ui');
+      expect(StatCard).toBeDefined();
 
-      const remaining = mockDashboard.overall.budget - mockDashboard.overall.totalSpent
-      const avgPerDay = mockDashboard.overall.totalSpent / 4 // 4 days into trip
+      const remaining = mockDashboard.overall.budget - mockDashboard.overall.totalSpent;
+      const avgPerDay = mockDashboard.overall.totalSpent / 4; // 4 days into trip
 
       const statCards = [
         React.createElement(StatCard, { key: '1', label: 'Total Budget', value: '€3,000' }),
         React.createElement(StatCard, { key: '2', label: 'Spent', value: '€2,140' }),
         React.createElement(StatCard, { key: '3', label: 'Remaining', value: `€${remaining}` }),
-        React.createElement(StatCard, { key: '4', label: 'Daily Average', value: `€${avgPerDay.toFixed(0)}` }),
-      ]
-      expect(statCards).toHaveLength(4)
-      expect(statCards[0].props.label).toBe('Total Budget')
-      expect(statCards[1].props.value).toBe('€2,140')
-    })
-  })
+        React.createElement(StatCard, {
+          key: '4',
+          label: 'Daily Average',
+          value: `€${avgPerDay.toFixed(0)}`,
+        }),
+      ];
+      expect(statCards).toHaveLength(4);
+      expect(statCards[0].props.label).toBe('Total Budget');
+      expect(statCards[1].props.value).toBe('€2,140');
+    });
+  });
 
   describe('average per day calculation', () => {
     it('computes avgPerDay = totalSpent / daysSinceStart', () => {
-      const totalSpent = 2140
-      const daysSinceStart = 4
-      const avgPerDay = totalSpent / daysSinceStart
-      expect(avgPerDay).toBe(535)
-    })
+      const totalSpent = 2140;
+      const daysSinceStart = 4;
+      const avgPerDay = totalSpent / daysSinceStart;
+      expect(avgPerDay).toBe(535);
+    });
 
     it('defaults to at least 1 day to avoid division by zero', () => {
-      const start = new Date('2026-03-20')
-      const end = new Date('2026-03-25')
-      const today = new Date('2026-03-20')
-      const effectiveEnd = today < end ? today : end
-      const diffMs = effectiveEnd.getTime() - start.getTime()
-      const days = Math.floor(diffMs / (1000 * 60 * 60 * 24)) + 1
-      const daysSinceStart = Math.max(1, days)
-      expect(daysSinceStart).toBe(1)
-    })
-  })
+      const start = new Date('2026-03-20');
+      const end = new Date('2026-03-25');
+      const today = new Date('2026-03-20');
+      const effectiveEnd = today < end ? today : end;
+      const diffMs = effectiveEnd.getTime() - start.getTime();
+      const days = Math.floor(diffMs / (1000 * 60 * 60 * 24)) + 1;
+      const daysSinceStart = Math.max(1, days);
+      expect(daysSinceStart).toBe(1);
+    });
+  });
 
   describe('currency formatting', () => {
     it('formats currency using Intl.NumberFormat', () => {
@@ -303,17 +312,17 @@ describe('DashboardPage', () => {
         style: 'currency',
         currency: 'EUR',
         maximumFractionDigits: 0,
-      }).format(2140)
-      expect(formatted).toContain('2,140')
-    })
+      }).format(2140);
+      expect(formatted).toContain('2,140');
+    });
 
     it('formats currency with locale pt-BR', () => {
       const formatted = new Intl.NumberFormat('pt-BR', {
         style: 'currency',
         currency: 'EUR',
         maximumFractionDigits: 0,
-      }).format(2140)
-      expect(formatted).toContain('2.140')
-    })
-  })
-})
+      }).format(2140);
+      expect(formatted).toContain('2.140');
+    });
+  });
+});
