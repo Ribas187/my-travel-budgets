@@ -1,5 +1,5 @@
-import { type ReactNode } from 'react'
-import { styled, Text, XStack, Spinner } from 'tamagui'
+import { type ReactNode } from 'react';
+import { styled, Text, XStack, Spinner } from 'tamagui';
 
 const ButtonFrame = styled(XStack, {
   alignItems: 'center',
@@ -33,7 +33,7 @@ const ButtonFrame = styled(XStack, {
       },
     },
   } as const,
-})
+});
 
 const ButtonLabel = styled(Text, {
   fontFamily: '$heading',
@@ -42,18 +42,18 @@ const ButtonLabel = styled(Text, {
   letterSpacing: 0.18,
   color: '$white',
   textAlign: 'center',
-})
+});
 
 interface PrimaryButtonProps {
-  label: string
-  onPress?: () => void
-  loading?: boolean
-  disabled?: boolean
-  icon?: ReactNode
+  label: string;
+  onPress?: () => void;
+  loading?: boolean;
+  disabled?: boolean;
+  icon?: ReactNode;
 }
 
 export function PrimaryButton({ label, onPress, loading, disabled, icon }: PrimaryButtonProps) {
-  const isDisabled = disabled || loading
+  const isDisabled = disabled || loading;
 
   return (
     <ButtonFrame
@@ -72,5 +72,5 @@ export function PrimaryButton({ label, onPress, loading, disabled, icon }: Prima
         </XStack>
       )}
     </ButtonFrame>
-  )
+  );
 }

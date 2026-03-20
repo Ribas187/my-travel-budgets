@@ -1,11 +1,11 @@
-import { styled, XStack, Text } from 'tamagui'
+import { styled, XStack, Text } from 'tamagui';
 
 const HeaderFrame = styled(XStack, {
   justifyContent: 'space-between',
   alignItems: 'center',
   paddingVertical: '$sm',
   paddingHorizontal: '$listItemPaddingHorizontal',
-})
+});
 
 const DateText = styled(Text, {
   fontFamily: '$body',
@@ -15,7 +15,7 @@ const DateText = styled(Text, {
   color: '$textTertiary',
   textTransform: 'uppercase',
   letterSpacing: 0.52,
-})
+});
 
 const TotalText = styled(Text, {
   fontFamily: '$body',
@@ -23,11 +23,11 @@ const TotalText = styled(Text, {
   fontWeight: '700',
   lineHeight: 18,
   color: '$textPrimary',
-})
+});
 
 interface DayGroupHeaderProps {
-  label: string
-  total: string
+  label: string;
+  total: string;
 }
 
 export function DayGroupHeader({ label, total }: DayGroupHeaderProps) {
@@ -36,5 +36,5 @@ export function DayGroupHeader({ label, total }: DayGroupHeaderProps) {
       <DateText>{label}</DateText>
       <TotalText>{total}</TotalText>
     </HeaderFrame>
-  )
+  );
 }

@@ -1,4 +1,4 @@
-import { styled, YStack, Text } from 'tamagui'
+import { styled, YStack, Text } from 'tamagui';
 
 const CardFrame = styled(YStack, {
   backgroundColor: '$white',
@@ -7,7 +7,7 @@ const CardFrame = styled(YStack, {
   borderColor: '$borderDefault',
   padding: '$cardPadding',
   gap: '$xs',
-})
+});
 
 const LabelText = styled(Text, {
   fontFamily: '$body',
@@ -15,7 +15,7 @@ const LabelText = styled(Text, {
   fontWeight: '500',
   lineHeight: 18,
   color: '$textTertiary',
-})
+});
 
 const ValueText = styled(Text, {
   fontFamily: '$heading',
@@ -23,7 +23,7 @@ const ValueText = styled(Text, {
   fontWeight: '700',
   letterSpacing: -0.64,
   color: '$textPrimary',
-})
+});
 
 const HelperText = styled(Text, {
   fontFamily: '$body',
@@ -31,13 +31,13 @@ const HelperText = styled(Text, {
   fontWeight: '500',
   lineHeight: 18,
   color: '$textTertiary',
-})
+});
 
 interface StatCardProps {
-  label: string
-  value: string
-  helper?: string
-  valueColor?: string
+  label: string;
+  value: string;
+  helper?: string;
+  valueColor?: string;
 }
 
 export function StatCard({ label, value, helper, valueColor }: StatCardProps) {
@@ -47,5 +47,5 @@ export function StatCard({ label, value, helper, valueColor }: StatCardProps) {
       <ValueText {...(valueColor && { color: valueColor })}>{value}</ValueText>
       {helper && <HelperText>{helper}</HelperText>}
     </CardFrame>
-  )
+  );
 }

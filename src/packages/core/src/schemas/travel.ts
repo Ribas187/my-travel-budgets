@@ -1,7 +1,8 @@
-import { z } from 'zod'
-import { SUPPORTED_CURRENCIES } from '../constants/currencies'
+import { z } from 'zod';
 
-const currencyCodes = SUPPORTED_CURRENCIES.map((c) => c.code) as [string, ...string[]]
+import { SUPPORTED_CURRENCIES } from '../constants/currencies';
+
+const currencyCodes = SUPPORTED_CURRENCIES.map((c) => c.code) as [string, ...string[]];
 
 export const createTravelSchema = z.object({
   name: z.string().min(1).max(200),
@@ -11,7 +12,7 @@ export const createTravelSchema = z.object({
   budget: z.number().positive(),
   startDate: z.string().date(),
   endDate: z.string().date(),
-})
+});
 
 export const updateTravelSchema = z.object({
   name: z.string().min(1).max(200).optional(),
@@ -21,7 +22,7 @@ export const updateTravelSchema = z.object({
   budget: z.number().positive().optional(),
   startDate: z.string().date().optional(),
   endDate: z.string().date().optional(),
-})
+});
 
-export type CreateTravelInput = z.infer<typeof createTravelSchema>
-export type UpdateTravelInput = z.infer<typeof updateTravelSchema>
+export type CreateTravelInput = z.infer<typeof createTravelSchema>;
+export type UpdateTravelInput = z.infer<typeof updateTravelSchema>;

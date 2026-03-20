@@ -1,7 +1,7 @@
 export interface Currency {
-  code: string
-  name: string
-  symbol: string
+  code: string;
+  name: string;
+  symbol: string;
 }
 
 export const SUPPORTED_CURRENCIES: Currency[] = [
@@ -25,4 +25,4 @@ export const SUPPORTED_CURRENCIES: Currency[] = [
   { code: 'NOK', name: 'Norwegian Krone', symbol: 'kr' },
   { code: 'DKK', name: 'Danish Krone', symbol: 'kr' },
   { code: 'NZD', name: 'New Zealand Dollar', symbol: 'NZ$' },
-]
+];

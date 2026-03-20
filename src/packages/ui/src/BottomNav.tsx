@@ -1,5 +1,5 @@
-import { type ReactNode } from 'react'
-import { styled, XStack, YStack, Text, View } from 'tamagui'
+import { type ReactNode } from 'react';
+import { styled, XStack, YStack, Text, View } from 'tamagui';
 
 const NavFrame = styled(XStack, {
   backgroundColor: '$white',
@@ -10,7 +10,7 @@ const NavFrame = styled(XStack, {
   paddingHorizontal: '$lg',
   alignItems: 'flex-end',
   justifyContent: 'space-around',
-})
+});
 
 const TabButton = styled(YStack, {
   alignItems: 'center',
@@ -19,14 +19,14 @@ const TabButton = styled(YStack, {
   minWidth: 56,
   minHeight: 44,
   cursor: 'pointer',
-})
+});
 
 const TabIcon = styled(View, {
   width: 22,
   height: 22,
   alignItems: 'center',
   justifyContent: 'center',
-})
+});
 
 const TabLabel = styled(Text, {
   fontFamily: '$body',
@@ -49,42 +49,38 @@ const TabLabel = styled(Text, {
   defaultVariants: {
     active: false,
   },
-})
+});
 
 const FABSlot = styled(YStack, {
   alignItems: 'center',
   justifyContent: 'center',
   marginTop: -32,
-})
+});
 
 interface NavTab {
-  key: string
-  label: string
-  icon: ReactNode
+  key: string;
+  label: string;
+  icon: ReactNode;
 }
 
 interface BottomNavProps {
-  tabs: NavTab[]
-  activeTab: string
-  onTabPress: (key: string) => void
-  fabSlot?: ReactNode
+  tabs: NavTab[];
+  activeTab: string;
+  onTabPress: (key: string) => void;
+  fabSlot?: ReactNode;
 }
 
 export function BottomNav({ tabs, activeTab, onTabPress, fabSlot }: BottomNavProps) {
-  const midpoint = Math.floor(tabs.length / 2)
+  const midpoint = Math.floor(tabs.length / 2);
 
-  const items: ReactNode[] = []
+  const items: ReactNode[] = [];
 
   tabs.forEach((tab, index) => {
     if (fabSlot && index === midpoint) {
-      items.push(
-        <FABSlot key="__fab">
-          {fabSlot}
-        </FABSlot>,
-      )
+      items.push(<FABSlot key="__fab">{fabSlot}</FABSlot>);
     }
 
-    const isActive = tab.key === activeTab
+    const isActive = tab.key === activeTab;
     items.push(
       <TabButton
         key={tab.key}
@@ -93,21 +89,15 @@ export function BottomNav({ tabs, activeTab, onTabPress, fabSlot }: BottomNavPro
         aria-selected={isActive}
         aria-label={tab.label}
       >
-        <TabIcon
-          {...(isActive
-            ? { opacity: 1 }
-            : { opacity: 0.6 })}
-        >
-          {tab.icon}
-        </TabIcon>
+        <TabIcon {...(isActive ? { opacity: 1 } : { opacity: 0.6 })}>{tab.icon}</TabIcon>
         <TabLabel active={isActive}>{tab.label}</TabLabel>
       </TabButton>,
-    )
-  })
+    );
+  });
 
   return (
     <NavFrame role="navigation" aria-label="Main navigation" data-testid="bottom-nav">
       {items}
     </NavFrame>
-  )
+  );
 }

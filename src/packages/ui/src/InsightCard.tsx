@@ -1,5 +1,5 @@
-import { type ReactNode } from 'react'
-import { styled, XStack, YStack, View, Text } from 'tamagui'
+import { type ReactNode } from 'react';
+import { styled, XStack, YStack, View, Text } from 'tamagui';
 
 const CardFrame = styled(XStack, {
   backgroundColor: '$white',
@@ -9,7 +9,7 @@ const CardFrame = styled(XStack, {
   padding: '$lg',
   alignItems: 'center',
   gap: 14,
-})
+});
 
 const IconContainer = styled(View, {
   width: 44,
@@ -17,12 +17,12 @@ const IconContainer = styled(View, {
   borderRadius: 14,
   alignItems: 'center',
   justifyContent: 'center',
-})
+});
 
 const ContentColumn = styled(YStack, {
   flex: 1,
   gap: 2,
-})
+});
 
 const TitleText = styled(Text, {
   fontFamily: '$body',
@@ -30,7 +30,7 @@ const TitleText = styled(Text, {
   fontWeight: '500',
   lineHeight: 20,
   color: '$textTertiary',
-})
+});
 
 const DescriptionText = styled(Text, {
   fontFamily: '$body',
@@ -38,13 +38,13 @@ const DescriptionText = styled(Text, {
   fontWeight: '600',
   lineHeight: 22,
   color: '$textPrimary',
-})
+});
 
 interface InsightCardProps {
-  title: string
-  description: string
-  icon: ReactNode
-  iconBackground: string
+  title: string;
+  description: string;
+  icon: ReactNode;
+  iconBackground: string;
 }
 
 export function InsightCard({ title, description, icon, iconBackground }: InsightCardProps) {
@@ -58,5 +58,5 @@ export function InsightCard({ title, description, icon, iconBackground }: Insigh
         <DescriptionText>{description}</DescriptionText>
       </ContentColumn>
     </CardFrame>
-  )
+  );
 }

@@ -1,4 +1,4 @@
-import { createFont, createTamagui, createTokens } from 'tamagui'
+import { createFont, createTamagui, createTokens } from 'tamagui';
 
 // ---------------------------------------------------------------------------
 // Fonts (from design-tokens.json → typography)
@@ -45,7 +45,7 @@ const fredokaFont = createFont({
     avatarInitial: 0,
     buttonPrimary: 0.01 * 18,
   },
-})
+});
 
 const nunitoFont = createFont({
   family: 'Nunito, sans-serif',
@@ -105,7 +105,7 @@ const nunitoFont = createFont({
     buttonSecondary: 0,
     amountDisplay: 0,
   },
-})
+});
 
 // ---------------------------------------------------------------------------
 // Tokens (from design-tokens.json)
@@ -252,7 +252,7 @@ export const tokens = createTokens({
     lg: 400,
     xl: 500,
   },
-})
+});
 
 // ---------------------------------------------------------------------------
 // Themes
@@ -307,7 +307,7 @@ const lightTheme = {
   chipDefault: tokens.color.chipDefault,
   chipActive: tokens.color.chipActive,
   chipActiveText: tokens.color.chipActiveText,
-}
+};
 
 // ---------------------------------------------------------------------------
 // Media queries (from design-tokens.json → breakpoints)
@@ -320,7 +320,7 @@ const media = {
   wide: { minWidth: 1440 },
   gtMobile: { minWidth: 768 },
   gtTablet: { minWidth: 1024 },
-}
+};
 
 // ---------------------------------------------------------------------------
 // Config
@@ -337,11 +337,11 @@ export const config = createTamagui({
     light: lightTheme,
   },
   media,
-})
+});
 
-export default config
+export default config;
 
-type AppConfig = typeof config
+type AppConfig = typeof config;
 
 declare module 'tamagui' {
   interface TamaguiCustomConfig extends AppConfig {}

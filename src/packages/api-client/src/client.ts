@@ -16,52 +16,56 @@ import type {
   DashboardData,
   UserMe,
   ApiError,
-} from './types'
+} from './types';
 
 export interface ApiClientConfig {
-  baseUrl: string
-  getToken: () => string | null
+  baseUrl: string;
+  getToken: () => string | null;
 }
 
 export class ApiClient {
-  private baseUrl: string
-  private getToken: () => string | null
+  private baseUrl: string;
+  private getToken: () => string | null;
 
   constructor(config: ApiClientConfig) {
-    this.baseUrl = config.baseUrl.replace(/\/$/, '')
-    this.getToken = config.getToken
+    this.baseUrl = config.baseUrl.replace(/\/$/, '');
+    this.getToken = config.getToken;
   }
 
   private async request<T>(
     method: string,
     path: string,
-    options?: { body?: unknown; auth?: boolean; query?: Record<string, string | number | undefined> },
+    options?: {
+      body?: unknown;
+      auth?: boolean;
+      query?: Record<string, string | number | undefined>;
+    },
   ): Promise<T> {
-    const { body, auth = true, query } = options ?? {}
+    const { body, auth = true, query } = options ?? {};
 
-    let url = `${this.baseUrl}${path}`
+    let url = `${this.baseUrl}${path}`;
 
     if (query) {
-      const params = new URLSearchParams()
+      const params = new URLSearchParams();
       for (const [key, value] of Object.entries(query)) {
         if (value !== undefined) {
-          params.set(key, String(value))
+          params.set(key, String(value));
         }
       }
-      const qs = params.toString()
+      const qs = params.toString();
       if (qs) {
-        url += `?${qs}`
+        url += `?${qs}`;
       }
     }
 
     const headers: Record<string, string> = {
       'Content-Type': 'application/json',
-    }
+    };
 
     if (auth) {
-      const token = this.getToken()
+      const token = this.getToken();
       if (token) {
-        headers['Authorization'] = `Bearer ${token}`
+        headers['Authorization'] = `Bearer ${token}`;
       }
     }
 
@@ -69,12 +73,12 @@ export class ApiClient {
       method,
       headers,
       body: body !== undefined ? JSON.stringify(body) : undefined,
-    })
+    });
 
     if (!response.ok) {
-      let errorBody: { message?: string; errors?: string[] } = {}
+      let errorBody: { message?: string; errors?: string[] } = {};
       try {
-        errorBody = await response.json()
+        errorBody = await response.json();
       } catch {
         // response body is not JSON
       }
@@ -83,15 +87,15 @@ export class ApiClient {
         statusCode: response.status,
         message: errorBody.message ?? response.statusText,
         errors: errorBody.errors,
-      }
-      throw apiError
+      };
+      throw apiError;
     }
 
     if (response.status === 204 || response.headers.get('content-length') === '0') {
-      return undefined as T
+      return undefined as T;
     }
 
-    return response.json() as Promise<T>
+    return response.json() as Promise<T>;
   }
 
   // Auth methods (no auth header required)
@@ -102,16 +106,14 @@ export class ApiClient {
 
     verify: (token: string): Promise<AuthSession> =>
       this.request('GET', `/auth/verify`, { auth: false, query: { token } }),
-  }
+  };
 
   // Travels methods
 
   readonly travels = {
-    list: (): Promise<Travel[]> =>
-      this.request('GET', '/travels'),
+    list: (): Promise<Travel[]> => this.request('GET', '/travels'),
 
-    get: (id: string): Promise<TravelDetail> =>
-      this.request('GET', `/travels/${id}`),
+    get: (id: string): Promise<TravelDetail> => this.request('GET', `/travels/${id}`),
 
     create: (data: CreateTravelInput): Promise<Travel> =>
       this.request('POST', '/travels', { body: data }),
@@ -119,9 +121,8 @@ export class ApiClient {
     update: (id: string, data: UpdateTravelInput): Promise<Travel> =>
       this.request('PATCH', `/travels/${id}`, { body: data }),
 
-    delete: (id: string): Promise<void> =>
-      this.request('DELETE', `/travels/${id}`),
-  }
+    delete: (id: string): Promise<void> => this.request('DELETE', `/travels/${id}`),
+  };
 
   // Members methods
 
@@ -131,21 +132,23 @@ export class ApiClient {
 
     remove: (travelId: string, memberId: string): Promise<void> =>
       this.request('DELETE', `/travels/${travelId}/members/${memberId}`),
-  }
+  };
 
   // Expenses methods
 
   readonly expenses = {
     list: (travelId: string, filters?: ExpenseFilters): Promise<Expense[]> =>
       this.request('GET', `/travels/${travelId}/expenses`, {
-        query: filters ? {
-          categoryId: filters.categoryId,
-          memberId: filters.memberId,
-          startDate: filters.startDate,
-          endDate: filters.endDate,
-          page: filters.page,
-          limit: filters.limit,
-        } : undefined,
+        query: filters
+          ? {
+              categoryId: filters.categoryId,
+              memberId: filters.memberId,
+              startDate: filters.startDate,
+              endDate: filters.endDate,
+              page: filters.page,
+              limit: filters.limit,
+            }
+          : undefined,
       }),
 
     create: (travelId: string, data: CreateExpenseInput): Promise<Expense> =>
@@ -156,7 +159,7 @@ export class ApiClient {
 
     delete: (travelId: string, expenseId: string): Promise<void> =>
       this.request('DELETE', `/travels/${travelId}/expenses/${expenseId}`),
-  }
+  };
 
   // Categories methods
 
@@ -169,22 +172,21 @@ export class ApiClient {
 
     delete: (travelId: string, catId: string): Promise<void> =>
       this.request('DELETE', `/travels/${travelId}/categories/${catId}`),
-  }
+  };
 
   // Dashboard methods
 
   readonly dashboard = {
     get: (travelId: string): Promise<DashboardData> =>
       this.request('GET', `/travels/${travelId}/dashboard`),
-  }
+  };
 
   // Users methods
 
   readonly users = {
-    getMe: (): Promise<UserMe> =>
-      this.request('GET', '/users/me'),
+    getMe: (): Promise<UserMe> => this.request('GET', '/users/me'),
 
     updateMe: (data: { name?: string }): Promise<UserMe> =>
       this.request('PATCH', '/users/me', { body: data }),
-  }
+  };
 }

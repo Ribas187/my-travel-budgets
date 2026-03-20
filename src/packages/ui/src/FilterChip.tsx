@@ -1,4 +1,4 @@
-import { styled, XStack, Text } from 'tamagui'
+import { styled, XStack, Text } from 'tamagui';
 
 const ChipFrame = styled(XStack, {
   alignItems: 'center',
@@ -27,7 +27,7 @@ const ChipFrame = styled(XStack, {
   defaultVariants: {
     active: false,
   },
-})
+});
 
 const ChipLabel = styled(Text, {
   fontFamily: '$body',
@@ -47,12 +47,12 @@ const ChipLabel = styled(Text, {
   defaultVariants: {
     active: false,
   },
-})
+});
 
 interface FilterChipProps {
-  label: string
-  active?: boolean
-  onPress?: () => void
+  label: string;
+  active?: boolean;
+  onPress?: () => void;
 }
 
 export function FilterChip({ label, active = false, onPress }: FilterChipProps) {
@@ -66,5 +66,5 @@ export function FilterChip({ label, active = false, onPress }: FilterChipProps) 
     >
       <ChipLabel active={active}>{label}</ChipLabel>
     </ChipFrame>
-  )
+  );
 }

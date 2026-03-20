@@ -1,5 +1,5 @@
-import { type ReactNode } from 'react'
-import { styled, XStack, YStack, Text, View } from 'tamagui'
+import { type ReactNode } from 'react';
+import { styled, XStack, YStack, Text, View } from 'tamagui';
 
 const SidebarFrame = styled(YStack, {
   width: 260,
@@ -10,7 +10,7 @@ const SidebarFrame = styled(YStack, {
   paddingHorizontal: 20,
   justifyContent: 'space-between',
   height: '100%',
-})
+});
 
 const NavItem = styled(XStack, {
   alignItems: 'center',
@@ -38,14 +38,14 @@ const NavItem = styled(XStack, {
   defaultVariants: {
     active: false,
   },
-})
+});
 
 const NavIcon = styled(View, {
   width: 20,
   height: 20,
   alignItems: 'center',
   justifyContent: 'center',
-})
+});
 
 const NavLabel = styled(Text, {
   fontFamily: '$body',
@@ -67,21 +67,21 @@ const NavLabel = styled(Text, {
   defaultVariants: {
     active: false,
   },
-})
+});
 
 interface SidebarNavItem {
-  key: string
-  label: string
-  icon: ReactNode
+  key: string;
+  label: string;
+  icon: ReactNode;
 }
 
 interface DesktopSidebarProps {
-  logo?: ReactNode
-  navItems: SidebarNavItem[]
-  activeItem: string
-  onItemPress: (key: string) => void
-  footerItems?: SidebarNavItem[]
-  userSection?: ReactNode
+  logo?: ReactNode;
+  navItems: SidebarNavItem[];
+  activeItem: string;
+  onItemPress: (key: string) => void;
+  footerItems?: SidebarNavItem[];
+  userSection?: ReactNode;
 }
 
 export function DesktopSidebar({
@@ -103,7 +103,7 @@ export function DesktopSidebar({
 
         <YStack gap="$xs">
           {navItems.map((item) => {
-            const isActive = item.key === activeItem
+            const isActive = item.key === activeItem;
             return (
               <NavItem
                 key={item.key}
@@ -116,14 +116,14 @@ export function DesktopSidebar({
                 <NavIcon>{item.icon}</NavIcon>
                 <NavLabel active={isActive}>{item.label}</NavLabel>
               </NavItem>
-            )
+            );
           })}
         </YStack>
       </YStack>
 
       <YStack gap="$sm">
         {footerItems?.map((item) => {
-          const isActive = item.key === activeItem
+          const isActive = item.key === activeItem;
           return (
             <NavItem
               key={item.key}
@@ -134,10 +134,10 @@ export function DesktopSidebar({
               <NavIcon>{item.icon}</NavIcon>
               <NavLabel active={isActive}>{item.label}</NavLabel>
             </NavItem>
-          )
+          );
         })}
         {userSection}
       </YStack>
     </SidebarFrame>
-  )
+  );
 }

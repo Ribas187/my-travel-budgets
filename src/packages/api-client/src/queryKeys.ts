@@ -1,4 +1,4 @@
-import type { ExpenseFilters } from './types'
+import type { ExpenseFilters } from './types';
 
 export const queryKeys = {
   travels: {
@@ -18,4 +18,4 @@ export const queryKeys = {
   users: {
     me: ['users', 'me'] as const,
   },
-}
+};

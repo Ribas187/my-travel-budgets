@@ -1,5 +1,5 @@
-import { type ReactNode } from 'react'
-import { styled, XStack, Text } from 'tamagui'
+import { type ReactNode } from 'react';
+import { styled, XStack, Text } from 'tamagui';
 
 const ChipFrame = styled(XStack, {
   alignItems: 'center',
@@ -26,7 +26,7 @@ const ChipFrame = styled(XStack, {
   defaultVariants: {
     selected: false,
   },
-})
+});
 
 const ChipLabel = styled(Text, {
   fontFamily: '$body',
@@ -47,16 +47,16 @@ const ChipLabel = styled(Text, {
   defaultVariants: {
     selected: false,
   },
-})
+});
 
 interface CategoryChipProps {
-  label: string
-  icon?: ReactNode
-  selected?: boolean
-  selectedBackgroundColor?: string
-  selectedBorderColor?: string
-  selectedTextColor?: string
-  onPress?: () => void
+  label: string;
+  icon?: ReactNode;
+  selected?: boolean;
+  selectedBackgroundColor?: string;
+  selectedBorderColor?: string;
+  selectedTextColor?: string;
+  onPress?: () => void;
 }
 
 export function CategoryChip({
@@ -88,5 +88,5 @@ export function CategoryChip({
         {label}
       </ChipLabel>
     </ChipFrame>
-  )
+  );
 }

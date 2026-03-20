@@ -1,4 +1,4 @@
-import { styled, XStack, Text } from 'tamagui'
+import { styled, XStack, Text } from 'tamagui';
 
 const BannerFrame = styled(XStack, {
   alignItems: 'center',
@@ -17,7 +17,7 @@ const BannerFrame = styled(XStack, {
       },
     },
   } as const,
-})
+});
 
 const IconText = styled(Text, {
   fontSize: 16,
@@ -32,7 +32,7 @@ const IconText = styled(Text, {
       },
     },
   } as const,
-})
+});
 
 const BannerText = styled(Text, {
   fontFamily: '$body',
@@ -51,20 +51,20 @@ const BannerText = styled(Text, {
       },
     },
   } as const,
-})
+});
 
 interface BudgetImpactBannerProps {
-  message: string
-  percentageAfter: number
+  message: string;
+  percentageAfter: number;
 }
 
 export function BudgetImpactBanner({ message, percentageAfter }: BudgetImpactBannerProps) {
-  const severity = percentageAfter >= 100 ? 'danger' : 'warning'
+  const severity = percentageAfter >= 100 ? 'danger' : 'warning';
 
   return (
     <BannerFrame severity={severity} role="alert">
       <IconText severity={severity}>⚠</IconText>
       <BannerText severity={severity}>{message}</BannerText>
     </BannerFrame>
-  )
+  );
 }

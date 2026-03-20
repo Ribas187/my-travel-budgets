@@ -1,6 +1,6 @@
-export { ApiClient } from './client'
-export type { ApiClientConfig } from './client'
-export { queryKeys } from './queryKeys'
+export { ApiClient } from './client';
+export type { ApiClientConfig } from './client';
+export { queryKeys } from './queryKeys';
 export type {
   UserMe,
   AuthSession,
@@ -16,7 +16,7 @@ export type {
   CategorySpending,
   BudgetAlertStatus,
   ApiError,
-} from './types'
+} from './types';
 
 // Re-export core input types for convenience
 export type {
@@ -29,4 +29,4 @@ export type {
   AddMemberInput,
   Currency,
   MemberRole,
-} from './types'
+} from './types';

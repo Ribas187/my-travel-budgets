@@ -1,4 +1,4 @@
-import { styled, XStack, Text } from 'tamagui'
+import { styled, XStack, Text } from 'tamagui';
 
 const FABFrame = styled(XStack, {
   width: 56,
@@ -18,18 +18,18 @@ const FABFrame = styled(XStack, {
     scale: 0.95,
     opacity: 0.9,
   },
-})
+});
 
 const PlusIcon = styled(Text, {
   color: '$white',
   fontSize: 26,
   fontWeight: '300',
   lineHeight: 26,
-})
+});
 
 interface FABProps {
-  onPress?: () => void
-  accessibilityLabel: string
+  onPress?: () => void;
+  accessibilityLabel: string;
 }
 
 export function FAB({ onPress, accessibilityLabel }: FABProps) {
@@ -42,5 +42,5 @@ export function FAB({ onPress, accessibilityLabel }: FABProps) {
     >
       <PlusIcon>+</PlusIcon>
     </FABFrame>
-  )
+  );
 }

@@ -1,5 +1,5 @@
-import { type ReactNode } from 'react'
-import { styled, XStack, YStack, Text, View } from 'tamagui'
+import { type ReactNode } from 'react';
+import { styled, XStack, YStack, Text, View } from 'tamagui';
 
 const CardFrame = styled(YStack, {
   borderRadius: '$2xl',
@@ -22,13 +22,13 @@ const CardFrame = styled(YStack, {
   defaultVariants: {
     expanded: false,
   },
-})
+});
 
 const CollapsedRow = styled(XStack, {
   alignItems: 'center',
   gap: '$iconTextGap',
   minHeight: 44,
-})
+});
 
 const IconContainer = styled(XStack, {
   width: 44,
@@ -36,7 +36,7 @@ const IconContainer = styled(XStack, {
   borderRadius: '$xl',
   alignItems: 'center',
   justifyContent: 'center',
-})
+});
 
 const NameText = styled(Text, {
   fontFamily: '$body',
@@ -45,7 +45,7 @@ const NameText = styled(Text, {
   lineHeight: 22,
   color: '$textPrimary',
   flex: 1,
-})
+});
 
 const BudgetText = styled(Text, {
   fontFamily: '$body',
@@ -53,23 +53,23 @@ const BudgetText = styled(Text, {
   fontWeight: '500',
   lineHeight: 18,
   color: '$textTertiary',
-})
+});
 
 const Divider = styled(View, {
   height: 1,
   backgroundColor: '$borderDefault',
   marginVertical: '$md',
-})
+});
 
 interface CategoryEditCardProps {
-  name: string
-  budgetLabel?: string
-  icon?: ReactNode
-  iconBackgroundColor?: string
-  expanded?: boolean
-  onToggle?: () => void
-  children?: ReactNode
-  actions?: ReactNode
+  name: string;
+  budgetLabel?: string;
+  icon?: ReactNode;
+  iconBackgroundColor?: string;
+  expanded?: boolean;
+  onToggle?: () => void;
+  children?: ReactNode;
+  actions?: ReactNode;
 }
 
 export function CategoryEditCard({
@@ -84,10 +84,14 @@ export function CategoryEditCard({
 }: CategoryEditCardProps) {
   return (
     <CardFrame expanded={expanded}>
-      <CollapsedRow onPress={onToggle} cursor="pointer" role="button" aria-expanded={expanded} aria-label={name}>
-        <IconContainer backgroundColor={iconBackgroundColor}>
-          {icon}
-        </IconContainer>
+      <CollapsedRow
+        onPress={onToggle}
+        cursor="pointer"
+        role="button"
+        aria-expanded={expanded}
+        aria-label={name}
+      >
+        <IconContainer backgroundColor={iconBackgroundColor}>{icon}</IconContainer>
         <YStack flex={1}>
           <NameText>{name}</NameText>
           {budgetLabel && <BudgetText>{budgetLabel}</BudgetText>}
@@ -107,5 +111,5 @@ export function CategoryEditCard({
         </YStack>
       )}
     </CardFrame>
-  )
+  );
 }

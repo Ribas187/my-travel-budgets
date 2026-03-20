@@ -1,5 +1,5 @@
-import { type ComponentProps, type ElementType } from 'react'
-import { styled, Text } from 'tamagui'
+import { type ComponentProps, type ElementType } from 'react';
+import { styled, Text } from 'tamagui';
 
 // ---------------------------------------------------------------------------
 // Heading — uses Fredoka font family (display/headings)
@@ -64,20 +64,20 @@ const HeadingBase = styled(Text, {
   defaultVariants: {
     level: 1,
   },
-})
+});
 
-type HeadingBaseProps = ComponentProps<typeof HeadingBase>
+type HeadingBaseProps = ComponentProps<typeof HeadingBase>;
 
 const LEVEL_TAG_MAP: Record<string, ElementType> = {
   '1': 'h1',
   '2': 'h2',
   '3': 'h3',
   '4': 'h4',
-}
+};
 
 export function Heading({ level = 1, ...props }: HeadingBaseProps) {
-  const tag = LEVEL_TAG_MAP[String(level)] ?? 'span'
-  return <HeadingBase level={level} tag={tag} {...props} />
+  const tag = LEVEL_TAG_MAP[String(level)] ?? 'span';
+  return <HeadingBase level={level} tag={tag} {...props} />;
 }
 
 // ---------------------------------------------------------------------------
@@ -111,7 +111,7 @@ export const Body = styled(Text, {
   defaultVariants: {
     size: 'default',
   },
-})
+});
 
 // ---------------------------------------------------------------------------
 // Caption — uses Nunito font family
@@ -139,7 +139,7 @@ export const Caption = styled(Text, {
   defaultVariants: {
     strong: false,
   },
-})
+});
 
 // ---------------------------------------------------------------------------
 // Label — uses Nunito font family
@@ -152,4 +152,4 @@ export const Label = styled(Text, {
   lineHeight: 18,
   fontWeight: '600',
   letterSpacing: 0.26,
-})
+});
