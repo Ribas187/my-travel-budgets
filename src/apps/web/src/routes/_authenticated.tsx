@@ -1,11 +1,27 @@
-import { createFileRoute, Outlet } from '@tanstack/react-router'
+import { createFileRoute, Outlet, useNavigate } from '@tanstack/react-router'
+import { useAuth } from '@/providers/AuthProvider'
+import { YStack, Spinner } from 'tamagui'
 
 export const Route = createFileRoute('/_authenticated')({
   component: AuthenticatedLayout,
 })
 
 function AuthenticatedLayout() {
-  // TODO: Task 7.0 will implement actual auth guard
-  // For now, render children directly
+  const { isAuthenticated, isLoading } = useAuth()
+  const navigate = useNavigate()
+
+  if (isLoading) {
+    return (
+      <YStack flex={1} alignItems="center" justifyContent="center">
+        <Spinner size="large" color="$brandPrimary" />
+      </YStack>
+    )
+  }
+
+  if (!isAuthenticated) {
+    navigate({ to: '/login' })
+    return null
+  }
+
   return <Outlet />
 }
