@@ -172,8 +172,8 @@ test.describe('Add expense', () => {
     const state = await setupAuthenticatedWithTravel(page)
     addCategoriesToState(state)
 
-    // Navigate to travel detail
-    await page.goto(`/travels/${TRAVEL_ID}`)
+    // Navigate to expenses page (inside travel tabs)
+    await page.goto(`/travels/${TRAVEL_ID}/expenses`)
     await page.waitForSelector('[data-testid="expense-list-container"]')
 
     // Open add expense modal — click the "Add Expense" button (works for both viewports)
@@ -250,7 +250,7 @@ test.describe('Expense list', () => {
       },
     )
 
-    await page.goto(`/travels/${TRAVEL_ID}`)
+    await page.goto(`/travels/${TRAVEL_ID}/expenses`)
     await page.waitForSelector('[data-testid="expense-list-container"]')
 
     // Verify expenses are displayed
@@ -287,7 +287,7 @@ test.describe('Expense list', () => {
       },
     )
 
-    await page.goto(`/travels/${TRAVEL_ID}`)
+    await page.goto(`/travels/${TRAVEL_ID}/expenses`)
     await page.waitForSelector('[data-testid="expense-list-container"]')
 
     // Both expenses should be visible initially
@@ -332,7 +332,7 @@ test.describe('Expense list', () => {
       },
     )
 
-    await page.goto(`/travels/${TRAVEL_ID}`)
+    await page.goto(`/travels/${TRAVEL_ID}/expenses`)
     await page.waitForSelector('[data-testid="expense-list-container"]')
 
     // Both visible initially

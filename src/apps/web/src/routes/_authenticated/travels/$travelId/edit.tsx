@@ -1,13 +1,13 @@
-import { useState, useCallback } from 'react'
+import { useCallback } from 'react'
 import { createFileRoute, useNavigate } from '@tanstack/react-router'
 import { useTranslation } from 'react-i18next'
-import { styled, XStack, YStack, Text, View, Spinner } from 'tamagui'
-import { Heading, Body } from '@repo/ui'
+import { styled, XStack, YStack, Text } from 'tamagui'
+import { Heading } from '@repo/ui'
 import type { CreateTravelInput } from '@repo/api-client'
-import { useTravelDetail } from '@/hooks/useTravelDetail'
 import { useUpdateTravel } from '@/hooks/useUpdateTravel'
 import { useDeleteTravel } from '@/hooks/useDeleteTravel'
 import { useTravelExpenses } from '@/hooks/useTravelExpenses'
+import { useTravelContext } from '@/contexts/TravelContext'
 import { showToast } from '@/lib/toast'
 import { TripForm } from '@/features/travels/TripForm'
 
@@ -28,7 +28,7 @@ function EditTripPage() {
   const { t } = useTranslation()
   const navigate = useNavigate()
   const { travelId } = Route.useParams()
-  const { data: travel, isLoading } = useTravelDetail(travelId)
+  const { travel } = useTravelContext()
   const { data: expenses } = useTravelExpenses(travelId)
   const updateTravel = useUpdateTravel(travelId)
   const deleteTravel = useDeleteTravel()
@@ -59,22 +59,6 @@ function EditTripPage() {
   const handleClose = useCallback(() => {
     navigate({ to: '/travels/$travelId', params: { travelId } })
   }, [navigate, travelId])
-
-  if (isLoading) {
-    return (
-      <YStack flex={1} alignItems="center" justifyContent="center">
-        <Spinner size="large" color="$brandPrimary" />
-      </YStack>
-    )
-  }
-
-  if (!travel) {
-    return (
-      <YStack flex={1} padding="$screenPaddingHorizontal" paddingTop="$2xl">
-        <Body size="secondary">{t('common.error')}</Body>
-      </YStack>
-    )
-  }
 
   return (
     <YStack flex={1} padding="$screenPaddingHorizontal" paddingTop="$2xl">
