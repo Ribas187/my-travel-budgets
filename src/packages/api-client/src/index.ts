@@ -1,3 +1,31 @@
-// API client will be implemented in Plan 3 (Backend API)
-// after endpoints are defined and tested
-export const API_VERSION = 'v1'
+export { ApiClient } from './client'
+export type { ApiClientConfig } from './client'
+export { queryKeys } from './queryKeys'
+export type {
+  UserMe,
+  AuthSession,
+  Travel,
+  TravelDetail,
+  TravelMember,
+  Category,
+  Expense,
+  ExpenseFilters,
+  DashboardData,
+  OverallBudget,
+  MemberSpending,
+  CategorySpending,
+  BudgetAlertStatus,
+  ApiError,
+} from './types'
+
+// Re-export core input types for convenience
+export type {
+  CreateTravelInput,
+  UpdateTravelInput,
+  CreateCategoryInput,
+  UpdateCategoryInput,
+  CreateExpenseInput,
+  AddMemberInput,
+  Currency,
+  MemberRole,
+} from './types'
