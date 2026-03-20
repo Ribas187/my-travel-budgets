@@ -1,4 +1,4 @@
-import { useState, useCallback } from 'react'
+import { useState, useCallback, useEffect } from 'react'
 import { useForm, Controller } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useTranslation } from 'react-i18next'
@@ -13,9 +13,11 @@ import {
   Heading,
 } from '@repo/ui'
 import { createExpenseSchema } from '@repo/core'
-import type { TravelDetail } from '@repo/api-client'
+import type { TravelDetail, Expense } from '@repo/api-client'
 import { SUPPORTED_CURRENCIES } from '@repo/core'
 import { useCreateExpense } from '@/hooks/useCreateExpense'
+import { useUpdateExpense } from '@/hooks/useUpdateExpense'
+import { useDeleteExpense } from '@/hooks/useDeleteExpense'
 import { useBudgetImpact } from '@/hooks/useBudgetImpact'
 import { showToast } from '@/lib/toast'
 
@@ -31,6 +33,7 @@ interface AddExpenseModalProps {
   open: boolean
   onClose: () => void
   travel: TravelDetail
+  expense?: Expense | null
 }
 
 const Overlay = styled(View, {
@@ -140,10 +143,105 @@ function getMemberInitial(member: TravelDetail['members'][number]): string {
   return name.charAt(0).toUpperCase()
 }
 
-export function AddExpenseModal({ open, onClose, travel }: AddExpenseModalProps) {
-  const { t } = useTranslation()
+function formatAmount(amount: number, currency: string, locale: string): string {
+  return new Intl.NumberFormat(locale, {
+    style: 'currency',
+    currency,
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2,
+  }).format(amount)
+}
+
+// --- Delete Confirmation Dialog ---
+
+function DeleteExpenseDialog({
+  expense,
+  currency,
+  locale,
+  onConfirm,
+  onCancel,
+  loading,
+  t,
+}: {
+  expense: Expense
+  currency: string
+  locale: string
+  onConfirm: () => void
+  onCancel: () => void
+  loading: boolean
+  t: (key: string, opts?: Record<string, unknown>) => string
+}) {
+  return (
+    <YStack
+      position="absolute"
+      top={0}
+      left={0}
+      right={0}
+      bottom={0}
+      backgroundColor="rgba(0,0,0,0.4)"
+      alignItems="center"
+      justifyContent="center"
+      zIndex={10000}
+      data-testid="delete-expense-dialog"
+    >
+      <YStack
+        backgroundColor="$white"
+        borderRadius="$2xl"
+        padding="$xl"
+        gap="$lg"
+        maxWidth={400}
+        width="90%"
+      >
+        <Text fontFamily="$body" fontSize={16} fontWeight="600" color="$textPrimary">
+          {t('expense.deleteConfirm', {
+            description: expense.description,
+            amount: formatAmount(expense.amount, currency, locale),
+          })}
+        </Text>
+        <XStack gap="$md" justifyContent="flex-end">
+          <Text
+            fontFamily="$body"
+            fontSize={14}
+            fontWeight="600"
+            color="$textTertiary"
+            cursor="pointer"
+            onPress={onCancel}
+            paddingVertical="$sm"
+            data-testid="delete-cancel"
+          >
+            {t('common.cancel')}
+          </Text>
+          <YStack
+            backgroundColor="$coral500"
+            paddingHorizontal="$lg"
+            paddingVertical="$sm"
+            borderRadius="$lg"
+            cursor="pointer"
+            opacity={loading ? 0.6 : 1}
+            onPress={loading ? undefined : onConfirm}
+            data-testid="delete-confirm"
+          >
+            <Text fontFamily="$body" fontSize={14} fontWeight="600" color="$white">
+              {t('common.delete')}
+            </Text>
+          </YStack>
+        </XStack>
+      </YStack>
+    </YStack>
+  )
+}
+
+// --- Main Modal ---
+
+export function AddExpenseModal({ open, onClose, travel, expense }: AddExpenseModalProps) {
+  const { t, i18n } = useTranslation()
+  const locale = i18n.language
+  const isEditMode = !!expense
   const createExpense = useCreateExpense(travel.id)
+  const updateExpense = useUpdateExpense(travel.id)
+  const deleteExpense = useDeleteExpense(travel.id)
   const [amountText, setAmountText] = useState('')
+  const [showDeleteDialog, setShowDeleteDialog] = useState(false)
 
   const {
     control,
@@ -155,14 +253,38 @@ export function AddExpenseModal({ open, onClose, travel }: AddExpenseModalProps)
   } = useForm<AddExpenseFormValues>({
     resolver: zodResolver(createExpenseSchema),
     defaultValues: {
-      categoryId: '',
-      memberId: travel.members[0]?.id ?? '',
-      amount: 0,
-      description: '',
-      date: new Date().toISOString().split('T')[0]!,
+      categoryId: expense?.categoryId ?? '',
+      memberId: expense?.memberId ?? travel.members[0]?.id ?? '',
+      amount: expense?.amount ?? 0,
+      description: expense?.description ?? '',
+      date: expense?.date ?? new Date().toISOString().split('T')[0]!,
     },
     mode: 'onChange',
   })
+
+  // Reset form when expense prop changes (opening edit mode or switching to create)
+  useEffect(() => {
+    if (expense) {
+      reset({
+        categoryId: expense.categoryId,
+        memberId: expense.memberId,
+        amount: expense.amount,
+        description: expense.description,
+        date: expense.date,
+      })
+      setAmountText(expense.amount.toString())
+    } else {
+      reset({
+        categoryId: '',
+        memberId: travel.members[0]?.id ?? '',
+        amount: 0,
+        description: '',
+        date: new Date().toISOString().split('T')[0]!,
+      })
+      setAmountText('')
+    }
+    setShowDeleteDialog(false)
+  }, [expense, reset, travel.members])
 
   const watchedCategoryId = watch('categoryId')
   const watchedAmount = watch('amount')
@@ -185,25 +307,55 @@ export function AddExpenseModal({ open, onClose, travel }: AddExpenseModalProps)
 
   const onSubmit = useCallback(
     (data: AddExpenseFormValues) => {
-      createExpense.mutate(data, {
-        onSuccess: () => {
-          showToast(t('expense.saved'))
-          reset()
-          setAmountText('')
-          onClose()
-        },
-      })
+      if (isEditMode && expense) {
+        updateExpense.mutate(
+          { expenseId: expense.id, data },
+          {
+            onSuccess: () => {
+              showToast(t('expense.updated'))
+              reset()
+              setAmountText('')
+              onClose()
+            },
+          },
+        )
+      } else {
+        createExpense.mutate(data, {
+          onSuccess: () => {
+            showToast(t('expense.saved'))
+            reset()
+            setAmountText('')
+            onClose()
+          },
+        })
+      }
     },
-    [createExpense, t, reset, onClose],
+    [isEditMode, expense, createExpense, updateExpense, t, reset, onClose],
   )
 
+  const handleDelete = useCallback(() => {
+    if (!expense) return
+    deleteExpense.mutate(expense.id, {
+      onSuccess: () => {
+        showToast(t('expense.deleted'))
+        setShowDeleteDialog(false)
+        reset()
+        setAmountText('')
+        onClose()
+      },
+    })
+  }, [expense, deleteExpense, t, reset, onClose])
+
+  const isPending = createExpense.isPending || updateExpense.isPending
+
   const handleClose = useCallback(() => {
-    if (!createExpense.isPending) {
+    if (!isPending) {
       reset()
       setAmountText('')
+      setShowDeleteDialog(false)
       onClose()
     }
-  }, [createExpense.isPending, reset, onClose])
+  }, [isPending, reset, onClose])
 
   const media = useMedia()
   const isMobile = !media.gtTablet
@@ -211,7 +363,9 @@ export function AddExpenseModal({ open, onClose, travel }: AddExpenseModalProps)
   if (!open) return null
 
   const currencySymbol = getCurrencySymbol(travel.currency)
-  const isSaveDisabled = !isValid || watchedAmount <= 0 || createExpense.isPending
+  const isSaveDisabled = !isValid || watchedAmount <= 0 || isPending
+
+  const modalTitle = isEditMode ? t('expense.edit') : t('expense.add')
 
   const formContent = (
     <YStack gap="$lg" testID="add-expense-form">
@@ -351,10 +505,60 @@ export function AddExpenseModal({ open, onClose, travel }: AddExpenseModalProps)
           label={t('expense.saveExpense')}
           onPress={handleSubmit(onSubmit)}
           disabled={isSaveDisabled}
-          loading={createExpense.isPending}
+          loading={isPending}
         />
       </View>
+
+      {/* Delete Button (edit mode only) */}
+      {isEditMode && (
+        <XStack
+          justifyContent="center"
+          paddingVertical="$sm"
+          cursor="pointer"
+          onPress={() => setShowDeleteDialog(true)}
+          testID="delete-expense-button"
+        >
+          <Text
+            fontFamily="$body"
+            fontSize={15}
+            fontWeight="600"
+            color="$coral500"
+          >
+            {t('common.delete')}
+          </Text>
+        </XStack>
+      )}
     </YStack>
+  )
+
+  const modalContent = (
+    <>
+      <XStack justifyContent="space-between" alignItems="center">
+        <Heading level={3}>{modalTitle}</Heading>
+        <CloseButton
+          onPress={handleClose}
+          role="button"
+          aria-label={t('common.close')}
+          testID="close-modal-button"
+        >
+          ✕
+        </CloseButton>
+      </XStack>
+      {formContent}
+    </>
+  )
+
+  // Delete confirmation dialog overlay
+  const deleteDialog = showDeleteDialog && expense && (
+    <DeleteExpenseDialog
+      expense={expense}
+      currency={travel.currency}
+      locale={locale}
+      onConfirm={handleDelete}
+      onCancel={() => setShowDeleteDialog(false)}
+      loading={deleteExpense.isPending}
+      t={t}
+    />
   )
 
   // Mobile: bottom sheet style
@@ -365,22 +569,12 @@ export function AddExpenseModal({ open, onClose, travel }: AddExpenseModalProps)
           onPress={(e: { stopPropagation: () => void }) => e.stopPropagation()}
           testID="add-expense-modal"
           role="dialog"
-          aria-label={t('expense.add')}
+          aria-label={modalTitle}
         >
           <DragHandle />
-          <XStack justifyContent="space-between" alignItems="center">
-            <Heading level={3}>{t('expense.add')}</Heading>
-            <CloseButton
-              onPress={handleClose}
-              role="button"
-              aria-label={t('common.close')}
-              testID="close-modal-button"
-            >
-              ✕
-            </CloseButton>
-          </XStack>
-          {formContent}
+          {modalContent}
         </BottomSheetCard>
+        {deleteDialog}
       </Overlay>
     )
   }
@@ -392,21 +586,11 @@ export function AddExpenseModal({ open, onClose, travel }: AddExpenseModalProps)
         onPress={(e: { stopPropagation: () => void }) => e.stopPropagation()}
         testID="add-expense-modal"
         role="dialog"
-        aria-label={t('expense.add')}
+        aria-label={modalTitle}
       >
-        <XStack justifyContent="space-between" alignItems="center">
-          <Heading level={3}>{t('expense.add')}</Heading>
-          <CloseButton
-            onPress={handleClose}
-            role="button"
-            aria-label={t('common.close')}
-            testID="close-modal-button"
-          >
-            ✕
-          </CloseButton>
-        </XStack>
-        {formContent}
+        {modalContent}
       </ModalCard>
+      {deleteDialog}
     </Overlay>
   )
 }

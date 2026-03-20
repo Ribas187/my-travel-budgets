@@ -1,10 +1,11 @@
 import { useState, useMemo, useCallback } from 'react'
 import { useTranslation } from 'react-i18next'
-import { styled, XStack, YStack, Text, ScrollView, Input } from 'tamagui'
+import { styled, XStack, YStack, Text, ScrollView, Input, View } from 'tamagui'
 import { ExpenseRow, DayGroupHeader, FilterChip, Heading, Body } from '@repo/ui'
 import type { TravelDetail, Expense, Category, ExpenseFilters } from '@repo/api-client'
 import { useTravelExpenses } from '@/hooks/useTravelExpenses'
 import { groupExpensesByDay } from '@/utils/groupExpensesByDay'
+import { AddExpenseModal } from './AddExpenseModal'
 
 // ---------------------------------------------------------------------------
 // Helpers
@@ -159,6 +160,7 @@ export function ExpenseList({ travel }: ExpenseListProps) {
   const [searchOpen, setSearchOpen] = useState(false)
   const [searchText, setSearchText] = useState('')
   const [debouncedSearch, setDebouncedSearch] = useState('')
+  const [selectedExpense, setSelectedExpense] = useState<Expense | null>(null)
 
   // Debounce search
   const handleSearchChange = useCallback((text: string) => {
@@ -303,22 +305,36 @@ export function ExpenseList({ travel }: ExpenseListProps) {
               {group.expenses.map((expense) => {
                 const category = getCategoryById(expense.categoryId, travel.categories ?? [])
                 return (
-                  <ExpenseRow
+                  <View
                     key={expense.id}
-                    title={expense.description}
-                    category={category?.name ?? ''}
-                    time={formatTime(expense.createdAt, locale)}
-                    paidBy={getMemberName(expense.memberId, travel)}
-                    amount={formatAmount(expense.amount, travel.currency, locale)}
-                    icon={<Text fontSize={20}>{category?.icon ?? '📝'}</Text>}
-                    iconBackgroundColor={category?.color ? `${category.color}20` : undefined}
-                  />
+                    cursor="pointer"
+                    onPress={() => setSelectedExpense(expense)}
+                    data-testid={`expense-row-pressable-${expense.id}`}
+                  >
+                    <ExpenseRow
+                      title={expense.description}
+                      category={category?.name ?? ''}
+                      time={formatTime(expense.createdAt, locale)}
+                      paidBy={getMemberName(expense.memberId, travel)}
+                      amount={formatAmount(expense.amount, travel.currency, locale)}
+                      icon={<Text fontSize={20}>{category?.icon ?? '📝'}</Text>}
+                      iconBackgroundColor={category?.color ? `${category.color}20` : undefined}
+                    />
+                  </View>
                 )
               })}
             </YStack>
           ))}
         </ScrollView>
       )}
+
+      {/* Edit Expense Modal */}
+      <AddExpenseModal
+        open={!!selectedExpense}
+        onClose={() => setSelectedExpense(null)}
+        travel={travel}
+        expense={selectedExpense}
+      />
     </YStack>
   )
 }
