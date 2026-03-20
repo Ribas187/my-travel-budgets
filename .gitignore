@@ -21,6 +21,7 @@ src/apps/**/*.d.ts.map
 docs/design/screenshots/
 docs/plans/
 docs/temp/
+tasks/
 
 
 # Caching
