@@ -34,7 +34,7 @@ interface AddExpenseModalProps {
 }
 
 const Overlay = styled(View, {
-  position: 'absolute' as const,
+  position: 'fixed' as any,
   top: 0,
   left: 0,
   right: 0,
@@ -216,7 +216,12 @@ export function AddExpenseModal({ open, onClose, travel }: AddExpenseModalProps)
   const formContent = (
     <YStack gap="$lg" testID="add-expense-form">
       {/* Amount Input */}
-      <YStack alignItems="center" gap="$sm">
+      <YStack alignItems="center" gap="$sm" position="relative" cursor="text"
+        onPress={() => {
+          const el = document.querySelector<HTMLInputElement>('[data-testid="amount-input"]')
+          el?.focus()
+        }}
+      >
         <AmountInput
           value={amountText || '0'}
           currencySymbol={currencySymbol}
@@ -229,7 +234,7 @@ export function AddExpenseModal({ open, onClose, travel }: AddExpenseModalProps)
           keyboardType="decimal-pad"
           placeholder="0.00"
           fontFamily="$body"
-          fontSize={16}
+          fontSize={1}
           textAlign="center"
           borderWidth={0}
           backgroundColor="transparent"
@@ -237,10 +242,10 @@ export function AddExpenseModal({ open, onClose, travel }: AddExpenseModalProps)
           position="absolute"
           top={0}
           left={0}
-          right={0}
-          bottom={0}
-          opacity={0}
-          autoFocus
+          width="100%"
+          height="100%"
+          opacity={0.01}
+          zIndex={1}
           aria-label={t('expense.amount')}
         />
       </YStack>
@@ -268,7 +273,7 @@ export function AddExpenseModal({ open, onClose, travel }: AddExpenseModalProps)
       <YStack gap="$sm">
         <SectionLabel id="category-label">{t('expense.category')}</SectionLabel>
         <XStack flexWrap="wrap" gap="$sm" testID="category-chips" role="radiogroup" aria-labelledby="category-label">
-          {travel.categories.map((category) => (
+          {(travel.categories ?? []).map((category) => (
             <CategoryChip
               key={category.id}
               label={category.name}
@@ -293,7 +298,7 @@ export function AddExpenseModal({ open, onClose, travel }: AddExpenseModalProps)
           name="memberId"
           render={({ field: { value } }) => (
             <XStack flexWrap="wrap" gap="$md" testID="paid-by-chips" role="radiogroup" aria-labelledby="paid-by-label">
-              {travel.members.map((member, index) => {
+              {(travel.members ?? []).map((member, index) => {
                 const isSelected = value === member.id
                 return (
                   <YStack

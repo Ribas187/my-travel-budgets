@@ -37,7 +37,7 @@ function formatTime(dateStr: string, locale: string): string {
 }
 
 function getMemberName(memberId: string, travel: TravelDetail): string {
-  const member = travel.members.find((m) => m.id === memberId)
+  const member = (travel.members ?? []).find((m) => m.id === memberId)
   if (!member) return ''
   return member.user?.name ?? member.guestName ?? member.user?.email ?? ''
 }
@@ -174,11 +174,19 @@ export function ExpenseList({ travel }: ExpenseListProps) {
     ? { categoryId: selectedCategoryId }
     : undefined
 
-  const { data: expenses, isLoading } = useTravelExpenses(travel.id, filters)
+  const { data: expensesRaw, isLoading } = useTravelExpenses(travel.id, filters)
+
+  // Normalize: API may return Expense[] or { data: Expense[] }
+  const expenses = useMemo(() => {
+    if (!expensesRaw) return []
+    if (Array.isArray(expensesRaw)) return expensesRaw
+    if (Array.isArray((expensesRaw as any).data)) return (expensesRaw as any).data as Expense[]
+    return []
+  }, [expensesRaw])
 
   // Client-side search filtering (API doesn't support search param)
   const filteredExpenses = useMemo(() => {
-    if (!expenses) return []
+    if (!expenses.length) return []
     if (!debouncedSearch.trim()) return expenses
     const query = debouncedSearch.toLowerCase()
     return expenses.filter((e) => e.description.toLowerCase().includes(query))
@@ -186,12 +194,12 @@ export function ExpenseList({ travel }: ExpenseListProps) {
 
   const dayGroups = useMemo(() => groupExpensesByDay(filteredExpenses), [filteredExpenses])
 
-  const hasExpenses = expenses && expenses.length > 0
+  const hasExpenses = expenses.length > 0
   const hasFilteredResults = filteredExpenses.length > 0
   const isFiltering = !!selectedCategoryId || !!debouncedSearch.trim()
 
   const selectedCategory = selectedCategoryId
-    ? getCategoryById(selectedCategoryId, travel.categories)
+    ? getCategoryById(selectedCategoryId, travel.categories ?? [])
     : undefined
 
   return (
@@ -236,7 +244,7 @@ export function ExpenseList({ travel }: ExpenseListProps) {
             active={!selectedCategoryId}
             onPress={() => setSelectedCategoryId(undefined)}
           />
-          {travel.categories.map((cat) => (
+          {(travel.categories ?? []).map((cat) => (
             <FilterChip
               key={cat.id}
               label={`${cat.icon} ${cat.name}`}
@@ -293,7 +301,7 @@ export function ExpenseList({ travel }: ExpenseListProps) {
                 total={formatAmount(group.dailyTotal, travel.currency, locale)}
               />
               {group.expenses.map((expense) => {
-                const category = getCategoryById(expense.categoryId, travel.categories)
+                const category = getCategoryById(expense.categoryId, travel.categories ?? [])
                 return (
                   <ExpenseRow
                     key={expense.id}

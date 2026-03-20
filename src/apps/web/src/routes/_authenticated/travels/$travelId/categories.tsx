@@ -47,7 +47,7 @@ function CategoriesRoute() {
   }
 
   const currentUserId = parseTokenUserId(token)
-  const isOwner = travel.members.some(
+  const isOwner = (travel.members ?? []).some(
     (m) => m.role === 'owner' && m.userId === currentUserId,
   )
 

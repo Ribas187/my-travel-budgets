@@ -1,26 +1,29 @@
 import { styled, XStack, YStack, Text, View } from 'tamagui'
 
-const CurrencySymbol = styled(Text, {
+const amountTextStyle = {
   fontFamily: '$heading',
-  fontSize: 56,
+  fontSize: 40,
   fontWeight: '700',
-  letterSpacing: -1.68,
+  letterSpacing: -1,
+
+  $gtMobile: {
+    fontSize: 56,
+    letterSpacing: -1.68,
+  },
+} as const
+
+const CurrencySymbol = styled(Text, {
+  ...amountTextStyle,
   color: '$textTertiary',
 })
 
 const IntegerPart = styled(Text, {
-  fontFamily: '$heading',
-  fontSize: 56,
-  fontWeight: '700',
-  letterSpacing: -1.68,
+  ...amountTextStyle,
   color: '$textPrimary',
 })
 
 const DecimalPart = styled(Text, {
-  fontFamily: '$heading',
-  fontSize: 56,
-  fontWeight: '700',
-  letterSpacing: -1.68,
+  ...amountTextStyle,
   color: '$stone',
 })
 

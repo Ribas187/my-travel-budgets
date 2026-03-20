@@ -437,7 +437,7 @@ export function TripForm({
           )}
 
           <XStack flexWrap="wrap" gap="$md" testID="travelers-list">
-            {travel.members.map((member, index) => (
+            {(travel.members ?? []).map((member, index) => (
               <YStack
                 key={member.id}
                 padding="$sm"
