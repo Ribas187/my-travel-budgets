@@ -7,6 +7,7 @@ import { UsersModule } from './modules/users/users.module'
 import { EmailModule } from './modules/common/email/email.module'
 import { PrismaModule } from './modules/prisma/prisma.module'
 import { TravelsModule } from './modules/travels/travels.module'
+import { MembersModule } from './modules/members/members.module'
 
 @Module({
   imports: [
@@ -20,6 +21,7 @@ import { TravelsModule } from './modules/travels/travels.module'
     AuthModule,
     UsersModule,
     TravelsModule,
+    MembersModule,
   ],
   controllers: [AppController],
 })
