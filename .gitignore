@@ -21,8 +21,16 @@ src/apps/**/*.d.ts.map
 docs/design/screenshots/
 docs/plans/
 docs/temp/
-tasks/
+tasks/prd-authentication-and-users/
+tasks/prd-dashboard-backend/
+tasks/prd-members-backend/
+tasks/prd-travels-backend/
+tasks/prd-travels-members-categories-expenses/
 
+
+# Playwright
+test-results/
+playwright-report/
 
 # Caching
 __pycache__/
