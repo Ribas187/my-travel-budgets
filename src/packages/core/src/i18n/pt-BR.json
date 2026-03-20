@@ -73,6 +73,12 @@
   "category.deleteConfirmTitle": "Excluir Categoria?",
   "category.deleteConfirmMessage": "Isso excluirá a categoria e afetará {{count}} despesas.",
   "category.manage": "Categorias",
+  "category.saved": "Categoria salva",
+  "category.created": "Categoria criada",
+  "category.deleted": "Categoria excluída",
+  "category.deleteWarning": "Esta ação é permanente e não pode ser desfeita.",
+  "category.namePlaceholder": "ex. Alimentação",
+  "category.budgetLimitPlaceholder": "0,00",
 
   "member.add": "Adicionar Membro",
   "member.invite": "Convidar por e-mail",

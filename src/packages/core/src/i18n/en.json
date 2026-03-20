@@ -73,6 +73,12 @@
   "category.deleteConfirmTitle": "Delete Category?",
   "category.deleteConfirmMessage": "This will delete the category and affect {{count}} expenses.",
   "category.manage": "Categories",
+  "category.saved": "Category saved",
+  "category.created": "Category created",
+  "category.deleted": "Category deleted",
+  "category.deleteWarning": "This action is permanent and cannot be undone.",
+  "category.namePlaceholder": "e.g. Food & Drinks",
+  "category.budgetLimitPlaceholder": "0.00",
 
   "member.add": "Add Member",
   "member.invite": "Invite by email",
