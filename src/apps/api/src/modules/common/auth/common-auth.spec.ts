@@ -11,9 +11,12 @@ import { Test, type TestingModule } from '@nestjs/testing'
 import jwt from 'jsonwebtoken'
 import request from 'supertest'
 import {
+  CheckPolicy,
   CommonAuthModule,
   CurrentUser,
+  IsAuthenticatedPolicy,
   JwtAuthGuard,
+  PolicyGuard,
   type JwtAuthUser,
 } from '@/modules/common/auth'
 
@@ -33,6 +36,13 @@ class TestAuthController {
   @UseGuards(JwtAuthGuard)
   me(@CurrentUser() user: JwtAuthUser) {
     return user
+  }
+
+  @Get('policy-protected')
+  @UseGuards(JwtAuthGuard, PolicyGuard)
+  @CheckPolicy(IsAuthenticatedPolicy)
+  policyProtected(@CurrentUser() user: JwtAuthUser) {
+    return { ok: true, userId: user.userId }
   }
 }
 
@@ -128,6 +138,25 @@ describe('JwtAuthGuard & CurrentUser (HTTP)', () => {
         .expect(HttpStatus.OK)
 
       expect(res.body).toEqual({ userId: 'int-user', email: 'int@test.com' })
+    })
+  })
+
+  describe('PolicyGuard + IsAuthenticatedPolicy integration', () => {
+    it('returns 401 without token', async () => {
+      await request(app.getHttpServer())
+        .get('/test-auth/policy-protected')
+        .expect(HttpStatus.UNAUTHORIZED)
+    })
+
+    it('returns 200 when authenticated and policy allows', async () => {
+      const token = jwtService.sign({ sub: 'policy-user', email: 'policy@test.com' })
+
+      const res = await request(app.getHttpServer())
+        .get('/test-auth/policy-protected')
+        .set('Authorization', `Bearer ${token}`)
+        .expect(HttpStatus.OK)
+
+      expect(res.body).toEqual({ ok: true, userId: 'policy-user' })
     })
   })
 })
