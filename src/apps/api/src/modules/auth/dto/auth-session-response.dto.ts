@@ -1,5 +1,5 @@
 export class AuthSessionResponseDto {
-  accessToken!: string
-  tokenType!: 'Bearer'
-  expiresIn!: number
+  accessToken!: string;
+  tokenType!: 'Bearer';
+  expiresIn!: number;
 }

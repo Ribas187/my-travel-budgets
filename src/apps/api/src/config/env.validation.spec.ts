@@ -1,11 +1,12 @@
-import { Test } from '@nestjs/testing'
-import { ConfigModule } from '@nestjs/config'
-import { validateEnv } from './env.validation'
+import { Test } from '@nestjs/testing';
+import { ConfigModule } from '@nestjs/config';
+
+import { validateEnv } from './env.validation';
 
 describe('validateEnv', () => {
   it('throws when required variables are missing', () => {
-    expect(() => validateEnv({})).toThrow(/Environment validation failed/)
-  })
+    expect(() => validateEnv({})).toThrow(/Environment validation failed/);
+  });
 
   it('accepts all required variables', () => {
     const env = validateEnv({
@@ -14,10 +15,10 @@ describe('validateEnv', () => {
       JWT_EXPIRES_IN: '30d',
       RESEND_API_KEY: 're_test',
       PORT: '3000',
-    })
-    expect(env.PORT).toBe('3000')
-    expect(env.JWT_EXPIRES_IN).toBe('30d')
-  })
+    });
+    expect(env.PORT).toBe('3000');
+    expect(env.JWT_EXPIRES_IN).toBe('30d');
+  });
 
   it('rejects Nest ConfigModule bootstrap when required env vars are missing', async () => {
     const keys = [
@@ -26,12 +27,11 @@ describe('validateEnv', () => {
       'JWT_EXPIRES_IN',
       'RESEND_API_KEY',
       'PORT',
-    ] as const
-    const backup: Partial<Record<(typeof keys)[number], string | undefined>> =
-      {}
+    ] as const;
+    const backup: Partial<Record<(typeof keys)[number], string | undefined>> = {};
     for (const key of keys) {
-      backup[key] = process.env[key]
-      delete process.env[key]
+      backup[key] = process.env[key];
+      delete process.env[key];
     }
 
     await expect(
@@ -43,13 +43,13 @@ describe('validateEnv', () => {
           }),
         ],
       }).compile(),
-    ).rejects.toThrow(/Environment validation failed/)
+    ).rejects.toThrow(/Environment validation failed/);
 
     for (const key of keys) {
-      const v = backup[key]
+      const v = backup[key];
       if (v !== undefined) {
-        process.env[key] = v
+        process.env[key] = v;
       }
     }
-  })
-})
+  });
+});

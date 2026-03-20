@@ -1,8 +1,10 @@
 import { config as loadEnv } from 'dotenv';
-import { Test, TestingModule } from '@nestjs/testing';
+import type { TestingModule } from '@nestjs/testing';
+import { Test } from '@nestjs/testing';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { JwtModule, JwtService } from '@nestjs/jwt';
 import type { StringValue } from 'ms';
+
 import { validateEnv } from '@/config/env.validation';
 import { PrismaModule } from '@/modules/prisma/prisma.module';
 import { PrismaService } from '@/modules/prisma/prisma.service';
@@ -22,20 +24,16 @@ describe('Auth integration tests', () => {
 
     const required: Record<string, string> = {
       DATABASE_URL: process.env.DATABASE_URL ?? '',
-      JWT_SECRET:
-        process.env.JWT_SECRET ?? 'integration-test-secret-min-32-chars!!',
+      JWT_SECRET: process.env.JWT_SECRET ?? 'integration-test-secret-min-32-chars!!',
       JWT_EXPIRES_IN: process.env.JWT_EXPIRES_IN ?? '30d',
-      RESEND_API_KEY:
-        process.env.RESEND_API_KEY ?? 're_integration_placeholder',
+      RESEND_API_KEY: process.env.RESEND_API_KEY ?? 're_integration_placeholder',
       PORT: process.env.PORT ?? '3000',
     };
     for (const [key, value] of Object.entries(required)) {
       if (!process.env[key]) process.env[key] = value;
     }
     if (!process.env.DATABASE_URL) {
-      throw new Error(
-        'DATABASE_URL must be set (or present in .env) for integration tests',
-      );
+      throw new Error('DATABASE_URL must be set (or present in .env) for integration tests');
     }
 
     moduleRef = await Test.createTestingModule({

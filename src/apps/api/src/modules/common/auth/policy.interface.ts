@@ -1,5 +1,6 @@
-import type { ExecutionContext } from '@nestjs/common'
-import type { JwtAuthUser } from './jwt-session.types'
+import type { ExecutionContext } from '@nestjs/common';
+
+import type { JwtAuthUser } from './jwt-session.types';
 
 /**
  * Policy interface for domain-specific authorization checks.
@@ -7,5 +8,5 @@ import type { JwtAuthUser } from './jwt-session.types'
  * to enforce access rules beyond simple authentication.
  */
 export interface Policy {
-  check(user: JwtAuthUser, context: ExecutionContext): Promise<boolean>
+  check(user: JwtAuthUser, context: ExecutionContext): Promise<boolean>;
 }

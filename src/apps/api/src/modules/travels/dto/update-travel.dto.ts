@@ -11,18 +11,18 @@ import {
   ValidatorConstraint,
   type ValidatorConstraintInterface,
   type ValidationArguments,
-} from 'class-validator'
+} from 'class-validator';
 
 @ValidatorConstraint({ name: 'isUpdateStartDateBeforeEndDate', async: false })
 class IsUpdateStartDateBeforeEndDate implements ValidatorConstraintInterface {
   validate(_value: unknown, args: ValidationArguments): boolean {
-    const obj = args.object as { startDate?: string; endDate?: string }
-    if (!obj.startDate || !obj.endDate) return true
-    return new Date(obj.startDate) <= new Date(obj.endDate)
+    const obj = args.object as { startDate?: string; endDate?: string };
+    if (!obj.startDate || !obj.endDate) return true;
+    return new Date(obj.startDate) <= new Date(obj.endDate);
   }
 
   defaultMessage(): string {
-    return 'startDate must be before or equal to endDate'
+    return 'startDate must be before or equal to endDate';
   }
 }
 
@@ -31,29 +31,29 @@ export class UpdateTravelDto {
   @IsString()
   @IsNotEmpty()
   @MaxLength(200)
-  name?: string
+  name?: string;
 
   @IsOptional()
   @IsString()
   @MaxLength(1000)
-  description?: string
+  description?: string;
 
   @IsOptional()
   @IsString()
   @IsUrl()
-  imageUrl?: string
+  imageUrl?: string;
 
   @IsOptional()
   @IsNumber()
   @IsPositive()
-  budget?: number
+  budget?: number;
 
   @IsOptional()
   @IsDateString()
   @Validate(IsUpdateStartDateBeforeEndDate)
-  startDate?: string
+  startDate?: string;
 
   @IsOptional()
   @IsDateString()
-  endDate?: string
+  endDate?: string;
 }

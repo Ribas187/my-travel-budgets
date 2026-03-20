@@ -6,21 +6,21 @@ import {
   IsString,
   IsUUID,
   MaxLength,
-} from 'class-validator'
+} from 'class-validator';
 
 export class CreateExpenseDto {
   @IsUUID()
-  categoryId!: string
+  categoryId!: string;
 
   @IsNumber()
   @IsPositive()
-  amount!: number
+  amount!: number;
 
   @IsString()
   @IsNotEmpty()
   @MaxLength(500)
-  description!: string
+  description!: string;
 
   @IsDateString()
-  date!: string
+  date!: string;
 }

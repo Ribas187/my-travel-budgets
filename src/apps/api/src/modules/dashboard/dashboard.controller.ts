@@ -1,6 +1,8 @@
-import { Controller, Get, Param, UseGuards } from '@nestjs/common'
-import { JwtAuthGuard, TravelMemberGuard } from '@/modules/common/auth'
-import { DashboardService } from './dashboard.service'
+import { Controller, Get, Param, UseGuards } from '@nestjs/common';
+
+import type { DashboardService } from './dashboard.service';
+
+import { JwtAuthGuard, TravelMemberGuard } from '@/modules/common/auth';
 
 @Controller('travels/:travelId/dashboard')
 @UseGuards(JwtAuthGuard, TravelMemberGuard)
@@ -9,6 +11,6 @@ export class DashboardController {
 
   @Get()
   async getDashboard(@Param('travelId') travelId: string) {
-    return this.dashboardService.getDashboard(travelId)
+    return this.dashboardService.getDashboard(travelId);
   }
 }

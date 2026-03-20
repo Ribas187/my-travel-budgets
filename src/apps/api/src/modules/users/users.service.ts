@@ -1,7 +1,9 @@
-import { Injectable, NotFoundException } from '@nestjs/common'
-import { PrismaService } from '@/modules/prisma/prisma.service'
-import type { UserMeDto } from './dto/user-me.dto'
-import type { UpdateMeDto } from './dto/update-me.dto'
+import { Injectable, NotFoundException } from '@nestjs/common';
+
+import type { UserMeDto } from './dto/user-me.dto';
+import type { UpdateMeDto } from './dto/update-me.dto';
+
+import type { PrismaService } from '@/modules/prisma/prisma.service';
 
 @Injectable()
 export class UsersService {
@@ -10,10 +12,10 @@ export class UsersService {
   async getMe(userId: string): Promise<UserMeDto> {
     const user = await this.prisma.user.findUnique({
       where: { id: userId },
-    })
+    });
 
     if (!user) {
-      throw new NotFoundException('User not found')
+      throw new NotFoundException('User not found');
     }
 
     return {
@@ -23,18 +25,18 @@ export class UsersService {
       avatarUrl: user.avatarUrl,
       createdAt: user.createdAt,
       updatedAt: user.updatedAt,
-    }
+    };
   }
 
   async updateMe(userId: string, input: UpdateMeDto): Promise<UserMeDto> {
-    const data: { name?: string; avatarUrl?: string } = {}
-    if (input.name !== undefined) data.name = input.name
-    if (input.avatarUrl !== undefined) data.avatarUrl = input.avatarUrl
+    const data: { name?: string; avatarUrl?: string } = {};
+    if (input.name !== undefined) data.name = input.name;
+    if (input.avatarUrl !== undefined) data.avatarUrl = input.avatarUrl;
 
     const user = await this.prisma.user.update({
       where: { id: userId },
       data,
-    })
+    });
 
     return {
       id: user.id,
@@ -43,6 +45,6 @@ export class UsersService {
       avatarUrl: user.avatarUrl,
       createdAt: user.createdAt,
       updatedAt: user.updatedAt,
-    }
+    };
   }
 }

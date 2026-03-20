@@ -1,7 +1,9 @@
-import { Module } from '@nestjs/common'
-import { CommonAuthModule } from '@/modules/common/auth'
-import { ExpensesController } from './expenses.controller'
-import { ExpensesService } from './expenses.service'
+import { Module } from '@nestjs/common';
+
+import { ExpensesController } from './expenses.controller';
+import { ExpensesService } from './expenses.service';
+
+import { CommonAuthModule } from '@/modules/common/auth';
 
 @Module({
   imports: [CommonAuthModule],

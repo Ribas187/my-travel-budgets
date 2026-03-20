@@ -29,10 +29,7 @@ export interface DashboardResponse {
   categorySpending: CategorySpendingItem[];
 }
 
-export function computeAlertStatus(
-  spent: number,
-  limit: number | null,
-): BudgetAlertStatus {
+export function computeAlertStatus(spent: number, limit: number | null): BudgetAlertStatus {
   if (limit === null) return 'ok';
   if (spent >= limit) return 'exceeded';
   if (spent >= limit * 0.8) return 'warning';

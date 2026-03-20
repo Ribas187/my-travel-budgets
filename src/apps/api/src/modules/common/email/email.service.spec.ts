@@ -1,15 +1,17 @@
-import { Test } from '@nestjs/testing'
-import { ConfigModule } from '@nestjs/config'
-import { validateEnv } from '@/config/env.validation'
-import { EmailService } from './email.service'
+import { Test } from '@nestjs/testing';
+import { ConfigModule } from '@nestjs/config';
 
-const sendMock = jest.fn().mockResolvedValue({ data: { id: 're_test' }, error: null })
+import { EmailService } from './email.service';
+
+import { validateEnv } from '@/config/env.validation';
+
+const sendMock = jest.fn().mockResolvedValue({ data: { id: 're_test' }, error: null });
 
 jest.mock('resend', () => ({
   Resend: jest.fn().mockImplementation(() => ({
     emails: { send: sendMock },
   })),
-}))
+}));
 
 describe('EmailService', () => {
   const envKeys = [
@@ -20,14 +22,13 @@ describe('EmailService', () => {
     'PORT',
     'MAGIC_LINK_BASE_URL',
     'RESEND_FROM_EMAIL',
-  ] as const
-  const saved: Partial<Record<(typeof envKeys)[number], string | undefined>> =
-    {}
+  ] as const;
+  const saved: Partial<Record<(typeof envKeys)[number], string | undefined>> = {};
 
   beforeEach(() => {
-    sendMock.mockClear()
+    sendMock.mockClear();
     for (const key of envKeys) {
-      saved[key] = process.env[key]
+      saved[key] = process.env[key];
     }
     Object.assign(process.env, {
       DATABASE_URL: 'postgresql://localhost:5432/t',
@@ -37,19 +38,19 @@ describe('EmailService', () => {
       PORT: '3000',
       MAGIC_LINK_BASE_URL: 'https://app.test',
       RESEND_FROM_EMAIL: 'auth@test.com',
-    })
-  })
+    });
+  });
 
   afterEach(() => {
     for (const key of envKeys) {
-      const v = saved[key]
+      const v = saved[key];
       if (v === undefined) {
-        delete process.env[key]
+        delete process.env[key];
       } else {
-        process.env[key] = v
+        process.env[key] = v;
       }
     }
-  })
+  });
 
   it('sendMagicLink calls Resend with expected payload and idempotency key', async () => {
     const moduleRef = await Test.createTestingModule({
@@ -61,22 +62,22 @@ describe('EmailService', () => {
         }),
       ],
       providers: [EmailService],
-    }).compile()
+    }).compile();
 
-    const service = moduleRef.get(EmailService)
-    await service.sendMagicLink('user@test.com', 'tok_abc')
+    const service = moduleRef.get(EmailService);
+    await service.sendMagicLink('user@test.com', 'tok_abc');
 
-    expect(sendMock).toHaveBeenCalledTimes(1)
+    expect(sendMock).toHaveBeenCalledTimes(1);
     const [payload, options] = sendMock.mock.calls[0] as [
       { from: string; to: string; subject: string; html: string },
       { idempotencyKey: string },
-    ]
-    expect(payload.from).toBe('auth@test.com')
-    expect(payload.to).toBe('user@test.com')
-    expect(payload.subject).toBe('Your sign-in link')
+    ];
+    expect(payload.from).toBe('auth@test.com');
+    expect(payload.to).toBe('user@test.com');
+    expect(payload.subject).toBe('Your sign-in link');
     expect(payload.html).toContain(
       `https://app.test/auth/verify?token=${encodeURIComponent('tok_abc')}`,
-    )
-    expect(options.idempotencyKey).toMatch(/^[a-f0-9]{64}$/)
-  })
-})
+    );
+    expect(options.idempotencyKey).toMatch(/^[a-f0-9]{64}$/);
+  });
+});

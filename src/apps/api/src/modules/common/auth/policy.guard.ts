@@ -3,11 +3,12 @@ import {
   type ExecutionContext,
   ForbiddenException,
   Injectable,
-} from '@nestjs/common'
-import { Reflector } from '@nestjs/core'
-import type { Policy } from './policy.interface'
-import { CHECK_POLICY_KEY } from './check-policy.decorator'
-import type { JwtAuthUser } from './jwt-session.types'
+} from '@nestjs/common';
+import type { Reflector } from '@nestjs/core';
+
+import type { Policy } from './policy.interface';
+import { CHECK_POLICY_KEY } from './check-policy.decorator';
+import type { JwtAuthUser } from './jwt-session.types';
 
 /**
  * Guard that executes the policy associated with the route via @CheckPolicy.
@@ -22,26 +23,26 @@ export class PolicyGuard implements CanActivate {
     const PolicyClass = this.reflector.getAllAndOverride<new (...args: unknown[]) => Policy>(
       CHECK_POLICY_KEY,
       [context.getHandler(), context.getClass()],
-    )
+    );
 
     if (!PolicyClass) {
-      return true
+      return true;
     }
 
-    const request = context.switchToHttp().getRequest()
-    const user = request.user as JwtAuthUser | undefined
+    const request = context.switchToHttp().getRequest();
+    const user = request.user as JwtAuthUser | undefined;
 
     if (!user) {
-      throw new ForbiddenException()
+      throw new ForbiddenException();
     }
 
-    const policy = new PolicyClass()
-    const allowed = await policy.check(user, context)
+    const policy = new PolicyClass();
+    const allowed = await policy.check(user, context);
 
     if (!allowed) {
-      throw new ForbiddenException()
+      throw new ForbiddenException();
     }
 
-    return true
+    return true;
   }
 }

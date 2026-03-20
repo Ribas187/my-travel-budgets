@@ -1,7 +1,9 @@
-import { Injectable, NotFoundException } from '@nestjs/common'
-import { PrismaService } from '@/modules/prisma/prisma.service'
-import type { CreateTravelDto } from './dto/create-travel.dto'
-import type { UpdateTravelDto } from './dto/update-travel.dto'
+import { Injectable, NotFoundException } from '@nestjs/common';
+
+import type { CreateTravelDto } from './dto/create-travel.dto';
+import type { UpdateTravelDto } from './dto/update-travel.dto';
+
+import type { PrismaService } from '@/modules/prisma/prisma.service';
 
 @Injectable()
 export class TravelsService {
@@ -20,7 +22,7 @@ export class TravelsService {
           endDate: new Date(dto.endDate),
           createdById: userId,
         },
-      })
+      });
 
       await tx.travelMember.create({
         data: {
@@ -28,10 +30,10 @@ export class TravelsService {
           userId,
           role: 'owner',
         },
-      })
+      });
 
-      return travel
-    })
+      return travel;
+    });
   }
 
   async findAllByUser(userId: string) {
@@ -42,7 +44,7 @@ export class TravelsService {
         },
       },
       orderBy: { startDate: 'desc' },
-    })
+    });
   }
 
   async findOne(travelId: string) {
@@ -60,18 +62,18 @@ export class TravelsService {
           orderBy: { createdAt: 'asc' },
         },
       },
-    })
+    });
 
     if (!travel) {
-      throw new NotFoundException('Travel not found')
+      throw new NotFoundException('Travel not found');
     }
 
     const result = await this.prisma.expense.aggregate({
       where: { travelId },
       _sum: { amount: true },
-    })
+    });
 
-    const totalSpent = result._sum.amount?.toNumber() ?? 0
+    const totalSpent = result._sum.amount?.toNumber() ?? 0;
 
     return {
       ...travel,
@@ -85,27 +87,27 @@ export class TravelsService {
         budget: travel.budget.toNumber(),
         remaining: travel.budget.toNumber() - totalSpent,
       },
-    }
+    };
   }
 
   async update(travelId: string, dto: UpdateTravelDto) {
-    const data: Record<string, unknown> = {}
-    if (dto.name !== undefined) data.name = dto.name
-    if (dto.description !== undefined) data.description = dto.description
-    if (dto.imageUrl !== undefined) data.imageUrl = dto.imageUrl
-    if (dto.budget !== undefined) data.budget = dto.budget
-    if (dto.startDate !== undefined) data.startDate = new Date(dto.startDate)
-    if (dto.endDate !== undefined) data.endDate = new Date(dto.endDate)
+    const data: Record<string, unknown> = {};
+    if (dto.name !== undefined) data.name = dto.name;
+    if (dto.description !== undefined) data.description = dto.description;
+    if (dto.imageUrl !== undefined) data.imageUrl = dto.imageUrl;
+    if (dto.budget !== undefined) data.budget = dto.budget;
+    if (dto.startDate !== undefined) data.startDate = new Date(dto.startDate);
+    if (dto.endDate !== undefined) data.endDate = new Date(dto.endDate);
 
     return this.prisma.travel.update({
       where: { id: travelId },
       data,
-    })
+    });
   }
 
   async remove(travelId: string) {
     await this.prisma.travel.delete({
       where: { id: travelId },
-    })
+    });
   }
 }

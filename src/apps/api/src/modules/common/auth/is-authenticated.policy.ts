@@ -1,6 +1,7 @@
-import type { ExecutionContext } from '@nestjs/common'
-import type { Policy } from './policy.interface'
-import type { JwtAuthUser } from './jwt-session.types'
+import type { ExecutionContext } from '@nestjs/common';
+
+import type { Policy } from './policy.interface';
+import type { JwtAuthUser } from './jwt-session.types';
 
 /**
  * Example policy that always allows access when the user is authenticated.
@@ -9,6 +10,6 @@ import type { JwtAuthUser } from './jwt-session.types'
  */
 export class IsAuthenticatedPolicy implements Policy {
   async check(user: JwtAuthUser, _context: ExecutionContext): Promise<boolean> {
-    return !!user?.userId
+    return !!user?.userId;
   }
 }
