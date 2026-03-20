@@ -20,7 +20,9 @@ function getAvatarColor(index: number): string {
 }
 
 function getMemberDisplayName(member: TravelMember): string {
-  return member.user?.name ?? member.guestName ?? member.user?.email ?? ''
+  if (member.user?.name) return member.user.name
+  if (member.guestName) return member.guestName
+  return member.user?.email ?? ''
 }
 
 function formatCurrency(amount: number, currency: string, locale: string): string {

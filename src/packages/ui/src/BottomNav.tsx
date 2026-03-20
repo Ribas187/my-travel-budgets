@@ -73,39 +73,41 @@ interface BottomNavProps {
 export function BottomNav({ tabs, activeTab, onTabPress, fabSlot }: BottomNavProps) {
   const midpoint = Math.floor(tabs.length / 2)
 
+  const items: ReactNode[] = []
+
+  tabs.forEach((tab, index) => {
+    if (fabSlot && index === midpoint) {
+      items.push(
+        <FABSlot key="__fab">
+          {fabSlot}
+        </FABSlot>,
+      )
+    }
+
+    const isActive = tab.key === activeTab
+    items.push(
+      <TabButton
+        key={tab.key}
+        onPress={() => onTabPress(tab.key)}
+        role="tab"
+        aria-selected={isActive}
+        aria-label={tab.label}
+      >
+        <TabIcon
+          {...(isActive
+            ? { opacity: 1 }
+            : { opacity: 0.6 })}
+        >
+          {tab.icon}
+        </TabIcon>
+        <TabLabel active={isActive}>{tab.label}</TabLabel>
+      </TabButton>,
+    )
+  })
+
   return (
     <NavFrame role="navigation" aria-label="Main navigation" data-testid="bottom-nav">
-      {tabs.map((tab, index) => {
-        if (fabSlot && index === midpoint) {
-          return (
-            <XStack key="__fab_and_tab" alignItems="flex-end">
-              <FABSlot>{fabSlot}</FABSlot>
-            </XStack>
-          )
-        }
-
-        const isActive = tab.key === activeTab
-        const adjustedIndex = fabSlot && index > midpoint ? index : index
-
-        return (
-          <TabButton
-            key={tab.key}
-            onPress={() => onTabPress(tab.key)}
-            role="tab"
-            aria-selected={isActive}
-            aria-label={tab.label}
-          >
-            <TabIcon
-              {...(isActive
-                ? { opacity: 1 }
-                : { opacity: 0.6 })}
-            >
-              {tab.icon}
-            </TabIcon>
-            <TabLabel active={isActive}>{tab.label}</TabLabel>
-          </TabButton>
-        )
-      })}
+      {items}
     </NavFrame>
   )
 }

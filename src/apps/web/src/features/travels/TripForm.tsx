@@ -104,6 +104,10 @@ function getMemberInitial(member: TravelMember): string {
   return name.charAt(0).toUpperCase()
 }
 
+function formatDateForInput(iso: string): string {
+  return iso.includes('T') ? iso.split('T')[0] : iso
+}
+
 function getDefaultFormValues(travel?: TravelDetail): CreateTravelInput {
   if (travel) {
     return {
@@ -111,8 +115,8 @@ function getDefaultFormValues(travel?: TravelDetail): CreateTravelInput {
       description: travel.description,
       currency: travel.currency,
       budget: travel.budget,
-      startDate: travel.startDate,
-      endDate: travel.endDate,
+      startDate: formatDateForInput(travel.startDate),
+      endDate: formatDateForInput(travel.endDate),
     }
   }
   return {

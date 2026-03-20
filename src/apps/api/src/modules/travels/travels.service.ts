@@ -56,6 +56,9 @@ export class TravelsService {
             },
           },
         },
+        categories: {
+          orderBy: { createdAt: 'asc' },
+        },
       },
     })
 
@@ -73,6 +76,10 @@ export class TravelsService {
     return {
       ...travel,
       budget: travel.budget.toNumber(),
+      categories: travel.categories.map((c) => ({
+        ...c,
+        budgetLimit: c.budgetLimit?.toNumber() ?? null,
+      })),
       summary: {
         totalSpent,
         budget: travel.budget.toNumber(),

@@ -117,6 +117,9 @@ describe('TravelsService', () => {
             user: { id: 'user-1', email: 'owner@test.com', name: 'Owner', avatarUrl: null },
           },
         ],
+        categories: [
+          { id: 'cat-1', name: 'Food', icon: '🍔', color: '#F59E0B', budgetLimit: { toNumber: () => 500 }, createdAt: new Date() },
+        ],
       }
       mockTravelFindUnique.mockResolvedValue(travel)
       mockExpenseAggregate.mockResolvedValue({
@@ -135,6 +138,9 @@ describe('TravelsService', () => {
               },
             },
           },
+          categories: {
+            orderBy: { createdAt: 'asc' },
+          },
         },
       })
       expect(result.summary).toEqual({
@@ -142,6 +148,9 @@ describe('TravelsService', () => {
         budget: 5000,
         remaining: 3500,
       })
+      expect(result.categories).toEqual([
+        expect.objectContaining({ id: 'cat-1', name: 'Food', budgetLimit: 500 }),
+      ])
     })
 
     it('returns zero totalSpent when no expenses exist', async () => {
@@ -150,6 +159,7 @@ describe('TravelsService', () => {
         name: 'Trip',
         budget: { toNumber: () => 3000 },
         members: [],
+        categories: [],
       }
       mockTravelFindUnique.mockResolvedValue(travel)
       mockExpenseAggregate.mockResolvedValue({

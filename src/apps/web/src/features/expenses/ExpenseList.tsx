@@ -176,15 +176,7 @@ export function ExpenseList({ travel }: ExpenseListProps) {
     ? { categoryId: selectedCategoryId }
     : undefined
 
-  const { data: expensesRaw, isLoading } = useTravelExpenses(travel.id, filters)
-
-  // Normalize: API may return Expense[] or { data: Expense[] }
-  const expenses = useMemo(() => {
-    if (!expensesRaw) return []
-    if (Array.isArray(expensesRaw)) return expensesRaw
-    if (Array.isArray((expensesRaw as any).data)) return (expensesRaw as any).data as Expense[]
-    return []
-  }, [expensesRaw])
+  const { data: expenses = [], isLoading } = useTravelExpenses(travel.id, filters)
 
   // Client-side search filtering (API doesn't support search param)
   const filteredExpenses = useMemo(() => {

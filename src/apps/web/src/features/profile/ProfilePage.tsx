@@ -118,7 +118,7 @@ export function ProfilePage() {
 
   const handleLogout = useCallback(() => {
     logout()
-    navigate({ to: '/login' })
+    setTimeout(() => navigate({ to: '/login' }), 0)
   }, [logout, navigate])
 
   if (!user) return null
