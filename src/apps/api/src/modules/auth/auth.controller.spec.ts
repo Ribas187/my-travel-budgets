@@ -1,4 +1,4 @@
-import { HttpStatus, ValidationPipe } from '@nestjs/common'
+import { HttpStatus, UnauthorizedException, ValidationPipe } from '@nestjs/common'
 import { Test, TestingModule } from '@nestjs/testing'
 import request from 'supertest'
 import { AuthService } from './auth.service'
@@ -6,6 +6,7 @@ import { AuthController } from './auth.controller'
 import type { INestApplication } from '@nestjs/common'
 
 const mockRequestMagicLink = jest.fn()
+const mockVerifyMagicLink = jest.fn()
 
 describe('AuthController', () => {
   let app: INestApplication
@@ -16,7 +17,13 @@ describe('AuthController', () => {
     const module: TestingModule = await Test.createTestingModule({
       controllers: [AuthController],
       providers: [
-        { provide: AuthService, useValue: { requestMagicLink: mockRequestMagicLink } },
+        {
+          provide: AuthService,
+          useValue: {
+            requestMagicLink: mockRequestMagicLink,
+            verifyMagicLink: mockVerifyMagicLink,
+          },
+        },
       ],
     }).compile()
 
@@ -63,6 +70,36 @@ describe('AuthController', () => {
       await request(app.getHttpServer())
         .post('/auth/magic-link')
         .send({})
+        .expect(HttpStatus.BAD_REQUEST)
+    })
+  })
+
+  describe('GET /auth/verify', () => {
+    it('returns 200 with AuthSessionResponseDto on success', async () => {
+      mockVerifyMagicLink.mockResolvedValue({ accessToken: 'test-jwt-token' })
+
+      const res = await request(app.getHttpServer())
+        .get('/auth/verify?token=valid-token')
+        .expect(HttpStatus.OK)
+
+      expect(res.body).toEqual({
+        accessToken: 'test-jwt-token',
+        tokenType: 'Bearer',
+        expiresIn: 30 * 24 * 60 * 60,
+      })
+    })
+
+    it('returns 401 Unauthorized on invalid token', async () => {
+      mockVerifyMagicLink.mockRejectedValue(new UnauthorizedException('Invalid token'))
+
+      await request(app.getHttpServer())
+        .get('/auth/verify?token=bad-token')
+        .expect(HttpStatus.UNAUTHORIZED)
+    })
+
+    it('returns 400 Bad Request when token query param is missing', async () => {
+      await request(app.getHttpServer())
+        .get('/auth/verify')
         .expect(HttpStatus.BAD_REQUEST)
     })
   })

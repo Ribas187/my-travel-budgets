@@ -1,0 +1,79 @@
+Arguments: 
+  /Users/ribas/.nvm/versions/node/v20.19.6/bin/node /opt/homebrew/bin/yarn add @nestjs/jwt
+
+PATH: 
+  /Users/ribas/.nvm/versions/node/v20.19.6/bin:/usr/local/Homebrew/opt/ruby/bin:/Users/ribas/.docker/bin:/Users/ribas/Downloads/apache-maven-3.8.1/bin:/Library/Frameworks/Python.framework/Versions/2.7/bin:/Users/ribas/Library/Android/sdk/platform-tools:/opt/homebrew/bin:/opt/homebrew/sbin:/usr/local/bin:/System/Cryptexes/App/usr/bin:/usr/bin:/bin:/usr/sbin:/sbin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/local/bin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/bin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/appleinternal/bin:/opt/pmk/env/global/bin:/Library/Apple/usr/bin:/usr/local/go/bin:/usr/local/Homebrew/opt/ruby/bin:/Users/ribas/.docker/bin:/Users/ribas/.local/share/zinit/polaris/bin:/Users/ribas/Downloads/apache-maven-3.8.1/bin:/Library/Frameworks/Python.framework/Versions/2.7/bin:/Users/ribas/Library/Android/sdk/platform-tools:/Applications/Ghostty.app/Contents/MacOS:/Users/ribas/.local/bin
+
+Yarn version: 
+  1.22.19
+
+Node version: 
+  20.19.6
+
+Platform: 
+  darwin arm64
+
+Trace: 
+  Error: https://registry.yarnpkg.com/@repo%2fcore: Not found
+      at params.callback [as _callback] (/opt/homebrew/lib/node_modules/yarn/lib/cli.js:66145:18)
+      at self.callback (/opt/homebrew/lib/node_modules/yarn/lib/cli.js:140890:22)
+      at Request.emit (node:events:524:28)
+      at Request.<anonymous> (/opt/homebrew/lib/node_modules/yarn/lib/cli.js:141862:10)
+      at Request.emit (node:events:524:28)
+      at IncomingMessage.<anonymous> (/opt/homebrew/lib/node_modules/yarn/lib/cli.js:141784:12)
+      at Object.onceWrapper (node:events:638:28)
+      at IncomingMessage.emit (node:events:536:35)
+      at endReadableNT (node:internal/streams/readable:1698:12)
+      at process.processTicksAndRejections (node:internal/process/task_queues:82:21)
+
+npm manifest: 
+  {
+    "name": "@app/api",
+    "version": "0.0.0",
+    "private": true,
+    "scripts": {
+      "dev": "nest start --watch",
+      "build": "nest build",
+      "start": "node dist/main",
+      "lint": "tsc --noEmit",
+      "test": "jest --config ./jest.config.cjs",
+      "test:e2e": "jest --config ./test/jest-e2e.json",
+      "db:generate": "prisma generate",
+      "db:migrate": "prisma migrate dev",
+      "db:studio": "prisma studio"
+    },
+    "dependencies": {
+      "@nestjs/common": "^11.0.0",
+      "@nestjs/config": "^4.0.3",
+      "@nestjs/core": "^11.0.0",
+      "@nestjs/platform-express": "^11.0.0",
+      "@prisma/adapter-pg": "^7.5.0",
+      "@prisma/client": "^7.0.0",
+      "@repo/core": "workspace:*",
+      "class-transformer": "^0.5.1",
+      "class-validator": "^0.15.1",
+      "reflect-metadata": "^0.2.0",
+      "resend": "^6.9.4",
+      "rxjs": "^7.8.0"
+    },
+    "devDependencies": {
+      "@nestjs/cli": "^11.0.0",
+      "@nestjs/testing": "^11.0.0",
+      "@repo/typescript-config": "workspace:*",
+      "@types/express": "^5.0.0",
+      "@types/jest": "^29.5.0",
+      "@types/supertest": "^6.0.0",
+      "dotenv": "^17.3.1",
+      "jest": "^29.7.0",
+      "prisma": "^7.0.0",
+      "supertest": "^7.0.0",
+      "ts-jest": "^29.2.0",
+      "typescript": "^5.7.0"
+    }
+  }
+
+yarn manifest: 
+  No manifest
+
+Lockfile: 
+  No lockfile
