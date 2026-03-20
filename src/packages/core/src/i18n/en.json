@@ -112,6 +112,13 @@
   "dashboard.recentExpenses": "Recent Expenses",
   "dashboard.emptyTitle": "No expenses yet",
   "dashboard.emptyAction": "Add your first expense",
+  "dashboard.totalBudget": "Total Budget",
+  "dashboard.spentSoFar": "Spent so far",
+  "dashboard.dailyAverage": "Daily Average",
+  "dashboard.budgetByCategory": "Budget by Category",
+  "dashboard.seeAll": "See all",
+  "dashboard.viewAll": "View all",
+  "dashboard.dayOfTrip": "Day {{current}} of {{total}}",
 
   "profile.title": "Profile",
   "profile.name": "Name",
