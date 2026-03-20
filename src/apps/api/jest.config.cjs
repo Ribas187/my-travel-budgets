@@ -5,6 +5,8 @@ module.exports = {
   setupFiles: ['<rootDir>/jest.setup.cjs'],
   testEnvironment: 'node',
   testRegex: '.*\\.spec\\.ts$',
+  // Integration tests share a DB; run sequentially to avoid interference
+  maxWorkers: 1,
   transform: {
     '^.+\\.(t|j)s$': 'ts-jest',
   },
