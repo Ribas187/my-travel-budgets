@@ -20,6 +20,7 @@ src/apps/**/*.d.ts.map
 # Documentation
 docs/design/screenshots/
 docs/plans/
+docs/temp/
 
 
 # Caching
