@@ -16,6 +16,7 @@ src/apps/**/*.d.ts
 src/apps/**/*.d.ts.map
 !src/apps/**/vite.config.ts
 !src/apps/**/babel.config.js
+.DS_Store
 
 # Documentation
 docs/design/screenshots/
@@ -26,6 +27,8 @@ tasks/prd-dashboard-backend/
 tasks/prd-members-backend/
 tasks/prd-travels-backend/
 tasks/prd-travels-members-categories-expenses/
+tasks/prd-web-frontend-mvp/
+tasks/prd-frontend-remaining-features/
 
 
 # Playwright

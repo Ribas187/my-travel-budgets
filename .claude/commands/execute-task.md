@@ -68,3 +68,5 @@ Provide a summary of:
 
 <critical>READ prd.md AND techspec.md BEFORE STARTING — IF YOU SKIP THIS YOUR WORK WILL BE INVALIDATED</critical>
 <critical>DO NOT MARK THE TASK COMPLETE UNTIL ALL TESTS PASS</critical>
+<critical>DO NOT COMMIT THE /tasks FOLDER</critical>
+<critical>DO NOT COMMIT ANY FILES IN THE /tasks FOLDER</critical>
