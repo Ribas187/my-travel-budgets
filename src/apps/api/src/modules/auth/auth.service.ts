@@ -1,10 +1,11 @@
 import { Injectable, Logger, UnauthorizedException } from '@nestjs/common'
 import { JwtService } from '@nestjs/jwt'
 import { randomBytes } from 'node:crypto'
+import type { JwtSessionPayload } from '@/modules/common/auth'
 import { EmailService } from '@/modules/common/email/email.service'
 import { PrismaService } from '@/modules/prisma/prisma.service'
 
-export type JwtSessionPayload = { sub: string; email: string }
+export type { JwtSessionPayload } from '@/modules/common/auth'
 
 @Injectable()
 export class AuthService {
