@@ -93,7 +93,7 @@ export function DesktopSidebar({
   userSection,
 }: DesktopSidebarProps) {
   return (
-    <SidebarFrame role="navigation" aria-label="Sidebar navigation">
+    <SidebarFrame role="navigation" aria-label="Sidebar navigation" data-testid="desktop-sidebar">
       <YStack gap="$xs">
         {logo && (
           <XStack paddingVertical="$md" paddingHorizontal={14} marginBottom="$lg">

@@ -102,6 +102,29 @@ export const TEST_EXPENSE = {
   updatedAt: '2026-06-02T12:30:00.000Z',
 }
 
+export const EXPENSE_ID_2 = '00000000-0000-4000-8000-000000020000'
+
+export const TEST_EXPENSE_2 = {
+  id: EXPENSE_ID_2,
+  travelId: TRAVEL_ID,
+  categoryId: CAT_TRANSPORT_ID,
+  memberId: MEMBER_ID,
+  amount: 25.0,
+  description: 'Taxi to airport',
+  date: '2026-06-03',
+  createdAt: '2026-06-03T09:00:00.000Z',
+  updatedAt: '2026-06-03T09:00:00.000Z',
+}
+
+export const TEST_USER_ME = {
+  id: TEST_USER.id,
+  email: TEST_USER.email,
+  name: TEST_USER.name,
+  avatarUrl: null,
+  createdAt: TEST_USER.createdAt,
+  updatedAt: TEST_USER.updatedAt,
+}
+
 export const TEST_DASHBOARD = {
   currency: 'EUR',
   overall: {

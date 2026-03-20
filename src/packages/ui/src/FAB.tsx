@@ -38,6 +38,7 @@ export function FAB({ onPress, accessibilityLabel }: FABProps) {
       onPress={onPress}
       role="button"
       aria-label={accessibilityLabel}
+      data-testid="fab-button"
     >
       <PlusIcon>+</PlusIcon>
     </FABFrame>

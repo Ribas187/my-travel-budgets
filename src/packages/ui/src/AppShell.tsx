@@ -35,7 +35,7 @@ export function AppShell({ children, sidebar, bottomNav }: AppShellProps) {
 
   if (isDesktop && sidebar) {
     return (
-      <ShellFrame>
+      <ShellFrame data-testid="app-shell-desktop">
         {sidebar}
         <ContentArea>{children}</ContentArea>
       </ShellFrame>
@@ -43,7 +43,7 @@ export function AppShell({ children, sidebar, bottomNav }: AppShellProps) {
   }
 
   return (
-    <MobileFrame>
+    <MobileFrame data-testid="app-shell-mobile">
       <MobileContent>{children}</MobileContent>
       {bottomNav}
     </MobileFrame>

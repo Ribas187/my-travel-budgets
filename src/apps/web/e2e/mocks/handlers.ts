@@ -12,6 +12,7 @@ import {
   TEST_CATEGORY_FOOD,
   TEST_EXPENSE,
   TEST_DASHBOARD,
+  TEST_USER_ME,
   TRAVEL_ID,
 } from './fixtures'
 
@@ -20,6 +21,7 @@ interface MockState {
   travelDetail: typeof TEST_TRAVEL_DETAIL
   categories: typeof TEST_CATEGORY_FOOD[]
   expenses: typeof TEST_EXPENSE[]
+  user: typeof TEST_USER_ME
 }
 
 /** Only intercept requests going to the API origin */
@@ -37,6 +39,7 @@ export async function setupApiMocks(page: Page): Promise<MockState> {
     travelDetail: { ...TEST_TRAVEL_DETAIL },
     categories: [],
     expenses: [],
+    user: { ...TEST_USER_ME },
   }
 
   // Single catch-all route for the API origin
@@ -73,8 +76,32 @@ export async function setupApiMocks(page: Page): Promise<MockState> {
       })
     }
 
+    // ── Expense: single expense PATCH/DELETE ──
+    const singleExpenseMatch = pathname.match(/^\/travels\/([^/]+)\/expenses\/([^/]+)$/)
+    if (singleExpenseMatch) {
+      const expenseId = singleExpenseMatch[2]
+      if (method === 'PATCH') {
+        const body = route.request().postDataJSON()
+        const idx = state.expenses.findIndex((e) => e.id === expenseId)
+        if (idx >= 0) {
+          state.expenses[idx] = { ...state.expenses[idx]!, ...body, updatedAt: new Date().toISOString() }
+        }
+        const updated = idx >= 0 ? state.expenses[idx] : { ...TEST_EXPENSE, ...body, id: expenseId }
+        return route.fulfill({
+          status: 200,
+          contentType: 'application/json',
+          body: JSON.stringify(updated),
+        })
+      }
+      if (method === 'DELETE') {
+        state.expenses = state.expenses.filter((e) => e.id !== expenseId)
+        return route.fulfill({ status: 204, body: '' })
+      }
+      return route.fallback()
+    }
+
     // ── Expenses ──
-    const expensesMatch = pathname.match(/^\/travels\/([^/]+)\/expenses/)
+    const expensesMatch = pathname.match(/^\/travels\/([^/]+)\/expenses$/)
     if (expensesMatch) {
       if (method === 'GET') {
         const urlObj = new URL(url)
@@ -258,6 +285,27 @@ export async function setupApiMocks(page: Page): Promise<MockState> {
       if (method === 'DELETE') {
         state.travels = state.travels.filter((t) => t.id !== travelId)
         return route.fulfill({ status: 204, body: '' })
+      }
+      return route.fallback()
+    }
+
+    // ── Users: /users/me ──
+    if (pathname === '/users/me') {
+      if (method === 'GET') {
+        return route.fulfill({
+          status: 200,
+          contentType: 'application/json',
+          body: JSON.stringify(state.user),
+        })
+      }
+      if (method === 'PATCH') {
+        const body = route.request().postDataJSON()
+        state.user = { ...state.user, ...body, updatedAt: new Date().toISOString() }
+        return route.fulfill({
+          status: 200,
+          contentType: 'application/json',
+          body: JSON.stringify(state.user),
+        })
       }
       return route.fallback()
     }

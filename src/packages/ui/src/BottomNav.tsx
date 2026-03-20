@@ -74,7 +74,7 @@ export function BottomNav({ tabs, activeTab, onTabPress, fabSlot }: BottomNavPro
   const midpoint = Math.floor(tabs.length / 2)
 
   return (
-    <NavFrame role="navigation" aria-label="Main navigation">
+    <NavFrame role="navigation" aria-label="Main navigation" data-testid="bottom-nav">
       {tabs.map((tab, index) => {
         if (fabSlot && index === midpoint) {
           return (
