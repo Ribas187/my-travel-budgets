@@ -196,6 +196,7 @@ export const tokens = createTokens({
   },
 
   space: {
+    true: 12,
     xs: 4,
     sm: 8,
     md: 12,
@@ -219,6 +220,7 @@ export const tokens = createTokens({
   },
 
   size: {
+    true: 12,
     xs: 4,
     sm: 8,
     md: 12,
@@ -243,12 +245,12 @@ export const tokens = createTokens({
   },
 
   zIndex: {
-    0: 0,
-    1: 100,
-    2: 200,
-    3: 300,
-    4: 400,
-    5: 500,
+    true: 0,
+    xs: 100,
+    sm: 200,
+    md: 300,
+    lg: 400,
+    xl: 500,
   },
 })
 

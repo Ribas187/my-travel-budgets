@@ -15,7 +15,7 @@
     "dev": {
       "cache": false,
       "persistent": true,
-      "dependsOn": ["^db:generate"]
+      "dependsOn": ["^build", "^db:generate"]
     },
     "lint": {},
     "test": {
