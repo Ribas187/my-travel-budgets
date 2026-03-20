@@ -56,37 +56,37 @@ import { Input } from 'tamagui'
 ### TextArea
 
 ```tsx
-import { TextArea } from 'tamagui'
+import { TextArea } from 'tamagui';
 
-<TextArea placeholder="Long text..." numberOfLines={4} />
+<TextArea placeholder="Long text..." numberOfLines={4} />;
 ```
 
 ### Checkbox
 
 ```tsx
-import { Checkbox } from 'tamagui'
+import { Checkbox } from 'tamagui';
 
 <Checkbox id="terms" checked={checked} onCheckedChange={setChecked}>
   <Checkbox.Indicator>
     <Check />
   </Checkbox.Indicator>
-</Checkbox>
+</Checkbox>;
 ```
 
 ### Switch
 
 ```tsx
-import { Switch } from 'tamagui'
+import { Switch } from 'tamagui';
 
 <Switch checked={on} onCheckedChange={setOn}>
   <Switch.Thumb />
-</Switch>
+</Switch>;
 ```
 
 ### RadioGroup
 
 ```tsx
-import { RadioGroup } from 'tamagui'
+import { RadioGroup } from 'tamagui';
 
 <RadioGroup value={value} onValueChange={setValue}>
   <RadioGroup.Item value="a" id="a">
@@ -95,20 +95,20 @@ import { RadioGroup } from 'tamagui'
   <RadioGroup.Item value="b" id="b">
     <RadioGroup.Indicator />
   </RadioGroup.Item>
-</RadioGroup>
+</RadioGroup>;
 ```
 
 ### Slider
 
 ```tsx
-import { Slider } from 'tamagui'
+import { Slider } from 'tamagui';
 
 <Slider value={[value]} onValueChange={([v]) => setValue(v)} max={100} step={1}>
   <Slider.Track>
     <Slider.TrackActive />
   </Slider.Track>
   <Slider.Thumb index={0} />
-</Slider>
+</Slider>;
 ```
 
 ## Overlays
@@ -116,7 +116,7 @@ import { Slider } from 'tamagui'
 ### Dialog
 
 ```tsx
-import { Dialog } from 'tamagui'
+import { Dialog } from 'tamagui';
 
 <Dialog open={open} onOpenChange={setOpen}>
   <Dialog.Trigger asChild>
@@ -132,13 +132,13 @@ import { Dialog } from 'tamagui'
       </Dialog.Close>
     </Dialog.Content>
   </Dialog.Portal>
-</Dialog>
+</Dialog>;
 ```
 
 ### Sheet
 
 ```tsx
-import { Sheet } from 'tamagui'
+import { Sheet } from 'tamagui';
 
 <Sheet open={open} onOpenChange={setOpen} snapPoints={[80]} dismissOnSnapToBottom>
   <Sheet.Overlay />
@@ -146,13 +146,13 @@ import { Sheet } from 'tamagui'
     <Sheet.Handle />
     {/* content */}
   </Sheet.Frame>
-</Sheet>
+</Sheet>;
 ```
 
 ### Popover
 
 ```tsx
-import { Popover } from 'tamagui'
+import { Popover } from 'tamagui';
 
 <Popover>
   <Popover.Trigger asChild>
@@ -162,13 +162,13 @@ import { Popover } from 'tamagui'
     <Popover.Arrow />
     {/* content */}
   </Popover.Content>
-</Popover>
+</Popover>;
 ```
 
 ### Tooltip
 
 ```tsx
-import { Tooltip } from 'tamagui'
+import { Tooltip } from 'tamagui';
 
 <Tooltip>
   <Tooltip.Trigger>
@@ -178,7 +178,7 @@ import { Tooltip } from 'tamagui'
     <Tooltip.Arrow />
     <Text>Tooltip text</Text>
   </Tooltip.Content>
-</Tooltip>
+</Tooltip>;
 ```
 
 ## Navigation
@@ -186,22 +186,26 @@ import { Tooltip } from 'tamagui'
 ### Tabs
 
 ```tsx
-import { Tabs } from 'tamagui'
+import { Tabs } from 'tamagui';
 
 <Tabs defaultValue="tab1">
   <Tabs.List>
-    <Tabs.Tab value="tab1"><Text>Tab 1</Text></Tabs.Tab>
-    <Tabs.Tab value="tab2"><Text>Tab 2</Text></Tabs.Tab>
+    <Tabs.Tab value="tab1">
+      <Text>Tab 1</Text>
+    </Tabs.Tab>
+    <Tabs.Tab value="tab2">
+      <Text>Tab 2</Text>
+    </Tabs.Tab>
   </Tabs.List>
   <Tabs.Content value="tab1">{/* content */}</Tabs.Content>
   <Tabs.Content value="tab2">{/* content */}</Tabs.Content>
-</Tabs>
+</Tabs>;
 ```
 
 ### Select
 
 ```tsx
-import { Select } from 'tamagui'
+import { Select } from 'tamagui';
 
 <Select value={value} onValueChange={setValue}>
   <Select.Trigger>
@@ -217,7 +221,7 @@ import { Select } from 'tamagui'
       </Select.Item>
     </Select.Viewport>
   </Select.Content>
-</Select>
+</Select>;
 ```
 
 ## Display
@@ -225,7 +229,7 @@ import { Select } from 'tamagui'
 ### Card
 
 ```tsx
-import { Card } from 'tamagui'
+import { Card } from 'tamagui';
 
 <Card>
   <Card.Header>
@@ -237,18 +241,18 @@ import { Card } from 'tamagui'
   <Card.Background>
     <Image src="..." />
   </Card.Background>
-</Card>
+</Card>;
 ```
 
 ### Avatar
 
 ```tsx
-import { Avatar } from 'tamagui'
+import { Avatar } from 'tamagui';
 
 <Avatar circular size="$6">
   <Avatar.Image src="..." />
   <Avatar.Fallback>AB</Avatar.Fallback>
-</Avatar>
+</Avatar>;
 ```
 
 ### Separator
@@ -272,11 +276,11 @@ import { Spinner } from 'tamagui'
 ### Progress
 
 ```tsx
-import { Progress } from 'tamagui'
+import { Progress } from 'tamagui';
 
 <Progress value={60}>
   <Progress.Indicator animation="bouncy" />
-</Progress>
+</Progress>;
 ```
 
 ## Typography
@@ -317,19 +321,17 @@ import { Spacer } from 'tamagui'
 ### ScrollView
 
 ```tsx
-import { ScrollView } from 'tamagui'
+import { ScrollView } from 'tamagui';
 
-<ScrollView>
-  {/* scrollable content */}
-</ScrollView>
+<ScrollView>{/* scrollable content */}</ScrollView>;
 ```
 
 ### Image
 
 ```tsx
-import { Image } from 'tamagui'
+import { Image } from 'tamagui';
 
-<Image source={{ uri: '...' }} width={200} height={200} />
+<Image source={{ uri: '...' }} width={200} height={200} />;
 ```
 
 ## Adapt Pattern
@@ -337,7 +339,7 @@ import { Image } from 'tamagui'
 Make components responsive to platform/screen size:
 
 ```tsx
-import { Adapt, Dialog, Sheet } from 'tamagui'
+import { Adapt, Dialog, Sheet } from 'tamagui';
 
 <Dialog>
   {/* On small touch screens, render as Sheet instead */}
@@ -350,9 +352,7 @@ import { Adapt, Dialog, Sheet } from 'tamagui'
   </Adapt>
 
   <Dialog.Portal>
-    <Dialog.Content>
-      {/* Dialog content - also used by Adapt.Contents */}
-    </Dialog.Content>
+    <Dialog.Content>{/* Dialog content - also used by Adapt.Contents */}</Dialog.Content>
   </Dialog.Portal>
-</Dialog>
+</Dialog>;
 ```

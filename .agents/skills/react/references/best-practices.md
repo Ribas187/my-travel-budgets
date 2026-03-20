@@ -348,18 +348,18 @@ function ItemList() {
 ### Zustand for Client State
 
 ```typescript
-import { create } from "zustand";
+import { create } from 'zustand';
 
 interface UIStore {
   sidebarOpen: boolean;
-  theme: "light" | "dark";
+  theme: 'light' | 'dark';
   toggleSidebar: () => void;
-  setTheme: (theme: "light" | "dark") => void;
+  setTheme: (theme: 'light' | 'dark') => void;
 }
 
 const useUIStore = create<UIStore>((set) => ({
   sidebarOpen: true,
-  theme: "light",
+  theme: 'light',
   toggleSidebar: () => set((state) => ({ sidebarOpen: !state.sidebarOpen })),
   setTheme: (theme) => set({ theme }),
 }));
@@ -376,7 +376,7 @@ function Sidebar() {
 ```typescript
 function useUser(id: string) {
   return useQuery({
-    queryKey: ["user", id],
+    queryKey: ['user', id],
     queryFn: () => fetchUser(id),
     staleTime: 5 * 60 * 1000, // 5 minutes
   });
@@ -388,7 +388,7 @@ function useMutation() {
   return useMutation({
     mutationFn: updateUser,
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["user"] });
+      queryClient.invalidateQueries({ queryKey: ['user'] });
     },
   });
 }
@@ -530,7 +530,7 @@ function useLocalStorage<T>(key: string, initialValue: T) {
 ```typescript
 function useUser(id: string) {
   const query = useQuery({
-    queryKey: ["user", id],
+    queryKey: ['user', id],
     queryFn: () => fetchUser(id),
   });
 
@@ -565,14 +565,14 @@ function useDebounce<T>(value: T, delay: number): T {
 ```typescript
 function useSearchWithFilters<T>(
   searchFn: (query: string, filters: Filters) => Promise<T[]>,
-  initialFilters: Filters
+  initialFilters: Filters,
 ) {
-  const [query, setQuery] = useState("");
+  const [query, setQuery] = useState('');
   const [filters, setFilters] = useState(initialFilters);
   const debouncedQuery = useDebounce(query, 300);
 
   const { data, isLoading, error } = useQuery({
-    queryKey: ["search", debouncedQuery, filters],
+    queryKey: ['search', debouncedQuery, filters],
     queryFn: () => searchFn(debouncedQuery, filters),
     enabled: debouncedQuery.length > 0,
   });
@@ -700,10 +700,10 @@ function handleError(error: unknown): string {
   if (error instanceof Error) {
     return error.message;
   }
-  if (typeof error === "string") {
+  if (typeof error === 'string') {
     return error;
   }
-  return "An unknown error occurred";
+  return 'An unknown error occurred';
 }
 ```
 
@@ -887,17 +887,17 @@ describe("Button", () => {
 ### Hook Testing
 
 ```typescript
-import { describe, it, expect } from "vitest";
-import { renderHook, act } from "@testing-library/react";
-import { useCounter } from "./use-counter";
+import { describe, it, expect } from 'vitest';
+import { renderHook, act } from '@testing-library/react';
+import { useCounter } from './use-counter';
 
-describe("useCounter", () => {
-  it("initializes with default value", () => {
+describe('useCounter', () => {
+  it('initializes with default value', () => {
     const { result } = renderHook(() => useCounter());
     expect(result.current.count).toBe(0);
   });
 
-  it("increments counter", () => {
+  it('increments counter', () => {
     const { result } = renderHook(() => useCounter());
     act(() => {
       result.current.increment();
@@ -905,7 +905,7 @@ describe("useCounter", () => {
     expect(result.current.count).toBe(1);
   });
 
-  it("accepts initial value", () => {
+  it('accepts initial value', () => {
     const { result } = renderHook(() => useCounter(10));
     expect(result.current.count).toBe(10);
   });
@@ -947,14 +947,14 @@ describe("useUser", () => {
 
 ### File Naming Conventions
 
-| Type | Pattern | Example |
-|------|---------|---------|
-| Components | kebab-case.tsx | `user-avatar.tsx` |
-| Hooks | use-kebab-case.ts | `use-user-data.ts` |
-| Utilities | camelCase.ts | `formatDate.ts` |
-| Types | types.ts | `types.ts` |
-| Tests | *.test.tsx | `user-avatar.test.tsx` |
-| Stories | *.stories.tsx | `user-avatar.stories.tsx` |
+| Type       | Pattern           | Example                   |
+| ---------- | ----------------- | ------------------------- |
+| Components | kebab-case.tsx    | `user-avatar.tsx`         |
+| Hooks      | use-kebab-case.ts | `use-user-data.ts`        |
+| Utilities  | camelCase.ts      | `formatDate.ts`           |
+| Types      | types.ts          | `types.ts`                |
+| Tests      | \*.test.tsx       | `user-avatar.test.tsx`    |
+| Stories    | \*.stories.tsx    | `user-avatar.stories.tsx` |
 
 ### Export Patterns
 
@@ -981,7 +981,7 @@ export type { User, UserAvatarProps } from "./types";
 ```typescript
 // BAD: Logic mixed with rendering
 function IssueList() {
-  const [query, setQuery] = useState("");
+  const [query, setQuery] = useState('');
   const [filters, setFilters] = useState({});
   const [issues, setIssues] = useState([]);
   const [loading, setLoading] = useState(false);

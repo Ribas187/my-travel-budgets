@@ -5,7 +5,7 @@
 Main configuration function:
 
 ```tsx
-import { createTamagui } from '@tamagui/core'
+import { createTamagui } from '@tamagui/core';
 
 const config = createTamagui({
   tokens,
@@ -15,9 +15,9 @@ const config = createTamagui({
   shorthands,
   animations,
   settings,
-})
+});
 
-export default config
+export default config;
 ```
 
 ## Using Pre-built Configs
@@ -26,22 +26,22 @@ For most projects, start with a pre-built config:
 
 ```tsx
 // v5 with CSS animations (web)
-import { config } from '@tamagui/config/v5-css'
+import { config } from '@tamagui/config/v5-css';
 
 // v5 with Motion animations (cross-platform)
-import { config } from '@tamagui/config/v5-motion'
+import { config } from '@tamagui/config/v5-motion';
 
 // v5 with Reanimated (best native performance)
-import { config } from '@tamagui/config/v5-reanimated'
+import { config } from '@tamagui/config/v5-reanimated';
 
 // v5 base (no animations, add your own)
-import { defaultConfig } from '@tamagui/config/v5'
-import { animations } from '@tamagui/config/v5-css'
+import { defaultConfig } from '@tamagui/config/v5';
+import { animations } from '@tamagui/config/v5-css';
 
 export default createTamagui({
   ...defaultConfig,
   animations,
-})
+});
 ```
 
 ## Tokens
@@ -89,6 +89,7 @@ tokens: {
 ```
 
 Usage:
+
 ```tsx
 <View padding="$4" borderRadius="$2" />
 ```
@@ -124,6 +125,7 @@ themes: {
 ```
 
 Usage:
+
 ```tsx
 <Theme name="dark">
   <View backgroundColor="$background" />
@@ -175,6 +177,7 @@ fonts: {
 ```
 
 Usage:
+
 ```tsx
 <Text fontFamily="$body" fontSize="$4" />
 ```
@@ -199,12 +202,9 @@ media: {
 ```
 
 Usage:
+
 ```tsx
-<View
-  padding="$4"
-  $gtSm={{ padding: '$6' }}
-  $gtMd={{ padding: '$8' }}
-/>
+<View padding="$4" $gtSm={{ padding: '$6' }} $gtMd={{ padding: '$8' }} />
 ```
 
 ## Shorthands
@@ -227,6 +227,7 @@ shorthands: {
 ```
 
 Usage:
+
 ```tsx
 <View p="$4" bg="$background" br="$2" />
 ```
@@ -268,15 +269,11 @@ export default config
 ## Provider Setup
 
 ```tsx
-import { TamaguiProvider } from 'tamagui'
-import config from './tamagui.config'
+import { TamaguiProvider } from 'tamagui';
+import config from './tamagui.config';
 
 export default function App() {
-  return (
-    <TamaguiProvider config={config}>
-      {/* app content */}
-    </TamaguiProvider>
-  )
+  return <TamaguiProvider config={config}>{/* app content */}</TamaguiProvider>;
 }
 ```
 

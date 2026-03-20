@@ -27,23 +27,23 @@ This skill provides comprehensive guidelines, patterns, and best practices for R
 
 ### State Management Hierarchy
 
-| Priority | Tool | Use Case |
-|----------|------|----------|
-| 1 | `useState`/`useReducer` | Component-specific UI state |
-| 2 | Zustand | Shared client state across components |
-| 3 | TanStack Query | Server state and data synchronization |
-| 4 | URL state | Shareable application state (TanStack Router) |
+| Priority | Tool                    | Use Case                                      |
+| -------- | ----------------------- | --------------------------------------------- |
+| 1        | `useState`/`useReducer` | Component-specific UI state                   |
+| 2        | Zustand                 | Shared client state across components         |
+| 3        | TanStack Query          | Server state and data synchronization         |
+| 4        | URL state               | Shareable application state (TanStack Router) |
 
 ### useEffect Decision Tree
 
-| Situation | DON'T | DO |
-|-----------|-------|-----|
-| Derived state from props/state | `useState` + `useEffect` | Calculate during render |
-| Expensive calculations | `useEffect` to cache | `useMemo` |
-| Reset state on prop change | `useEffect` with `setState` | `key` prop |
-| User event responses | `useEffect` watching state | Event handler directly |
-| Notify parent of changes | `useEffect` calling `onChange` | Call in event handler |
-| Fetch data | `useEffect` without cleanup | `useEffect` with cleanup OR TanStack Query |
+| Situation                      | DON'T                          | DO                                         |
+| ------------------------------ | ------------------------------ | ------------------------------------------ |
+| Derived state from props/state | `useState` + `useEffect`       | Calculate during render                    |
+| Expensive calculations         | `useEffect` to cache           | `useMemo`                                  |
+| Reset state on prop change     | `useEffect` with `setState`    | `key` prop                                 |
+| User event responses           | `useEffect` watching state     | Event handler directly                     |
+| Notify parent of changes       | `useEffect` calling `onChange` | Call in event handler                      |
+| Fetch data                     | `useEffect` without cleanup    | `useEffect` with cleanup OR TanStack Query |
 
 ### When You DO Need Effects
 
@@ -95,7 +95,7 @@ function useToggle(initial = false) {
 
 // Complex hook returns object
 function useUser(id: string) {
-  const query = useQuery({ queryKey: ["user", id], queryFn: () => fetchUser(id) });
+  const query = useQuery({ queryKey: ['user', id], queryFn: () => fetchUser(id) });
   return {
     user: query.data,
     isLoading: query.isLoading,
@@ -142,13 +142,13 @@ function IssueList({ projectId }: { projectId: string }) {
 
 ## File Naming Conventions
 
-| Type | Pattern | Example |
-|------|---------|---------|
-| Components | kebab-case.tsx | `user-avatar.tsx` |
-| Hooks | use-kebab-case.ts | `use-user-data.ts` |
-| Utilities | camelCase.ts | `formatDate.ts` |
-| Types | types.ts | `types.ts` |
-| Tests | *.test.tsx | `user-avatar.test.tsx` |
+| Type       | Pattern           | Example                |
+| ---------- | ----------------- | ---------------------- |
+| Components | kebab-case.tsx    | `user-avatar.tsx`      |
+| Hooks      | use-kebab-case.ts | `use-user-data.ts`     |
+| Utilities  | camelCase.ts      | `formatDate.ts`        |
+| Types      | types.ts          | `types.ts`             |
+| Tests      | \*.test.tsx       | `user-avatar.test.tsx` |
 
 ## Testing with Vitest
 

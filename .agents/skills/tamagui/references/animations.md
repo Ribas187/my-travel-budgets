@@ -4,19 +4,19 @@
 
 Tamagui supports multiple animation drivers. Choose based on your platform:
 
-| Driver | Package | Best For |
-|--------|---------|----------|
-| CSS | `@tamagui/animations-css` | Web-only apps, smallest bundle |
-| React Native | `@tamagui/animations-react-native` | Native apps, basic animations |
-| Reanimated | `@tamagui/animations-reanimated` | Native apps, best performance |
-| Motion | `@tamagui/animations-motion` | Cross-platform spring physics |
+| Driver       | Package                            | Best For                       |
+| ------------ | ---------------------------------- | ------------------------------ |
+| CSS          | `@tamagui/animations-css`          | Web-only apps, smallest bundle |
+| React Native | `@tamagui/animations-react-native` | Native apps, basic animations  |
+| Reanimated   | `@tamagui/animations-reanimated`   | Native apps, best performance  |
+| Motion       | `@tamagui/animations-motion`       | Cross-platform spring physics  |
 
 ## Configuration
 
 ```tsx
 // v5 config - import driver separately
-import { defaultConfig } from '@tamagui/config/v5'
-import { animations } from '@tamagui/config/v5-css'
+import { defaultConfig } from '@tamagui/config/v5';
+import { animations } from '@tamagui/config/v5-css';
 // or: '@tamagui/config/v5-motion'
 // or: '@tamagui/config/v5-rn'
 // or: '@tamagui/config/v5-reanimated'
@@ -24,7 +24,7 @@ import { animations } from '@tamagui/config/v5-css'
 export const config = createTamagui({
   ...defaultConfig,
   animations,
-})
+});
 ```
 
 ## Defining Animations
@@ -34,14 +34,14 @@ export const config = createTamagui({
 Uses CSS transition strings:
 
 ```tsx
-import { createAnimations } from '@tamagui/animations-css'
+import { createAnimations } from '@tamagui/animations-css';
 
 const animations = createAnimations({
   fast: 'ease-in 150ms',
   medium: 'ease-in-out 300ms',
   slow: 'ease-out 500ms',
   bouncy: 'cubic-bezier(0.68, -0.55, 0.265, 1.55) 400ms',
-})
+});
 ```
 
 ### Spring-Based Drivers (RN, Reanimated, Motion)
@@ -49,7 +49,7 @@ const animations = createAnimations({
 Use spring physics config:
 
 ```tsx
-import { createAnimations } from '@tamagui/animations-react-native'
+import { createAnimations } from '@tamagui/animations-react-native';
 
 const animations = createAnimations({
   fast: {
@@ -68,7 +68,7 @@ const animations = createAnimations({
     mass: 0.8,
     stiffness: 100,
   },
-})
+});
 ```
 
 ## Using Animations
@@ -76,11 +76,7 @@ const animations = createAnimations({
 ### Basic Animation
 
 ```tsx
-<View
-  animation="medium"
-  opacity={isVisible ? 1 : 0}
-  y={isVisible ? 0 : 10}
-/>
+<View animation="medium" opacity={isVisible ? 1 : 0} y={isVisible ? 0 : 10} />
 ```
 
 ### Enter/Exit Styles
@@ -109,19 +105,19 @@ const animations = createAnimations({
 Exit animations only work inside `AnimatePresence`:
 
 ```tsx
-import { AnimatePresence } from 'tamagui'
+import { AnimatePresence } from 'tamagui';
 
 <AnimatePresence>
   {show && (
     <View
-      key="unique-key"  // key is required
+      key="unique-key" // key is required
       animation="medium"
       enterStyle={{ opacity: 0 }}
       exitStyle={{ opacity: 0 }}
       opacity={1}
     />
   )}
-</AnimatePresence>
+</AnimatePresence>;
 ```
 
 ### Per-Property Animation
@@ -145,6 +141,7 @@ Override animation for specific properties:
 ## Animatable Properties
 
 Common animatable style properties:
+
 - `opacity`
 - `x`, `y` (translateX/Y)
 - `scale`, `scaleX`, `scaleY`
@@ -200,33 +197,19 @@ const AnimatedCard = styled(View, {
 ### Fade In
 
 ```tsx
-<View
-  animation="medium"
-  enterStyle={{ opacity: 0 }}
-  opacity={1}
-/>
+<View animation="medium" enterStyle={{ opacity: 0 }} opacity={1} />
 ```
 
 ### Slide Up
 
 ```tsx
-<View
-  animation="fast"
-  enterStyle={{ opacity: 0, y: 20 }}
-  opacity={1}
-  y={0}
-/>
+<View animation="fast" enterStyle={{ opacity: 0, y: 20 }} opacity={1} y={0} />
 ```
 
 ### Scale In
 
 ```tsx
-<View
-  animation="bouncy"
-  enterStyle={{ opacity: 0, scale: 0.8 }}
-  opacity={1}
-  scale={1}
-/>
+<View animation="bouncy" enterStyle={{ opacity: 0, scale: 0.8 }} opacity={1} scale={1} />
 ```
 
 ### Modal Overlay

@@ -15,14 +15,14 @@ Effects are an **escape hatch** from React. They let you synchronize with extern
 
 ## Quick Reference
 
-| Situation | DON'T | DO |
-|-----------|-------|-----|
-| Derived state from props/state | `useState` + `useEffect` | Calculate during render |
-| Expensive calculations | `useEffect` to cache | `useMemo` |
-| Reset state on prop change | `useEffect` with `setState` | `key` prop |
-| User event responses | `useEffect` watching state | Event handler directly |
-| Notify parent of changes | `useEffect` calling `onChange` | Call in event handler |
-| Fetch data | `useEffect` without cleanup | `useEffect` with cleanup OR framework |
+| Situation                      | DON'T                          | DO                                    |
+| ------------------------------ | ------------------------------ | ------------------------------------- |
+| Derived state from props/state | `useState` + `useEffect`       | Calculate during render               |
+| Expensive calculations         | `useEffect` to cache           | `useMemo`                             |
+| Reset state on prop change     | `useEffect` with `setState`    | `key` prop                            |
+| User event responses           | `useEffect` watching state     | Event handler directly                |
+| Notify parent of changes       | `useEffect` calling `onChange` | Call in event handler                 |
+| Fetch data                     | `useEffect` without cleanup    | `useEffect` with cleanup OR framework |
 
 ---
 
@@ -68,20 +68,20 @@ Need to respond to something?
 ```tsx
 // BAD: Extra state + Effect for derived value
 function Form() {
-  const [firstName, setFirstName] = useState("Taylor");
-  const [lastName, setLastName] = useState("Swift");
-  const [fullName, setFullName] = useState("");
+  const [firstName, setFirstName] = useState('Taylor');
+  const [lastName, setLastName] = useState('Swift');
+  const [fullName, setFullName] = useState('');
 
   useEffect(() => {
-    setFullName(firstName + " " + lastName);
+    setFullName(firstName + ' ' + lastName);
   }, [firstName, lastName]);
 }
 
 // GOOD: Calculate during rendering
 function Form() {
-  const [firstName, setFirstName] = useState("Taylor");
-  const [lastName, setLastName] = useState("Swift");
-  const fullName = firstName + " " + lastName; // Just compute it
+  const [firstName, setFirstName] = useState('Taylor');
+  const [lastName, setLastName] = useState('Swift');
+  const fullName = firstName + ' ' + lastName; // Just compute it
 }
 ```
 
@@ -114,10 +114,10 @@ function TodoList({ todos, filter }) {
 ```tsx
 // BAD: Effect to reset state
 function ProfilePage({ userId }) {
-  const [comment, setComment] = useState("");
+  const [comment, setComment] = useState('');
 
   useEffect(() => {
-    setComment("");
+    setComment('');
   }, [userId]);
 }
 
@@ -127,7 +127,7 @@ function ProfilePage({ userId }) {
 }
 
 function Profile({ userId }) {
-  const [comment, setComment] = useState(""); // Resets automatically
+  const [comment, setComment] = useState(''); // Resets automatically
 }
 ```
 
@@ -175,12 +175,12 @@ function Game() {
   const [isGameOver, setIsGameOver] = useState(false);
 
   useEffect(() => {
-    if (card?.gold) setGoldCardCount(c => c + 1);
+    if (card?.gold) setGoldCardCount((c) => c + 1);
   }, [card]);
 
   useEffect(() => {
     if (goldCardCount > 3) {
-      setRound(r => r + 1);
+      setRound((r) => r + 1);
       setGoldCardCount(0);
     }
   }, [goldCardCount]);
@@ -198,7 +198,7 @@ function Game() {
   const isGameOver = round > 5; // Derived!
 
   function handlePlaceCard(nextCard) {
-    if (isGameOver) throw Error("Game ended");
+    if (isGameOver) throw Error('Game ended');
 
     setCard(nextCard);
     if (nextCard.gold) {
@@ -207,7 +207,7 @@ function Game() {
       } else {
         setGoldCardCount(0);
         setRound(round + 1);
-        if (round === 5) alert("Good game!");
+        if (round === 5) alert('Good game!');
       }
     }
   }
@@ -294,7 +294,7 @@ function SearchResults({ query }) {
   const [results, setResults] = useState([]);
 
   useEffect(() => {
-    fetchResults(query).then(json => {
+    fetchResults(query).then((json) => {
       setResults(json); // "hello" response may arrive after "hell"
     });
   }, [query]);
@@ -307,7 +307,7 @@ function SearchResults({ query }) {
   useEffect(() => {
     let ignore = false;
 
-    fetchResults(query).then(json => {
+    fetchResults(query).then((json) => {
       if (!ignore) setResults(json);
     });
 
@@ -345,7 +345,7 @@ function App() {
 }
 
 // ALSO GOOD: Module-level execution
-if (typeof window !== "undefined") {
+if (typeof window !== 'undefined') {
   checkAuthToken();
   loadDataFromLocalStorage();
 }
@@ -361,11 +361,11 @@ For values derived from props or state, just compute them:
 
 ```tsx
 function Form() {
-  const [firstName, setFirstName] = useState("Taylor");
-  const [lastName, setLastName] = useState("Swift");
+  const [firstName, setFirstName] = useState('Taylor');
+  const [lastName, setLastName] = useState('Swift');
 
   // Runs every render - that's fine and intentional
-  const fullName = firstName + " " + lastName;
+  const fullName = firstName + ' ' + lastName;
   const isValid = firstName.length > 0 && lastName.length > 0;
 }
 ```
@@ -379,7 +379,7 @@ function Form() {
 When computation is expensive, memoize it:
 
 ```tsx
-import { useMemo } from "react";
+import { useMemo } from 'react';
 
 function TodoList({ todos, filter }) {
   const visibleTodos = useMemo(() => getFilteredTodos(todos, filter), [todos, filter]);
@@ -389,9 +389,9 @@ function TodoList({ todos, filter }) {
 **How to know if it's expensive**:
 
 ```tsx
-console.time("filter");
+console.time('filter');
 const visibleTodos = getFilteredTodos(todos, filter);
-console.timeEnd("filter");
+console.timeEnd('filter');
 // If > 1ms, consider memoizing
 ```
 
@@ -416,7 +416,7 @@ function ProfilePage({ userId }) {
 
 function Profile({ userId }) {
   // All state here resets when userId changes
-  const [comment, setComment] = useState("");
+  const [comment, setComment] = useState('');
   const [likes, setLikes] = useState([]);
 }
 ```
@@ -444,7 +444,7 @@ function List({ items }) {
   const [selectedId, setSelectedId] = useState(null);
 
   // Derived - no Effect needed
-  const selection = items.find(item => item.id === selectedId) ?? null;
+  const selection = items.find((item) => item.id === selectedId) ?? null;
 }
 ```
 
@@ -462,13 +462,13 @@ function ProductPage({ product, addToCart }) {
   function handleBuyClick() {
     addToCart(product);
     showNotification(`Added ${product.name}!`);
-    analytics.track("product_added", { id: product.id });
+    analytics.track('product_added', { id: product.id });
   }
 
   function handleCheckoutClick() {
     addToCart(product);
     showNotification(`Added ${product.name}!`);
-    navigateTo("/checkout");
+    navigateTo('/checkout');
   }
 }
 ```
@@ -486,7 +486,7 @@ function handleBuyClick() {
 }
 function handleCheckoutClick() {
   buyProduct();
-  navigateTo("/checkout");
+  navigateTo('/checkout');
 }
 ```
 
@@ -505,11 +505,11 @@ function useOnlineStatus() {
     function update() {
       setIsOnline(navigator.onLine);
     }
-    window.addEventListener("online", update);
-    window.addEventListener("offline", update);
+    window.addEventListener('online', update);
+    window.addEventListener('offline', update);
     return () => {
-      window.removeEventListener("online", update);
-      window.removeEventListener("offline", update);
+      window.removeEventListener('online', update);
+      window.removeEventListener('offline', update);
     };
   }, []);
 
@@ -517,14 +517,14 @@ function useOnlineStatus() {
 }
 
 // Use purpose-built hook
-import { useSyncExternalStore } from "react";
+import { useSyncExternalStore } from 'react';
 
 function subscribe(callback) {
-  window.addEventListener("online", callback);
-  window.addEventListener("offline", callback);
+  window.addEventListener('online', callback);
+  window.addEventListener('offline', callback);
   return () => {
-    window.removeEventListener("online", callback);
-    window.removeEventListener("offline", callback);
+    window.removeEventListener('online', callback);
+    window.removeEventListener('offline', callback);
   };
 }
 
@@ -532,7 +532,7 @@ function useOnlineStatus() {
   return useSyncExternalStore(
     subscribe,
     () => navigator.onLine, // Client value
-    () => true // Server value (SSR)
+    () => true, // Server value (SSR)
   );
 }
 ```
@@ -546,7 +546,7 @@ When two components need synchronized state, lift it to common ancestor:
 ```tsx
 // Instead of syncing via Effects between siblings
 function Parent() {
-  const [value, setValue] = useState("");
+  const [value, setValue] = useState('');
 
   return (
     <>
@@ -574,14 +574,14 @@ function useData(url) {
     setLoading(true);
 
     fetch(url)
-      .then(res => res.json())
-      .then(json => {
+      .then((res) => res.json())
+      .then((json) => {
         if (!ignore) {
           setData(json);
           setError(null);
         }
       })
-      .catch(err => {
+      .catch((err) => {
         if (!ignore) setError(err);
       })
       .finally(() => {
@@ -608,13 +608,13 @@ function SearchResults({ query }) {
 
 ## Summary: When to Use What
 
-| Need | Solution |
-|------|----------|
-| Value from props/state | Calculate during render |
-| Expensive calculation | `useMemo` |
-| Reset all state on prop change | `key` prop |
-| Respond to user action | Event handler |
-| Sync with external system | `useEffect` with cleanup |
-| Subscribe to external store | `useSyncExternalStore` |
-| Share state between components | Lift state up |
-| Fetch data | Custom hook with cleanup / TanStack Query |
+| Need                           | Solution                                  |
+| ------------------------------ | ----------------------------------------- |
+| Value from props/state         | Calculate during render                   |
+| Expensive calculation          | `useMemo`                                 |
+| Reset all state on prop change | `key` prop                                |
+| Respond to user action         | Event handler                             |
+| Sync with external system      | `useEffect` with cleanup                  |
+| Subscribe to external store    | `useSyncExternalStore`                    |
+| Share state between components | Lift state up                             |
+| Fetch data                     | Custom hook with cleanup / TanStack Query |

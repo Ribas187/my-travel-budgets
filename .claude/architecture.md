@@ -30,15 +30,15 @@ packages/api-client/ → Typed API client for web & mobile
 
 ### New Code Placement
 
-| What | Where |
-|------|-------|
-| Zod schema / shared type | `packages/core/src/` |
-| Reusable UI component | `packages/ui/src/` |
-| API endpoint type / client method | `packages/api-client/src/` |
-| NestJS module / controller / service | `apps/api/src/` |
-| Web-only screen or page | `apps/web/src/` |
-| Mobile-only screen | `apps/mobile/src/` |
-| Translation strings | `packages/core/src/i18n/{locale}.json` |
+| What                                 | Where                                  |
+| ------------------------------------ | -------------------------------------- |
+| Zod schema / shared type             | `packages/core/src/`                   |
+| Reusable UI component                | `packages/ui/src/`                     |
+| API endpoint type / client method    | `packages/api-client/src/`             |
+| NestJS module / controller / service | `apps/api/src/`                        |
+| Web-only screen or page              | `apps/web/src/`                        |
+| Mobile-only screen                   | `apps/mobile/src/`                     |
+| Translation strings                  | `packages/core/src/i18n/{locale}.json` |
 
 ### NestJS Backend Patterns
 

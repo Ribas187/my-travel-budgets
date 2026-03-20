@@ -9,17 +9,17 @@
 
 ## Naming
 
-| Thing | Convention | Example |
-|-------|-----------|---------|
-| Files (components) | PascalCase | `TravelCard.tsx` |
-| Files (utilities) | camelCase | `formatCurrency.ts` |
-| Files (NestJS) | kebab-case with suffix | `travels.controller.ts` |
-| React components | PascalCase | `ExpenseList` |
-| Functions / variables | camelCase | `getTravelById` |
-| Constants | UPPER_SNAKE_CASE | `MAX_BUDGET_LIMIT` |
-| Database fields | camelCase | Prisma default |
-| API routes | kebab-case | `/travels/:id/magic-link` |
-| Translation keys | dot.notation | `travel.create.title` |
+| Thing                 | Convention             | Example                   |
+| --------------------- | ---------------------- | ------------------------- |
+| Files (components)    | PascalCase             | `TravelCard.tsx`          |
+| Files (utilities)     | camelCase              | `formatCurrency.ts`       |
+| Files (NestJS)        | kebab-case with suffix | `travels.controller.ts`   |
+| React components      | PascalCase             | `ExpenseList`             |
+| Functions / variables | camelCase              | `getTravelById`           |
+| Constants             | UPPER_SNAKE_CASE       | `MAX_BUDGET_LIMIT`        |
+| Database fields       | camelCase              | Prisma default            |
+| API routes            | kebab-case             | `/travels/:id/magic-link` |
+| Translation keys      | dot.notation           | `travel.create.title`     |
 
 ## Imports
 

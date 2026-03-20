@@ -1,6 +1,6 @@
 ---
 name: landing-page-design
-description: "Landing page conversion optimization with layout rules, hero section design, and CTA psychology. Covers above-the-fold formula, social proof placement, mobile design, and F-pattern reading. Use for: startup landing pages, product pages, SaaS marketing, conversion optimization. Triggers: landing page, hero section, above the fold, conversion optimization, landing page design, cta button, hero image, landing page layout, saas landing page, product page design, conversion rate, landing page best practices"
+description: 'Landing page conversion optimization with layout rules, hero section design, and CTA psychology. Covers above-the-fold formula, social proof placement, mobile design, and F-pattern reading. Use for: startup landing pages, product pages, SaaS marketing, conversion optimization. Triggers: landing page, hero section, above the fold, conversion optimization, landing page design, cta button, hero image, landing page layout, saas landing page, product page design, conversion rate, landing page best practices'
 allowed-tools: Bash(infsh *)
 ---
 
@@ -28,7 +28,6 @@ infsh app run tavily/search-assistant --input '{
 }'
 ```
 
-
 ## Above-the-Fold Formula
 
 Everything visible before scrolling must communicate value in 5 seconds.
@@ -51,25 +50,25 @@ Everything visible before scrolling must communicate value in 5 seconds.
 
 ### The 5 Elements
 
-| Element | Rule | Example |
-|---------|------|---------|
-| **Headline** | 6-12 words, states the outcome | "Ship docs in minutes, not days" |
-| **Subheadline** | 15-25 words, expands on how | "AI-powered documentation that writes itself from your codebase. No templates needed." |
-| **Hero image** | Shows the OUTCOME, not the product | Person looking satisfied at results, not a screenshot of your UI |
-| **Primary CTA** | Action verb + value | "Start Free Trial" not "Submit" or "Learn More" |
-| **Social proof** | Logos, count, or micro-testimonial | "Trusted by 10,000+ teams at [logos]" |
+| Element          | Rule                               | Example                                                                                |
+| ---------------- | ---------------------------------- | -------------------------------------------------------------------------------------- |
+| **Headline**     | 6-12 words, states the outcome     | "Ship docs in minutes, not days"                                                       |
+| **Subheadline**  | 15-25 words, expands on how        | "AI-powered documentation that writes itself from your codebase. No templates needed." |
+| **Hero image**   | Shows the OUTCOME, not the product | Person looking satisfied at results, not a screenshot of your UI                       |
+| **Primary CTA**  | Action verb + value                | "Start Free Trial" not "Submit" or "Learn More"                                        |
+| **Social proof** | Logos, count, or micro-testimonial | "Trusted by 10,000+ teams at [logos]"                                                  |
 
 ## Headlines
 
 ### Formulas That Convert
 
-| Formula | Example |
-|---------|---------|
-| [Outcome] without [pain] | "Beautiful docs without the design skills" |
-| [Outcome] in [timeframe] | "Launch your site in 5 minutes" |
-| The [better way] to [common task] | "The faster way to build APIs" |
-| Stop [pain]. Start [outcome]. | "Stop guessing. Start knowing." |
-| [Number] [things] to [outcome] | "One tool to manage all your data" |
+| Formula                           | Example                                    |
+| --------------------------------- | ------------------------------------------ |
+| [Outcome] without [pain]          | "Beautiful docs without the design skills" |
+| [Outcome] in [timeframe]          | "Launch your site in 5 minutes"            |
+| The [better way] to [common task] | "The faster way to build APIs"             |
+| Stop [pain]. Start [outcome].     | "Stop guessing. Start knowing."            |
+| [Number] [things] to [outcome]    | "One tool to manage all your data"         |
 
 ### What Makes Headlines Fail
 
@@ -117,52 +116,52 @@ infsh app run bytedance/seedream-4-5 --input '{
 
 ### Text
 
-| Good CTAs | Bad CTAs |
-|-----------|----------|
-| "Start Free Trial" | "Submit" |
-| "Get Started Free" | "Click Here" |
-| "See It in Action" | "Learn More" (low commitment) |
-| "Create Your First Report" | "Sign Up" (vague) |
-| "Try Free for 14 Days" | "Register" |
+| Good CTAs                  | Bad CTAs                      |
+| -------------------------- | ----------------------------- |
+| "Start Free Trial"         | "Submit"                      |
+| "Get Started Free"         | "Click Here"                  |
+| "See It in Action"         | "Learn More" (low commitment) |
+| "Create Your First Report" | "Sign Up" (vague)             |
+| "Try Free for 14 Days"     | "Register"                    |
 
 **Formula:** Action verb + value/outcome + (optional: reduce risk)
 
 ### Design
 
-| Element | Rule |
-|---------|------|
-| Color | High contrast with background — must be the most visible element |
-| Size | Minimum 44px height (tap target), wide enough for text + padding |
-| Position | Above the fold, repeated after each major section |
-| Whitespace | Generous padding around button, don't crowd it |
-| Secondary CTA | If needed, use text link below ("or watch a demo") |
+| Element       | Rule                                                             |
+| ------------- | ---------------------------------------------------------------- |
+| Color         | High contrast with background — must be the most visible element |
+| Size          | Minimum 44px height (tap target), wide enough for text + padding |
+| Position      | Above the fold, repeated after each major section                |
+| Whitespace    | Generous padding around button, don't crowd it                   |
+| Secondary CTA | If needed, use text link below ("or watch a demo")               |
 
 ## Section Order
 
 The proven sequence for landing pages:
 
-| Section | Purpose | Key Element |
-|---------|---------|-------------|
-| 1. **Hero** | Core value, primary CTA | Headline + image + CTA |
-| 2. **Social Proof** | Build trust | Logos, numbers, badges |
-| 3. **Problem** | Create empathy | Pain point they recognize |
-| 4. **Solution/Features** | Show how you solve it | 3 key features with visuals |
-| 5. **How It Works** | Reduce complexity | 3 steps: sign up, configure, benefit |
-| 6. **Testimonials** | Prove it works | 2-3 specific customer quotes |
-| 7. **Pricing** | Enable decision | Clear tiers, highlight recommended |
-| 8. **FAQ** | Handle objections | 5-7 common questions |
-| 9. **Final CTA** | Capture remainders | Repeat primary CTA with urgency |
+| Section                  | Purpose                 | Key Element                          |
+| ------------------------ | ----------------------- | ------------------------------------ |
+| 1. **Hero**              | Core value, primary CTA | Headline + image + CTA               |
+| 2. **Social Proof**      | Build trust             | Logos, numbers, badges               |
+| 3. **Problem**           | Create empathy          | Pain point they recognize            |
+| 4. **Solution/Features** | Show how you solve it   | 3 key features with visuals          |
+| 5. **How It Works**      | Reduce complexity       | 3 steps: sign up, configure, benefit |
+| 6. **Testimonials**      | Prove it works          | 2-3 specific customer quotes         |
+| 7. **Pricing**           | Enable decision         | Clear tiers, highlight recommended   |
+| 8. **FAQ**               | Handle objections       | 5-7 common questions                 |
+| 9. **Final CTA**         | Capture remainders      | Repeat primary CTA with urgency      |
 
 ## Social Proof Types
 
-| Type | Impact | Placement |
-|------|--------|-----------|
-| **Company logos** | Fastest to process, high trust | Below hero |
-| **User count** | Scale signal | Hero or social proof bar |
-| **Star rating** | Product quality | Near CTA |
-| **Testimonials** | Detailed credibility | Dedicated section |
-| **Case study stats** | Specific proof | Feature sections |
-| **Trust badges** | Security/compliance | Near forms, pricing, footer |
+| Type                 | Impact                         | Placement                   |
+| -------------------- | ------------------------------ | --------------------------- |
+| **Company logos**    | Fastest to process, high trust | Below hero                  |
+| **User count**       | Scale signal                   | Hero or social proof bar    |
+| **Star rating**      | Product quality                | Near CTA                    |
+| **Testimonials**     | Detailed credibility           | Dedicated section           |
+| **Case study stats** | Specific proof                 | Feature sections            |
+| **Trust badges**     | Security/compliance            | Near forms, pricing, footer |
 
 ```bash
 # Research for social proof stats
@@ -173,26 +172,26 @@ infsh app run exa/answer --input '{
 
 ## Form Design
 
-| Rule | Impact |
-|------|--------|
-| Every field reduces conversion ~11% | Minimize fields |
-| Name + Email = maximum for signups | Don't ask for phone, company, role |
-| Single-column layout | Don't use multi-column forms |
-| Inline validation | Show errors immediately, not on submit |
-| Clear error messages | "Email is required" not "Error in field 3" |
-| Submit button text = action | "Create Account" not "Submit" |
+| Rule                                | Impact                                     |
+| ----------------------------------- | ------------------------------------------ |
+| Every field reduces conversion ~11% | Minimize fields                            |
+| Name + Email = maximum for signups  | Don't ask for phone, company, role         |
+| Single-column layout                | Don't use multi-column forms               |
+| Inline validation                   | Show errors immediately, not on submit     |
+| Clear error messages                | "Email is required" not "Error in field 3" |
+| Submit button text = action         | "Create Account" not "Submit"              |
 
 ## Mobile Optimization
 
-| Rule | Why |
-|------|-----|
-| CTA button full width | Easy to tap with thumbs |
-| Sticky CTA on scroll | Always accessible |
-| No horizontal scrolling | Breaks mobile layout |
-| Font minimum 16px | iOS zooms inputs below 16px |
-| Tap targets minimum 48x48px | Apple HIG, Google Material |
-| Images responsive | Don't overflow viewport |
-| Prioritize headline + CTA | Simplify above-the-fold |
+| Rule                        | Why                         |
+| --------------------------- | --------------------------- |
+| CTA button full width       | Easy to tap with thumbs     |
+| Sticky CTA on scroll        | Always accessible           |
+| No horizontal scrolling     | Breaks mobile layout        |
+| Font minimum 16px           | iOS zooms inputs below 16px |
+| Tap targets minimum 48x48px | Apple HIG, Google Material  |
+| Images responsive           | Don't overflow viewport     |
+| Prioritize headline + CTA   | Simplify above-the-fold     |
 
 ## OG Image for Sharing
 
@@ -212,26 +211,26 @@ infsh app run infsh/html-to-image --input '{
 
 ## Page Speed
 
-| Rule | Target | Why |
-|------|--------|-----|
-| Hero image | < 200 KB | First thing to load |
-| Total page weight | < 2 MB | Mobile data, patience |
-| Lazy load below-fold | Always | Only load what's visible |
-| Minimize JavaScript | < 200 KB | Blocks rendering |
-| LCP (Largest Contentful Paint) | < 2.5s | Google Core Web Vitals |
+| Rule                           | Target   | Why                      |
+| ------------------------------ | -------- | ------------------------ |
+| Hero image                     | < 200 KB | First thing to load      |
+| Total page weight              | < 2 MB   | Mobile data, patience    |
+| Lazy load below-fold           | Always   | Only load what's visible |
+| Minimize JavaScript            | < 200 KB | Blocks rendering         |
+| LCP (Largest Contentful Paint) | < 2.5s   | Google Core Web Vitals   |
 
 ## Common Mistakes
 
-| Mistake | Problem | Fix |
-|---------|---------|-----|
-| No clear headline | Visitor doesn't know what you do | 6-12 words, outcome-focused |
-| CTA says "Learn More" | Too low commitment | Action verb + specific value |
-| Hero is a product screenshot | Hard to parse, boring | Show the outcome, use lifestyle imagery |
-| Multiple competing CTAs | Decision paralysis | One primary CTA, one secondary max |
-| No social proof | No trust signal | Add logos, counts, or testimonials |
-| Too many form fields | Conversion drops ~11% per field | Name + email maximum |
-| Desktop-only design | 60%+ traffic is mobile | Design mobile-first |
-| No urgency in final CTA | Visitors leave and forget | "Start your free 14-day trial" |
+| Mistake                      | Problem                          | Fix                                     |
+| ---------------------------- | -------------------------------- | --------------------------------------- |
+| No clear headline            | Visitor doesn't know what you do | 6-12 words, outcome-focused             |
+| CTA says "Learn More"        | Too low commitment               | Action verb + specific value            |
+| Hero is a product screenshot | Hard to parse, boring            | Show the outcome, use lifestyle imagery |
+| Multiple competing CTAs      | Decision paralysis               | One primary CTA, one secondary max      |
+| No social proof              | No trust signal                  | Add logos, counts, or testimonials      |
+| Too many form fields         | Conversion drops ~11% per field  | Name + email maximum                    |
+| Desktop-only design          | 60%+ traffic is mobile           | Design mobile-first                     |
+| No urgency in final CTA      | Visitors leave and forget        | "Start your free 14-day trial"          |
 
 ## Related Skills
 
@@ -242,4 +241,3 @@ npx skills add inference-sh/skills@prompt-engineering
 ```
 
 Browse all apps: `infsh app list`
-

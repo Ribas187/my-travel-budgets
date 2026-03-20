@@ -21,6 +21,7 @@ npx tamagui generate-prompt
 ```
 
 This outputs `tamagui-prompt.md` with the project's specific:
+
 - Design tokens (space, size, radius, color, zIndex)
 - Theme names and hierarchy
 - Available components
@@ -69,6 +70,7 @@ const Card = styled(View, {
 ```
 
 **Key rules:**
+
 - Always use `as const` on variants objects
 - Tokens use `$` prefix: `$4`, `$background`, `$color11`
 - Prop order matters - later props override earlier ones
@@ -77,7 +79,7 @@ const Card = styled(View, {
 ### Stack Components
 
 ```tsx
-import { XStack, YStack, ZStack } from 'tamagui'
+import { XStack, YStack, ZStack } from 'tamagui';
 
 // XStack = flexDirection: 'row'
 // YStack = flexDirection: 'column'
@@ -88,7 +90,7 @@ import { XStack, YStack, ZStack } from 'tamagui'
     <Text>Label</Text>
     <Button>Action</Button>
   </XStack>
-</YStack>
+</YStack>;
 ```
 
 ### Themes
@@ -96,7 +98,7 @@ import { XStack, YStack, ZStack } from 'tamagui'
 Themes nest and combine hierarchically:
 
 ```tsx
-import { Theme } from 'tamagui'
+import { Theme } from 'tamagui';
 
 // base theme
 <Theme name="dark">
@@ -105,15 +107,16 @@ import { Theme } from 'tamagui'
     {/* uses dark_blue theme */}
     <Button>Blue button on dark</Button>
   </Theme>
-</Theme>
+</Theme>;
 
 // access theme values
-const theme = useTheme()
-console.log(theme.background.val)  // actual color value
-console.log(theme.color11.val)     // high contrast text
+const theme = useTheme();
+console.log(theme.background.val); // actual color value
+console.log(theme.color11.val); // high contrast text
 ```
 
 **12-step color scale convention:**
+
 - `$color1-4`: backgrounds (subtle to emphasized)
 - `$color5-6`: borders, separators
 - `$color7-8`: hover/active states
@@ -127,14 +130,14 @@ Use media query props (check your `tamagui-prompt.md` for actual breakpoint name
 ```tsx
 <YStack
   padding="$4"
-  $gtSm={{ padding: '$6' }}   // check your config for actual names
+  $gtSm={{ padding: '$6' }} // check your config for actual names
   $gtMd={{ padding: '$8' }}
   flexDirection="column"
   $gtLg={{ flexDirection: 'row' }}
-/>
+/>;
 
 // or with hook
-const media = useMedia()
+const media = useMedia();
 if (media.gtMd) {
   // render for medium+ screens
 }
@@ -143,12 +146,12 @@ if (media.gtMd) {
 ### Animations
 
 ```tsx
-import { AnimatePresence } from 'tamagui'
+import { AnimatePresence } from 'tamagui';
 
 <AnimatePresence>
   {show && (
     <YStack
-      key="modal"  // key required for exit animations
+      key="modal" // key required for exit animations
       animation="quick"
       enterStyle={{ opacity: 0, y: -20 }}
       exitStyle={{ opacity: 0, y: 20 }}
@@ -156,10 +159,11 @@ import { AnimatePresence } from 'tamagui'
       y={0}
     />
   )}
-</AnimatePresence>
+</AnimatePresence>;
 ```
 
 **Animation drivers:**
+
 - `@tamagui/animations-css` - web only, CSS transitions
 - `@tamagui/animations-react-native` - native Animated API
 - `@tamagui/animations-reanimated` - best native performance
@@ -223,7 +227,7 @@ export const Card = withStaticProperties(CardFrame, {
 ### Dialog with Adapt (Sheet on Mobile)
 
 ```tsx
-import { Dialog, Sheet, Adapt, Button } from 'tamagui'
+import { Dialog, Sheet, Adapt, Button } from 'tamagui';
 
 <Dialog>
   <Dialog.Trigger asChild>
@@ -260,13 +264,13 @@ import { Dialog, Sheet, Adapt, Button } from 'tamagui'
       </Dialog.Close>
     </Dialog.Content>
   </Dialog.Portal>
-</Dialog>
+</Dialog>;
 ```
 
 ### Form with Input/Label
 
 ```tsx
-import { Input, Label, YStack, XStack, Button } from 'tamagui'
+import { Input, Label, YStack, XStack, Button } from 'tamagui';
 
 <YStack gap="$4" padding="$4">
   <YStack gap="$2">
@@ -283,7 +287,7 @@ import { Input, Label, YStack, XStack, Button } from 'tamagui'
     <Button variant="outlined">Cancel</Button>
     <Button theme="blue">Submit</Button>
   </XStack>
-</YStack>
+</YStack>;
 ```
 
 ---
@@ -320,25 +324,25 @@ variants: {
 // bad - won't be extracted by compiler
 const Box = styled(View, {
   padding: Platform.OS === 'web' ? 10 : 20,
-})
+});
 
 // good - use platform modifiers
 const Box = styled(View, {
   padding: 20,
   '$platform-web': { padding: 10 },
-})
+});
 ```
 
 ### ❌ exitStyle without AnimatePresence
 
 ```tsx
 // bad - exit animation won't work
-{show && <View exitStyle={{ opacity: 0 }} />}
+{
+  show && <View exitStyle={{ opacity: 0 }} />;
+}
 
 // good
-<AnimatePresence>
-  {show && <View key="box" exitStyle={{ opacity: 0 }} />}
-</AnimatePresence>
+<AnimatePresence>{show && <View key="box" exitStyle={{ opacity: 0 }} />}</AnimatePresence>;
 ```
 
 ### ❌ Dynamic values that prevent extraction
@@ -366,15 +370,15 @@ const dynamicPadding = isPremium ? '$6' : '$4'
 
 ```tsx
 // bad - CSS driver doesn't support spring physics
-import { createAnimations } from '@tamagui/animations-css'
+import { createAnimations } from '@tamagui/animations-css';
 const anims = createAnimations({
-  bouncy: { type: 'spring', damping: 10 }  // won't work
-})
+  bouncy: { type: 'spring', damping: 10 }, // won't work
+});
 
 // good for CSS driver - use easing strings
 const anims = createAnimations({
-  bouncy: 'cubic-bezier(0.68, -0.55, 0.265, 1.55) 300ms'
-})
+  bouncy: 'cubic-bezier(0.68, -0.55, 0.265, 1.55) 300ms',
+});
 ```
 
 ---
@@ -389,6 +393,7 @@ The Tamagui compiler extracts static styles to CSS at build time. For styles to 
 4. **Use variants** - better than conditional props
 
 Check if extraction is working:
+
 - Look for `data-tamagui` attributes in dev mode
 - Bundle size should be smaller with compiler enabled
 - Styles should appear as CSS classes, not inline
@@ -398,20 +403,20 @@ Check if extraction is working:
 ## TypeScript
 
 ```tsx
-import { GetProps, styled, View } from '@tamagui/core'
+import { GetProps, styled, View } from '@tamagui/core';
 
 const MyComponent = styled(View, {
   variants: {
-    size: { small: {}, large: {} }
+    size: { small: {}, large: {} },
   } as const,
-})
+});
 
 // extract props type
-type MyComponentProps = GetProps<typeof MyComponent>
+type MyComponentProps = GetProps<typeof MyComponent>;
 
 // extend with custom props
 interface ExtendedProps extends MyComponentProps {
-  onCustomEvent?: () => void
+  onCustomEvent?: () => void;
 }
 ```
 
@@ -419,16 +424,16 @@ interface ExtendedProps extends MyComponentProps {
 
 ## Quick Reference
 
-| Pattern | Example |
-|---------|---------|
-| Token | `padding="$4"` |
-| Theme value | `backgroundColor="$background"` |
-| Color scale | `color="$color11"` (high contrast text) |
-| Responsive | `$gtSm={{ padding: '$6' }}` |
-| Variant | `<Button size="large" variant="outlined" />` |
-| Animation | `animation="quick" enterStyle={{ opacity: 0 }}` |
-| Theme switch | `<Theme name="dark"><Theme name="blue">` |
-| Compound | `<Card><Card.Title>` with `createStyledContext` |
+| Pattern      | Example                                         |
+| ------------ | ----------------------------------------------- |
+| Token        | `padding="$4"`                                  |
+| Theme value  | `backgroundColor="$background"`                 |
+| Color scale  | `color="$color11"` (high contrast text)         |
+| Responsive   | `$gtSm={{ padding: '$6' }}`                     |
+| Variant      | `<Button size="large" variant="outlined" />`    |
+| Animation    | `animation="quick" enterStyle={{ opacity: 0 }}` |
+| Theme switch | `<Theme name="dark"><Theme name="blue">`        |
+| Compound     | `<Card><Card.Title>` with `createStyledContext` |
 
 ---
 

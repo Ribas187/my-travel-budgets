@@ -6,10 +6,10 @@ Both the web and mobile apps must support multiple languages. The initial suppor
 
 ## Supported Languages
 
-| Code | Language | Default |
-|------|----------|---------|
-| `en` | English | Yes |
-| `pt-BR` | Brazilian Portuguese | No |
+| Code    | Language             | Default |
+| ------- | -------------------- | ------- |
+| `en`    | English              | Yes     |
+| `pt-BR` | Brazilian Portuguese | No      |
 
 ## Approach
 
@@ -101,6 +101,7 @@ packages/
 ## Adding a New Language
 
 To add a new language:
+
 1. Create a new JSON file in `packages/core/src/i18n/` (e.g., `es.json`)
 2. Add the locale code to the supported languages list in the i18n index
 3. No code changes needed beyond this

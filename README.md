@@ -6,17 +6,17 @@ Served at **mybudget.cards**
 
 ## Tech Stack
 
-| Layer | Technology |
-|-------|-----------|
-| Monorepo | Turborepo + pnpm workspaces |
-| Web | React 19 + Vite |
-| Mobile | Expo (iOS & Android) |
-| Shared UI | Tamagui |
-| API | NestJS 11 |
-| Database | PostgreSQL + Prisma 7 |
-| Validation | Zod (shared schemas) |
-| Auth | Magic link (passwordless) |
-| Language | TypeScript (strict) |
+| Layer      | Technology                  |
+| ---------- | --------------------------- |
+| Monorepo   | Turborepo + pnpm workspaces |
+| Web        | React 19 + Vite             |
+| Mobile     | Expo (iOS & Android)        |
+| Shared UI  | Tamagui                     |
+| API        | NestJS 11                   |
+| Database   | PostgreSQL + Prisma 7       |
+| Validation | Zod (shared schemas)        |
+| Auth       | Magic link (passwordless)   |
+| Language   | TypeScript (strict)         |
 
 ## Project Structure
 
@@ -69,14 +69,14 @@ The web app runs on `http://localhost:5173` and the API on `http://localhost:300
 
 ### Commands
 
-| Command | Description |
-|---------|-------------|
-| `pnpm dev` | Start all dev servers in parallel |
-| `pnpm build` | Build all apps and packages |
-| `pnpm test` | Run tests across all workspaces |
-| `pnpm lint` | Type-check all packages |
-| `pnpm db:generate` | Generate Prisma client |
-| `pnpm db:migrate` | Run database migrations |
+| Command            | Description                       |
+| ------------------ | --------------------------------- |
+| `pnpm dev`         | Start all dev servers in parallel |
+| `pnpm build`       | Build all apps and packages       |
+| `pnpm test`        | Run tests across all workspaces   |
+| `pnpm lint`        | Type-check all packages           |
+| `pnpm db:generate` | Generate Prisma client            |
+| `pnpm db:migrate`  | Run database migrations           |
 
 ## Features
 
