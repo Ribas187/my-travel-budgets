@@ -1,3 +1,2 @@
-export { config } from './tamagui.config'
-
-// Shared components will be added in Plan 2 (Design System)
+export { config, tokens } from './tamagui.config'
+export { Heading, Body, Caption, Label } from './Typography'
