@@ -4,6 +4,7 @@ import type {
   CreateCategoryInput,
   UpdateCategoryInput,
   CreateExpenseInput,
+  UpdateExpenseInput,
   AddMemberInput,
   AuthSession,
   Travel,
@@ -13,6 +14,7 @@ import type {
   Expense,
   ExpenseFilters,
   DashboardData,
+  UserMe,
   ApiError,
 } from './types'
 
@@ -148,6 +150,12 @@ export class ApiClient {
 
     create: (travelId: string, data: CreateExpenseInput): Promise<Expense> =>
       this.request('POST', `/travels/${travelId}/expenses`, { body: data }),
+
+    update: (travelId: string, expenseId: string, data: UpdateExpenseInput): Promise<Expense> =>
+      this.request('PATCH', `/travels/${travelId}/expenses/${expenseId}`, { body: data }),
+
+    delete: (travelId: string, expenseId: string): Promise<void> =>
+      this.request('DELETE', `/travels/${travelId}/expenses/${expenseId}`),
   }
 
   // Categories methods
@@ -168,5 +176,15 @@ export class ApiClient {
   readonly dashboard = {
     get: (travelId: string): Promise<DashboardData> =>
       this.request('GET', `/travels/${travelId}/dashboard`),
+  }
+
+  // Users methods
+
+  readonly users = {
+    getMe: (): Promise<UserMe> =>
+      this.request('GET', '/users/me'),
+
+    updateMe: (data: { name?: string }): Promise<UserMe> =>
+      this.request('PATCH', '/users/me', { body: data }),
   }
 }

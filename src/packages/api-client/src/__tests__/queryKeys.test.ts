@@ -39,4 +39,10 @@ describe('queryKeys', () => {
       expect(queryKeys.dashboard.get('t1')).toEqual(['travels', 't1', 'dashboard'])
     })
   })
+
+  describe('users', () => {
+    it('me returns ["users", "me"]', () => {
+      expect(queryKeys.users.me).toEqual(['users', 'me'])
+    })
+  })
 })

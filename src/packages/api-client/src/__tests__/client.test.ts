@@ -273,6 +273,44 @@ describe('ApiClient', () => {
       expect(JSON.parse(init.body)).toEqual(input)
       expect(result).toEqual(expense)
     })
+
+    it('update sends PATCH to /travels/:travelId/expenses/:expenseId with body', async () => {
+      const updated = { id: 'e1', amount: 30, description: 'Updated lunch' }
+      const fetchMock = mockFetchSuccess(updated)
+      globalThis.fetch = fetchMock
+
+      const client = createClient()
+      const result = await client.expenses.update('t1', 'e1', { amount: 30, description: 'Updated lunch' })
+
+      const [url, init] = fetchMock.mock.calls[0]
+      expect(url).toBe(`${BASE_URL}/travels/t1/expenses/e1`)
+      expect(init.method).toBe('PATCH')
+      expect(JSON.parse(init.body)).toEqual({ amount: 30, description: 'Updated lunch' })
+      expect(result).toEqual(updated)
+    })
+
+    it('update sends only provided fields (partial update)', async () => {
+      const fetchMock = mockFetchSuccess({ id: 'e1', amount: 50 })
+      globalThis.fetch = fetchMock
+
+      const client = createClient()
+      await client.expenses.update('t1', 'e1', { amount: 50 })
+
+      const [, init] = fetchMock.mock.calls[0]
+      expect(JSON.parse(init.body)).toEqual({ amount: 50 })
+    })
+
+    it('delete sends DELETE to /travels/:travelId/expenses/:expenseId', async () => {
+      const fetchMock = mockFetch204()
+      globalThis.fetch = fetchMock
+
+      const client = createClient()
+      await client.expenses.delete('t1', 'e1')
+
+      const [url, init] = fetchMock.mock.calls[0]
+      expect(url).toBe(`${BASE_URL}/travels/t1/expenses/e1`)
+      expect(init.method).toBe('DELETE')
+    })
   })
 
   describe('categories', () => {
@@ -334,6 +372,52 @@ describe('ApiClient', () => {
 
       expect(fetchMock.mock.calls[0][0]).toBe(`${BASE_URL}/travels/t1/dashboard`)
       expect(result).toEqual(dashboard)
+    })
+  })
+
+  describe('users', () => {
+    it('getMe sends GET to /users/me', async () => {
+      const user = {
+        id: 'u1',
+        email: 'user@example.com',
+        name: 'Test User',
+        avatarUrl: null,
+        createdAt: '2026-01-01T00:00:00Z',
+        updatedAt: '2026-01-01T00:00:00Z',
+      }
+      const fetchMock = mockFetchSuccess(user)
+      globalThis.fetch = fetchMock
+
+      const client = createClient()
+      const result = await client.users.getMe()
+
+      const [url, init] = fetchMock.mock.calls[0]
+      expect(url).toBe(`${BASE_URL}/users/me`)
+      expect(init.method).toBe('GET')
+      expect(init.headers['Authorization']).toBe(`Bearer ${TEST_TOKEN}`)
+      expect(result).toEqual(user)
+    })
+
+    it('updateMe sends PATCH to /users/me with body', async () => {
+      const updated = {
+        id: 'u1',
+        email: 'user@example.com',
+        name: 'New Name',
+        avatarUrl: null,
+        createdAt: '2026-01-01T00:00:00Z',
+        updatedAt: '2026-03-20T00:00:00Z',
+      }
+      const fetchMock = mockFetchSuccess(updated)
+      globalThis.fetch = fetchMock
+
+      const client = createClient()
+      const result = await client.users.updateMe({ name: 'New Name' })
+
+      const [url, init] = fetchMock.mock.calls[0]
+      expect(url).toBe(`${BASE_URL}/users/me`)
+      expect(init.method).toBe('PATCH')
+      expect(JSON.parse(init.body)).toEqual({ name: 'New Name' })
+      expect(result).toEqual(updated)
     })
   })
 

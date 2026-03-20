@@ -4,6 +4,7 @@ export type {
   CreateCategoryInput,
   UpdateCategoryInput,
   CreateExpenseInput,
+  UpdateExpenseInput,
   AddMemberInput,
   Currency,
   MemberRole,

@@ -15,4 +15,7 @@ export const queryKeys = {
   dashboard: {
     get: (travelId: string) => ['travels', travelId, 'dashboard'] as const,
   },
+  users: {
+    me: ['users', 'me'] as const,
+  },
 }
