@@ -10,6 +10,7 @@ import { TravelsModule } from './modules/travels/travels.module'
 import { MembersModule } from './modules/members/members.module'
 import { CategoriesModule } from './modules/categories/categories.module'
 import { ExpensesModule } from './modules/expenses/expenses.module'
+import { DashboardModule } from './modules/dashboard/dashboard.module'
 
 @Module({
   imports: [
@@ -26,6 +27,7 @@ import { ExpensesModule } from './modules/expenses/expenses.module'
     MembersModule,
     CategoriesModule,
     ExpensesModule,
+    DashboardModule,
   ],
   controllers: [AppController],
 })
