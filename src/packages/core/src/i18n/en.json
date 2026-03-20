@@ -54,6 +54,8 @@
   "expense.dailyTotal": "Daily total",
   "expense.budgetImpactWarning": "This expense will use {{percentage}}% of the {{category}} budget",
   "expense.budgetImpactDanger": "This expense exceeds the {{category}} budget",
+  "expense.saved": "Expense saved",
+  "expense.descriptionPlaceholder": "What did you spend on?",
 
   "category.add": "Add Category",
   "category.budgetLimit": "Budget limit",
