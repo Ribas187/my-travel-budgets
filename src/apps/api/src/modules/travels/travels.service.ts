@@ -3,7 +3,7 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import type { CreateTravelDto } from './dto/create-travel.dto';
 import type { UpdateTravelDto } from './dto/update-travel.dto';
 
-import type { PrismaService } from '@/modules/prisma/prisma.service';
+import { PrismaService } from '@/modules/prisma/prisma.service';
 
 @Injectable()
 export class TravelsService {

@@ -3,7 +3,7 @@ import { ConflictException, Injectable, NotFoundException } from '@nestjs/common
 import type { CreateCategoryDto } from './dto/create-category.dto';
 import type { UpdateCategoryDto } from './dto/update-category.dto';
 
-import type { PrismaService } from '@/modules/prisma/prisma.service';
+import { PrismaService } from '@/modules/prisma/prisma.service';
 
 @Injectable()
 export class CategoriesService {

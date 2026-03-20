@@ -7,7 +7,7 @@ import {
 
 import type { JwtAuthUser } from './jwt-session.types';
 
-import type { PrismaService } from '@/modules/prisma/prisma.service';
+import { PrismaService } from '@/modules/prisma/prisma.service';
 
 @Injectable()
 export class TravelMemberGuard implements CanActivate {

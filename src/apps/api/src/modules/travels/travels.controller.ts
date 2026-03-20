@@ -13,9 +13,9 @@ import {
   ValidationPipe,
 } from '@nestjs/common';
 
-import type { TravelsService } from './travels.service';
-import type { CreateTravelDto } from './dto/create-travel.dto';
-import type { UpdateTravelDto } from './dto/update-travel.dto';
+import { TravelsService } from './travels.service';
+import { CreateTravelDto } from './dto/create-travel.dto';
+import { UpdateTravelDto } from './dto/update-travel.dto';
 
 import {
   CheckPolicy,

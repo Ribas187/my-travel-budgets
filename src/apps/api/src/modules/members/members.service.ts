@@ -8,7 +8,7 @@ import { Prisma } from '@prisma/client';
 
 import type { AddMemberDto } from './dto/add-member.dto';
 
-import type { PrismaService } from '@/modules/prisma/prisma.service';
+import { PrismaService } from '@/modules/prisma/prisma.service';
 
 @Injectable()
 export class MembersService {

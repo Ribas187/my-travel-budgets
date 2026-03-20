@@ -11,8 +11,8 @@ import {
   ValidationPipe,
 } from '@nestjs/common';
 
-import type { MembersService } from './members.service';
-import type { AddMemberDto } from './dto/add-member.dto';
+import { MembersService } from './members.service';
+import { AddMemberDto } from './dto/add-member.dto';
 
 import {
   CheckPolicy,

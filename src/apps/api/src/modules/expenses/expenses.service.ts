@@ -11,7 +11,7 @@ import type { CreateExpenseDto } from './dto/create-expense.dto';
 import type { UpdateExpenseDto } from './dto/update-expense.dto';
 import type { ExpenseFiltersDto } from './dto/expense-filters.dto';
 
-import type { PrismaService } from '@/modules/prisma/prisma.service';
+import { PrismaService } from '@/modules/prisma/prisma.service';
 
 export interface PaginatedResult<T> {
   data: T[];

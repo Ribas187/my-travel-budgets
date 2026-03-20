@@ -1,8 +1,8 @@
 import { Body, Controller, Get, Patch, UseGuards, UsePipes, ValidationPipe } from '@nestjs/common';
 
-import type { UsersService } from './users.service';
-import type { UserMeDto } from './dto/user-me.dto';
-import type { UpdateMeDto } from './dto/update-me.dto';
+import { UsersService } from './users.service';
+import { UserMeDto } from './dto/user-me.dto';
+import { UpdateMeDto } from './dto/update-me.dto';
 
 import { CurrentUser, JwtAuthGuard, type JwtAuthUser } from '@/modules/common/auth';
 

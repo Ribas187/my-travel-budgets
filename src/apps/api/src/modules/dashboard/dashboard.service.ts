@@ -7,7 +7,7 @@ import type {
 } from './dashboard.types';
 import { computeAlertStatus } from './dashboard.types';
 
-import type { PrismaService } from '@/modules/prisma/prisma.service';
+import { PrismaService } from '@/modules/prisma/prisma.service';
 
 @Injectable()
 export class DashboardService {

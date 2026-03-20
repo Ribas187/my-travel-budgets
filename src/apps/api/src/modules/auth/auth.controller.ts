@@ -10,10 +10,10 @@ import {
   ValidationPipe,
 } from '@nestjs/common';
 
-import type { AuthService } from './auth.service';
-import type { AuthSessionResponseDto } from './dto/auth-session-response.dto';
-import type { RequestMagicLinkDto } from './dto/request-magic-link.dto';
-import type { VerifyMagicLinkQueryDto } from './dto/verify-magic-link-query.dto';
+import { AuthService } from './auth.service';
+import { AuthSessionResponseDto } from './dto/auth-session-response.dto';
+import { RequestMagicLinkDto } from './dto/request-magic-link.dto';
+import { VerifyMagicLinkQueryDto } from './dto/verify-magic-link-query.dto';
 
 @Controller('auth')
 export class AuthController {

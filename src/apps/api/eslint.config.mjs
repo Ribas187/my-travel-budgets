@@ -5,5 +5,8 @@ export default [
   ...nestjsConfig,
   {
     ignores: ['**/*.js', '**/*.cjs'],
+    rules: {
+      '@typescript-eslint/consistent-type-imports': 'off',
+    },
   },
 ];

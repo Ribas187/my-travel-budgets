@@ -1,11 +1,11 @@
 import { randomBytes } from 'node:crypto';
 
 import { Injectable, Logger, UnauthorizedException } from '@nestjs/common';
-import type { JwtService } from '@nestjs/jwt';
+import { JwtService } from '@nestjs/jwt';
 
 import type { JwtSessionPayload } from '@/modules/common/auth';
-import type { EmailService } from '@/modules/common/email/email.service';
-import type { PrismaService } from '@/modules/prisma/prisma.service';
+import { EmailService } from '@/modules/common/email/email.service';
+import { PrismaService } from '@/modules/prisma/prisma.service';
 
 export type { JwtSessionPayload } from '@/modules/common/auth';
 

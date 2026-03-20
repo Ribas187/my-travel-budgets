@@ -1,6 +1,6 @@
 import { Controller, Get, Param, UseGuards } from '@nestjs/common';
 
-import type { DashboardService } from './dashboard.service';
+import { DashboardService } from './dashboard.service';
 
 import { JwtAuthGuard, TravelMemberGuard } from '@/modules/common/auth';
 

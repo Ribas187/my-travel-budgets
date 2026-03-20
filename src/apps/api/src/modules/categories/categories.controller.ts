@@ -12,9 +12,9 @@ import {
   ValidationPipe,
 } from '@nestjs/common';
 
-import type { CategoriesService } from './categories.service';
-import type { CreateCategoryDto } from './dto/create-category.dto';
-import type { UpdateCategoryDto } from './dto/update-category.dto';
+import { CategoriesService } from './categories.service';
+import { CreateCategoryDto } from './dto/create-category.dto';
+import { UpdateCategoryDto } from './dto/update-category.dto';
 
 import {
   CheckPolicy,
