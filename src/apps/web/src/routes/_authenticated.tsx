@@ -12,7 +12,7 @@ function AuthenticatedLayout() {
 
   if (isLoading) {
     return (
-      <YStack flex={1} alignItems="center" justifyContent="center">
+      <YStack flex={1} alignItems="center" justifyContent="center" role="status" aria-label="Loading">
         <Spinner size="large" color="$brandPrimary" />
       </YStack>
     )
@@ -23,5 +23,9 @@ function AuthenticatedLayout() {
     return null
   }
 
-  return <Outlet />
+  return (
+    <YStack flex={1} tag="main" role="main">
+      <Outlet />
+    </YStack>
+  )
 }

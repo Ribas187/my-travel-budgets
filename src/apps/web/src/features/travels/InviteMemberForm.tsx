@@ -110,6 +110,11 @@ export function InviteMemberForm({
         keyboardType={mode === 'email' ? 'email-address' : 'default'}
         autoCapitalize={mode === 'email' ? 'none' : 'words'}
         testID="invite-member-input"
+        aria-label={
+          mode === 'email'
+            ? t('member.emailPlaceholder')
+            : t('member.guestPlaceholder')
+        }
       />
       <XStack gap="$md" justifyContent="flex-end">
         <Text

@@ -80,7 +80,11 @@ function LoginPage() {
       </Text>
 
       <YStack width="100%" maxWidth={360} gap="$md">
+        <label htmlFor="login-email" style={{ position: 'absolute', width: 1, height: 1, overflow: 'hidden', clip: 'rect(0,0,0,0)' }}>
+          {t('auth.emailPlaceholder')}
+        </label>
         <Input
+          id="login-email"
           value={email}
           onChangeText={setEmail}
           placeholder={t('auth.emailPlaceholder')}

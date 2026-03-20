@@ -31,7 +31,7 @@ interface AppShellProps {
 
 export function AppShell({ children, sidebar, bottomNav }: AppShellProps) {
   const media = useMedia()
-  const isDesktop = media.gtMobile
+  const isDesktop = media.gtTablet
 
   if (isDesktop && sidebar) {
     return (

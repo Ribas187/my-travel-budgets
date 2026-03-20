@@ -16,8 +16,8 @@ const FABContainer = styled(View, {
   bottom: 80,
   right: 24,
   zIndex: 100,
-  // Show only on mobile
-  $gtMd: {
+  // Show only on mobile/tablet — hide on desktop where we show inline button
+  $gtTablet: {
     display: 'none',
   },
 })
@@ -48,8 +48,8 @@ function TravelDetailPage() {
     <YStack flex={1} padding="$screenPaddingHorizontal" paddingTop="$2xl">
       <XStack justifyContent="space-between" alignItems="center" marginBottom="$2xl">
         <Heading level={2}>{travel.name}</Heading>
-        {/* Desktop: show Add Expense button inline */}
-        <View $md={{ display: 'none' }}>
+        {/* Desktop: show Add Expense button inline — hidden on mobile/tablet */}
+        <View display="none" $gtTablet={{ display: 'flex' }}>
           <PrimaryButton
             label={t('expense.add')}
             onPress={() => setAddExpenseOpen(true)}

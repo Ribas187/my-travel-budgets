@@ -82,6 +82,8 @@ export function DeleteTripDialog({
       <DialogCard
         onPress={(e: { stopPropagation: () => void }) => e.stopPropagation()}
         testID="delete-trip-dialog"
+        role="alertdialog"
+        aria-label={t('travel.deleteConfirmTitle')}
       >
         <Heading level={3}>{t('travel.deleteConfirmTitle')}</Heading>
         <Body size="primary" testID="delete-trip-message">

@@ -1,11 +1,13 @@
+import { type ComponentProps, type ElementType } from 'react'
 import { styled, Text } from 'tamagui'
 
 // ---------------------------------------------------------------------------
 // Heading — uses Fredoka font family (display/headings)
 // Values from design-tokens.json → typography.scale
+// Renders as the correct semantic HTML heading element (h1–h4)
 // ---------------------------------------------------------------------------
 
-export const Heading = styled(Text, {
+const HeadingBase = styled(Text, {
   fontFamily: '$heading',
   color: '$textPrimary',
 
@@ -63,6 +65,20 @@ export const Heading = styled(Text, {
     level: 1,
   },
 })
+
+type HeadingBaseProps = ComponentProps<typeof HeadingBase>
+
+const LEVEL_TAG_MAP: Record<string, ElementType> = {
+  '1': 'h1',
+  '2': 'h2',
+  '3': 'h3',
+  '4': 'h4',
+}
+
+export function Heading({ level = 1, ...props }: HeadingBaseProps) {
+  const tag = LEVEL_TAG_MAP[String(level)] ?? 'span'
+  return <HeadingBase level={level} tag={tag} {...props} />
+}
 
 // ---------------------------------------------------------------------------
 // Body — uses Nunito font family

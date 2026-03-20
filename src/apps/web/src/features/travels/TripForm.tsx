@@ -228,6 +228,7 @@ export function TripForm({
               onChangeText={onChange}
               placeholder={t('travel.namePlaceholder')}
               placeholderTextColor="$textTertiary"
+              aria-label={t('travel.name')}
             />
           )}
         />
@@ -265,6 +266,7 @@ export function TripForm({
               onChangeText={(text: string) => onChange(text || null)}
               placeholder={t('travel.destinationPlaceholder')}
               placeholderTextColor="$textTertiary"
+              aria-label={t('travel.destination')}
             />
           )}
         />
@@ -284,6 +286,7 @@ export function TripForm({
                 onChangeText={onChange}
                 placeholder="YYYY-MM-DD"
                 placeholderTextColor="$textTertiary"
+                aria-label={t('travel.startDate')}
               />
             )}
           />
@@ -305,6 +308,7 @@ export function TripForm({
                 onChangeText={onChange}
                 placeholder="YYYY-MM-DD"
                 placeholderTextColor="$textTertiary"
+                aria-label={t('travel.endDate')}
               />
             )}
           />
@@ -396,6 +400,7 @@ export function TripForm({
                 placeholder="0.00"
                 placeholderTextColor="$textTertiary"
                 keyboardType="decimal-pad"
+                aria-label={t('travel.totalBudget')}
               />
             )}
           />

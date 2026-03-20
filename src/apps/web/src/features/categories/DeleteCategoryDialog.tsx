@@ -82,6 +82,8 @@ export function DeleteCategoryDialog({
       <DialogCard
         onPress={(e: { stopPropagation: () => void }) => e.stopPropagation()}
         testID="delete-category-dialog"
+        role="alertdialog"
+        aria-label={t('category.deleteConfirmTitle')}
       >
         <Heading level={3}>{t('category.deleteConfirmTitle')}</Heading>
         <Body size="primary" testID="delete-category-message">

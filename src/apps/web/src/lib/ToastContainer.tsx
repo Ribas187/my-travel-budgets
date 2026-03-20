@@ -46,6 +46,9 @@ export function ToastContainer() {
       gap="$sm"
       zIndex={10000}
       pointerEvents="none"
+      role="region"
+      aria-live="polite"
+      aria-label="Notifications"
     >
       {toasts.map((toast) => (
         <ToastFrame key={toast.id} type={toast.type} role="status">

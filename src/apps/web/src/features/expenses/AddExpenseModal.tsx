@@ -2,7 +2,7 @@ import { useState, useCallback } from 'react'
 import { useForm, Controller } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useTranslation } from 'react-i18next'
-import { styled, XStack, YStack, Text, View, Sheet, Input } from 'tamagui'
+import { styled, XStack, YStack, Text, View, Sheet, Input, useMedia } from 'tamagui'
 import {
   AmountInput,
   CategoryChip,
@@ -43,6 +43,15 @@ const Overlay = styled(View, {
   zIndex: 9000,
   justifyContent: 'center',
   alignItems: 'center',
+
+  variants: {
+    bottomSheet: {
+      true: {
+        justifyContent: 'flex-end',
+        alignItems: 'stretch',
+      },
+    },
+  } as const,
 })
 
 const ModalCard = styled(YStack, {
@@ -54,6 +63,17 @@ const ModalCard = styled(YStack, {
   maxHeight: '90vh',
   overflow: 'scroll' as const,
   gap: '$lg',
+})
+
+const BottomSheetCard = styled(YStack, {
+  backgroundColor: '$white',
+  borderTopLeftRadius: '$2xl',
+  borderTopRightRadius: '$2xl',
+  padding: '$screenPaddingHorizontal',
+  maxHeight: '90vh',
+  overflow: 'scroll' as const,
+  gap: '$lg',
+  paddingBottom: '$3xl',
 })
 
 const SheetContent = styled(YStack, {
@@ -185,6 +205,9 @@ export function AddExpenseModal({ open, onClose, travel }: AddExpenseModalProps)
     }
   }, [createExpense.isPending, reset, onClose])
 
+  const media = useMedia()
+  const isMobile = !media.gtTablet
+
   if (!open) return null
 
   const currencySymbol = getCurrencySymbol(travel.currency)
@@ -218,12 +241,13 @@ export function AddExpenseModal({ open, onClose, travel }: AddExpenseModalProps)
           bottom={0}
           opacity={0}
           autoFocus
+          aria-label={t('expense.amount')}
         />
       </YStack>
 
       {/* Description */}
       <YStack gap="$sm">
-        <SectionLabel>{t('expense.description')}</SectionLabel>
+        <SectionLabel id="desc-label">{t('expense.description')}</SectionLabel>
         <Controller
           control={control}
           name="description"
@@ -234,6 +258,7 @@ export function AddExpenseModal({ open, onClose, travel }: AddExpenseModalProps)
               onChangeText={onChange}
               placeholder={t('expense.descriptionPlaceholder')}
               placeholderTextColor="$textTertiary"
+              aria-label={t('expense.description')}
             />
           )}
         />
@@ -241,8 +266,8 @@ export function AddExpenseModal({ open, onClose, travel }: AddExpenseModalProps)
 
       {/* Category Selection */}
       <YStack gap="$sm">
-        <SectionLabel>{t('expense.category')}</SectionLabel>
-        <XStack flexWrap="wrap" gap="$sm" testID="category-chips">
+        <SectionLabel id="category-label">{t('expense.category')}</SectionLabel>
+        <XStack flexWrap="wrap" gap="$sm" testID="category-chips" role="radiogroup" aria-labelledby="category-label">
           {travel.categories.map((category) => (
             <CategoryChip
               key={category.id}
@@ -262,12 +287,12 @@ export function AddExpenseModal({ open, onClose, travel }: AddExpenseModalProps)
 
       {/* Paid By Selector */}
       <YStack gap="$sm">
-        <SectionLabel>{t('expense.paidBy')}</SectionLabel>
+        <SectionLabel id="paid-by-label">{t('expense.paidBy')}</SectionLabel>
         <Controller
           control={control}
           name="memberId"
           render={({ field: { value } }) => (
-            <XStack flexWrap="wrap" gap="$md" testID="paid-by-chips">
+            <XStack flexWrap="wrap" gap="$md" testID="paid-by-chips" role="radiogroup" aria-labelledby="paid-by-label">
               {travel.members.map((member, index) => {
                 const isSelected = value === member.id
                 return (
@@ -284,6 +309,7 @@ export function AddExpenseModal({ open, onClose, travel }: AddExpenseModalProps)
                     }
                     role="radio"
                     aria-checked={isSelected}
+                    aria-label={getMemberDisplayName(member)}
                   >
                     <AvatarChip
                       name={getMemberDisplayName(member)}
@@ -326,12 +352,42 @@ export function AddExpenseModal({ open, onClose, travel }: AddExpenseModalProps)
     </YStack>
   )
 
+  // Mobile: bottom sheet style
+  if (isMobile) {
+    return (
+      <Overlay bottomSheet onPress={handleClose} testID="add-expense-overlay">
+        <BottomSheetCard
+          onPress={(e: { stopPropagation: () => void }) => e.stopPropagation()}
+          testID="add-expense-modal"
+          role="dialog"
+          aria-label={t('expense.add')}
+        >
+          <DragHandle />
+          <XStack justifyContent="space-between" alignItems="center">
+            <Heading level={3}>{t('expense.add')}</Heading>
+            <CloseButton
+              onPress={handleClose}
+              role="button"
+              aria-label={t('common.close')}
+              testID="close-modal-button"
+            >
+              ✕
+            </CloseButton>
+          </XStack>
+          {formContent}
+        </BottomSheetCard>
+      </Overlay>
+    )
+  }
+
   // Desktop: centered modal overlay
   return (
     <Overlay onPress={handleClose} testID="add-expense-overlay">
       <ModalCard
         onPress={(e: { stopPropagation: () => void }) => e.stopPropagation()}
         testID="add-expense-modal"
+        role="dialog"
+        aria-label={t('expense.add')}
       >
         <XStack justifyContent="space-between" alignItems="center">
           <Heading level={3}>{t('expense.add')}</Heading>
