@@ -8,6 +8,8 @@ import { EmailModule } from './modules/common/email/email.module'
 import { PrismaModule } from './modules/prisma/prisma.module'
 import { TravelsModule } from './modules/travels/travels.module'
 import { MembersModule } from './modules/members/members.module'
+import { CategoriesModule } from './modules/categories/categories.module'
+import { ExpensesModule } from './modules/expenses/expenses.module'
 
 @Module({
   imports: [
@@ -22,6 +24,8 @@ import { MembersModule } from './modules/members/members.module'
     UsersModule,
     TravelsModule,
     MembersModule,
+    CategoriesModule,
+    ExpensesModule,
   ],
   controllers: [AppController],
 })
