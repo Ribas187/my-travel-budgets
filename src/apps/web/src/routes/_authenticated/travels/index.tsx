@@ -172,8 +172,7 @@ function TravelsPage() {
   const { data: travels, isLoading } = useTravels()
 
   const handleCreateTrip = () => {
-    // Route will be created in Task 11 (Add/Edit Trip)
-    navigate({ to: '/travels/new' as string })
+    navigate({ to: '/travels/new' })
   }
 
   const handleTravelPress = (travelId: string) => {

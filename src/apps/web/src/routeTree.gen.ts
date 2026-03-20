@@ -13,6 +13,9 @@ import { Route as LoginRouteImport } from './routes/login'
 import { Route as AuthenticatedRouteImport } from './routes/_authenticated'
 import { Route as AuthVerifyRouteImport } from './routes/auth/verify'
 import { Route as AuthenticatedTravelsIndexRouteImport } from './routes/_authenticated/travels/index'
+import { Route as AuthenticatedTravelsNewRouteImport } from './routes/_authenticated/travels/new'
+import { Route as AuthenticatedTravelsTravelIdIndexRouteImport } from './routes/_authenticated/travels/$travelId/index'
+import { Route as AuthenticatedTravelsTravelIdEditRouteImport } from './routes/_authenticated/travels/$travelId/edit'
 
 const LoginRoute = LoginRouteImport.update({
   id: '/login',
@@ -34,37 +37,80 @@ const AuthenticatedTravelsIndexRoute =
     path: '/travels/',
     getParentRoute: () => AuthenticatedRoute,
   } as any)
+const AuthenticatedTravelsNewRoute = AuthenticatedTravelsNewRouteImport.update({
+  id: '/travels/new',
+  path: '/travels/new',
+  getParentRoute: () => AuthenticatedRoute,
+} as any)
+const AuthenticatedTravelsTravelIdIndexRoute =
+  AuthenticatedTravelsTravelIdIndexRouteImport.update({
+    id: '/travels/$travelId/',
+    path: '/travels/$travelId/',
+    getParentRoute: () => AuthenticatedRoute,
+  } as any)
+const AuthenticatedTravelsTravelIdEditRoute =
+  AuthenticatedTravelsTravelIdEditRouteImport.update({
+    id: '/travels/$travelId/edit',
+    path: '/travels/$travelId/edit',
+    getParentRoute: () => AuthenticatedRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof AuthenticatedRouteWithChildren
   '/login': typeof LoginRoute
   '/auth/verify': typeof AuthVerifyRoute
+  '/travels/new': typeof AuthenticatedTravelsNewRoute
   '/travels/': typeof AuthenticatedTravelsIndexRoute
+  '/travels/$travelId/edit': typeof AuthenticatedTravelsTravelIdEditRoute
+  '/travels/$travelId/': typeof AuthenticatedTravelsTravelIdIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof AuthenticatedRouteWithChildren
   '/login': typeof LoginRoute
   '/auth/verify': typeof AuthVerifyRoute
+  '/travels/new': typeof AuthenticatedTravelsNewRoute
   '/travels': typeof AuthenticatedTravelsIndexRoute
+  '/travels/$travelId/edit': typeof AuthenticatedTravelsTravelIdEditRoute
+  '/travels/$travelId': typeof AuthenticatedTravelsTravelIdIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/_authenticated': typeof AuthenticatedRouteWithChildren
   '/login': typeof LoginRoute
   '/auth/verify': typeof AuthVerifyRoute
+  '/_authenticated/travels/new': typeof AuthenticatedTravelsNewRoute
   '/_authenticated/travels/': typeof AuthenticatedTravelsIndexRoute
+  '/_authenticated/travels/$travelId/edit': typeof AuthenticatedTravelsTravelIdEditRoute
+  '/_authenticated/travels/$travelId/': typeof AuthenticatedTravelsTravelIdIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/login' | '/auth/verify' | '/travels/'
+  fullPaths:
+    | '/'
+    | '/login'
+    | '/auth/verify'
+    | '/travels/new'
+    | '/travels/'
+    | '/travels/$travelId/edit'
+    | '/travels/$travelId/'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/login' | '/auth/verify' | '/travels'
+  to:
+    | '/'
+    | '/login'
+    | '/auth/verify'
+    | '/travels/new'
+    | '/travels'
+    | '/travels/$travelId/edit'
+    | '/travels/$travelId'
   id:
     | '__root__'
     | '/_authenticated'
     | '/login'
     | '/auth/verify'
+    | '/_authenticated/travels/new'
     | '/_authenticated/travels/'
+    | '/_authenticated/travels/$travelId/edit'
+    | '/_authenticated/travels/$travelId/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -103,15 +149,43 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedTravelsIndexRouteImport
       parentRoute: typeof AuthenticatedRoute
     }
+    '/_authenticated/travels/new': {
+      id: '/_authenticated/travels/new'
+      path: '/travels/new'
+      fullPath: '/travels/new'
+      preLoaderRoute: typeof AuthenticatedTravelsNewRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
+    '/_authenticated/travels/$travelId/': {
+      id: '/_authenticated/travels/$travelId/'
+      path: '/travels/$travelId'
+      fullPath: '/travels/$travelId/'
+      preLoaderRoute: typeof AuthenticatedTravelsTravelIdIndexRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
+    '/_authenticated/travels/$travelId/edit': {
+      id: '/_authenticated/travels/$travelId/edit'
+      path: '/travels/$travelId/edit'
+      fullPath: '/travels/$travelId/edit'
+      preLoaderRoute: typeof AuthenticatedTravelsTravelIdEditRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
   }
 }
 
 interface AuthenticatedRouteChildren {
+  AuthenticatedTravelsNewRoute: typeof AuthenticatedTravelsNewRoute
   AuthenticatedTravelsIndexRoute: typeof AuthenticatedTravelsIndexRoute
+  AuthenticatedTravelsTravelIdEditRoute: typeof AuthenticatedTravelsTravelIdEditRoute
+  AuthenticatedTravelsTravelIdIndexRoute: typeof AuthenticatedTravelsTravelIdIndexRoute
 }
 
 const AuthenticatedRouteChildren: AuthenticatedRouteChildren = {
+  AuthenticatedTravelsNewRoute: AuthenticatedTravelsNewRoute,
   AuthenticatedTravelsIndexRoute: AuthenticatedTravelsIndexRoute,
+  AuthenticatedTravelsTravelIdEditRoute: AuthenticatedTravelsTravelIdEditRoute,
+  AuthenticatedTravelsTravelIdIndexRoute:
+    AuthenticatedTravelsTravelIdIndexRoute,
 }
 
 const AuthenticatedRouteWithChildren = AuthenticatedRoute._addFileChildren(

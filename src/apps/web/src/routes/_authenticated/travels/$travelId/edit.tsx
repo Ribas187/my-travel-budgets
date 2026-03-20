@@ -1,0 +1,107 @@
+import { useState, useCallback } from 'react'
+import { createFileRoute, useNavigate } from '@tanstack/react-router'
+import { useTranslation } from 'react-i18next'
+import { styled, XStack, YStack, Text, View, Spinner } from 'tamagui'
+import { Heading, Body } from '@repo/ui'
+import type { CreateTravelInput } from '@repo/api-client'
+import { useTravelDetail } from '@/hooks/useTravelDetail'
+import { useUpdateTravel } from '@/hooks/useUpdateTravel'
+import { useDeleteTravel } from '@/hooks/useDeleteTravel'
+import { useTravelExpenses } from '@/hooks/useTravelExpenses'
+import { showToast } from '@/lib/toast'
+import { TripForm } from '@/features/travels/TripForm'
+
+export const Route = createFileRoute(
+  '/_authenticated/travels/$travelId/edit',
+)({
+  component: EditTripPage,
+})
+
+const CloseButton = styled(Text, {
+  fontSize: 24,
+  color: '$textTertiary',
+  cursor: 'pointer',
+  padding: '$xs',
+})
+
+function EditTripPage() {
+  const { t } = useTranslation()
+  const navigate = useNavigate()
+  const { travelId } = Route.useParams()
+  const { data: travel, isLoading } = useTravelDetail(travelId)
+  const { data: expenses } = useTravelExpenses(travelId)
+  const updateTravel = useUpdateTravel(travelId)
+  const deleteTravel = useDeleteTravel()
+
+  const expenseCount = expenses?.length ?? 0
+
+  const handleSave = useCallback(
+    (data: CreateTravelInput) => {
+      updateTravel.mutate(data, {
+        onSuccess: () => {
+          showToast(t('travel.saved'))
+          navigate({ to: '/travels/$travelId', params: { travelId } })
+        },
+      })
+    },
+    [updateTravel, navigate, travelId, t],
+  )
+
+  const handleDelete = useCallback(() => {
+    deleteTravel.mutate(travelId, {
+      onSuccess: () => {
+        showToast(t('travel.deleted'))
+        navigate({ to: '/travels' })
+      },
+    })
+  }, [deleteTravel, travelId, navigate, t])
+
+  const handleClose = useCallback(() => {
+    navigate({ to: '/travels/$travelId', params: { travelId } })
+  }, [navigate, travelId])
+
+  if (isLoading) {
+    return (
+      <YStack flex={1} alignItems="center" justifyContent="center">
+        <Spinner size="large" color="$brandPrimary" />
+      </YStack>
+    )
+  }
+
+  if (!travel) {
+    return (
+      <YStack flex={1} padding="$screenPaddingHorizontal" paddingTop="$2xl">
+        <Body size="secondary">{t('common.error')}</Body>
+      </YStack>
+    )
+  }
+
+  return (
+    <YStack flex={1} padding="$screenPaddingHorizontal" paddingTop="$2xl">
+      <XStack
+        justifyContent="space-between"
+        alignItems="center"
+        marginBottom="$2xl"
+      >
+        <Heading level={2}>{t('travel.editTrip')}</Heading>
+        <CloseButton
+          onPress={handleClose}
+          role="button"
+          aria-label={t('common.close')}
+          testID="close-edit-trip"
+        >
+          ✕
+        </CloseButton>
+      </XStack>
+
+      <TripForm
+        travel={travel}
+        expenseCount={expenseCount}
+        saving={updateTravel.isPending}
+        deleting={deleteTravel.isPending}
+        onSave={handleSave}
+        onDelete={handleDelete}
+      />
+    </YStack>
+  )
+}
