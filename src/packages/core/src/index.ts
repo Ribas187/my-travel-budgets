@@ -5,3 +5,4 @@ export * from './schemas/expense';
 export * from './schemas/member';
 export * from './constants/currencies';
 export * from './types/index';
+export * from './i18n/index';
