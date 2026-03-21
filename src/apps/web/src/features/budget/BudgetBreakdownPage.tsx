@@ -1,7 +1,7 @@
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from '@tanstack/react-router';
-import { XStack, YStack, View, Text, useMedia } from 'tamagui';
+import { XStack, YStack, View, Text } from 'tamagui';
 import { CategoryDetailCard, Heading, Body } from '@repo/ui';
 import type { CategorySpending, Expense } from '@repo/api-client';
 
@@ -210,8 +210,6 @@ export function BudgetBreakdownPage() {
   const { travel } = useTravelContext();
   const locale = i18n.language;
   const navigate = useNavigate();
-  const media = useMedia();
-  const isDesktop = media.gtTablet;
 
   const { data: dashboard, isLoading } = useDashboard(travel.id);
   const { data: expenses } = useTravelExpenses(travel.id);
@@ -246,8 +244,8 @@ export function BudgetBreakdownPage() {
       {/* Page Header */}
       <SectionHeader
         title={t('budget.title')}
-        action={isDesktop ? t('budget.manage') : undefined}
-        onAction={isDesktop ? handleNavigateToCategories : undefined}
+        action={t('budget.manage')}
+        onAction={handleNavigateToCategories}
       />
 
       {/* Summary Card */}
