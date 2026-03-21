@@ -209,7 +209,7 @@ function TravelLayout() {
         <Outlet />
       </AppShell>
 
-      {!isDesktop && (
+      {!isDesktop && sheetOpen && (
         <NavigationSheet
           open={sheetOpen}
           onOpenChange={setSheetOpen}

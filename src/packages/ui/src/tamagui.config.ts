@@ -1,4 +1,5 @@
 import { createFont, createTamagui, createTokens } from 'tamagui';
+import { createAnimations } from '@tamagui/animations-css';
 
 // ---------------------------------------------------------------------------
 // Fonts (from design-tokens.json → typography)
@@ -326,6 +327,12 @@ const media = {
 // Config
 // ---------------------------------------------------------------------------
 
+const animations = createAnimations({
+  fast: 'ease-in 150ms',
+  medium: 'ease-in 300ms',
+  slow: 'ease-in 450ms',
+});
+
 export const config = createTamagui({
   defaultFont: 'body',
   fonts: {
@@ -337,6 +344,7 @@ export const config = createTamagui({
     light: lightTheme,
   },
   media,
+  animations,
 });
 
 export default config;

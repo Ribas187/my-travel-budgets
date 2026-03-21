@@ -91,6 +91,7 @@ export function NavigationSheet({
         backgroundColor="$backgroundPrimary"
         paddingTop="$lg"
         paddingBottom="$2xl"
+        data-testid="navigation-sheet"
       >
         <XStack
           alignItems="center"
@@ -113,6 +114,7 @@ export function NavigationSheet({
               onPress={item.onPress}
               role="button"
               aria-label={item.label}
+              data-testid={`nav-sheet-item-${item.key}`}
             >
               {item.icon}
               <MenuLabel destructive={item.destructive}>

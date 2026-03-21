@@ -44,7 +44,7 @@ export function AppShell({ children, sidebar, bottomNav }: AppShellProps) {
 
   return (
     <MobileFrame data-testid="app-shell-mobile">
-      <MobileContent>{children}</MobileContent>
+      <MobileContent data-testid="mobile-content">{children}</MobileContent>
       {bottomNav}
     </MobileFrame>
   );
