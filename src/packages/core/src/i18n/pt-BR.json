@@ -172,5 +172,8 @@
   "summary.expensesLogged": "{{count}} despesas registradas",
   "summary.tripComplete": "VIAGEM CONCLUÍDA",
   "summary.days": "{{count}} dias",
-  "summary.travelers": "{{count}} viajantes"
+  "summary.travelers": "{{count}} viajantes",
+
+  "datePicker.openCalendar": "Abrir calendário",
+  "datePicker.selectedDate": "Selecionado: {{date}}"
 }

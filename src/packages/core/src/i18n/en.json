@@ -172,5 +172,8 @@
   "summary.expensesLogged": "{{count}} expenses logged",
   "summary.tripComplete": "TRIP COMPLETE",
   "summary.days": "{{count}} days",
-  "summary.travelers": "{{count}} travelers"
+  "summary.travelers": "{{count}} travelers",
+
+  "datePicker.openCalendar": "Open calendar",
+  "datePicker.selectedDate": "Selected: {{date}}"
 }
