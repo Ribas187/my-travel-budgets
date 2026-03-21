@@ -448,7 +448,6 @@ export function AddExpenseModal({ open, onClose, travel, expense }: AddExpenseMo
               testID="expense-date-input"
               value={value}
               onChange={onChange}
-              placeholder="YYYY-MM-DD"
               label={t('expense.date')}
             />
           )}

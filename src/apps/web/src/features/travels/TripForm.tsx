@@ -294,7 +294,6 @@ export function TripForm({
                 testID="trip-start-date-input"
                 value={value}
                 onChange={onChange}
-                placeholder="YYYY-MM-DD"
                 label={t('travel.startDate')}
                 error={errors.startDate?.message}
               />
@@ -311,7 +310,6 @@ export function TripForm({
                 testID="trip-end-date-input"
                 value={value}
                 onChange={onChange}
-                placeholder="YYYY-MM-DD"
                 label={t('travel.endDate')}
                 error={errors.endDate?.message}
               />

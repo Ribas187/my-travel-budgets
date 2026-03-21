@@ -11,9 +11,7 @@
   },
   "dependencies": {
     "tamagui": "^1.141.5",
-    "@tamagui/config": "^1.141.5",
-    "react-day-picker": "^9.0.0",
-    "date-fns": "^4.0.0"
+    "@tamagui/config": "^1.141.5"
   },
   "devDependencies": {
     "@repo/eslint-config": "workspace:*",

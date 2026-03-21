@@ -49,15 +49,6 @@ describe('DatePickerInput', () => {
     expect(element.props.disabled).toBe(true);
   });
 
-  it('passes placeholder prop', () => {
-    const element = React.createElement(DatePickerInput, {
-      value: '',
-      onChange: vi.fn(),
-      placeholder: 'Select a date',
-    });
-    expect(element.props.placeholder).toBe('Select a date');
-  });
-
   it('passes testID prop', () => {
     const element = React.createElement(DatePickerInput, {
       value: '2026-03-21',
@@ -65,16 +56,6 @@ describe('DatePickerInput', () => {
       testID: 'start-date-picker',
     });
     expect(element.props.testID).toBe('start-date-picker');
-  });
-
-  it('accepts locale prop for localized display', () => {
-    const mockLocale = { code: 'pt-BR' } as unknown as import('date-fns').Locale;
-    const element = React.createElement(DatePickerInput, {
-      value: '2026-03-21',
-      onChange: vi.fn(),
-      locale: mockLocale,
-    });
-    expect(element.props.locale).toBe(mockLocale);
   });
 
   it('renders without value (empty string)', () => {
@@ -91,8 +72,6 @@ describe('DatePickerInput', () => {
       value: '2026-06-15',
       onChange: vi.fn(),
     });
-    // In edit mode, the component receives the existing ISO date
-    // and passes it to DayPicker as selected
     expect(element.props.value).toBe('2026-06-15');
   });
 });

@@ -6,16 +6,6 @@ interface BackHeaderProps {
   accessibilityLabel?: string;
 }
 
-const BackArrow = styled(Text, {
-  fontSize: 24,
-  color: '$textTertiary',
-  cursor: 'pointer',
-  padding: '$xs',
-  pressStyle: {
-    opacity: 0.7,
-  },
-});
-
 const HeaderTitle = styled(Text, {
   fontFamily: '$body',
   fontSize: 15,
@@ -31,14 +21,22 @@ export function BackHeader({ title, onBack, accessibilityLabel }: BackHeaderProp
       marginBottom="$lg"
       testID="back-header"
     >
-      <BackArrow
-        onPress={onBack}
-        role="button"
+      <button
+        onClick={onBack}
         aria-label={accessibilityLabel ?? `Back to ${title}`}
-        testID="back-header-button"
+        data-testid="back-header-button"
+        style={{
+          background: 'none',
+          border: 'none',
+          fontSize: 24,
+          color: '#8C8580',
+          cursor: 'pointer',
+          padding: 4,
+          lineHeight: 1,
+        }}
       >
         ←
-      </BackArrow>
+      </button>
       <HeaderTitle>{title}</HeaderTitle>
     </XStack>
   );
