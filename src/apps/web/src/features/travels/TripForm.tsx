@@ -3,7 +3,7 @@ import { useForm, Controller } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useTranslation } from 'react-i18next';
 import { styled, XStack, YStack, Text, View, Input, Select } from 'tamagui';
-import { AvatarChip, PrimaryButton, Heading, Body, Label } from '@repo/ui';
+import { AvatarChip, PrimaryButton, Heading, Body, Label, DatePickerInput } from '@repo/ui';
 import { createTravelSchema } from '@repo/core';
 import { SUPPORTED_CURRENCIES } from '@repo/core';
 import type { TravelDetail, TravelMember } from '@repo/api-client';
@@ -290,19 +290,16 @@ export function TripForm({
             control={control}
             name="startDate"
             render={({ field: { onChange, value } }) => (
-              <FormInput
+              <DatePickerInput
                 testID="trip-start-date-input"
                 value={value}
-                onChangeText={onChange}
+                onChange={onChange}
                 placeholder="YYYY-MM-DD"
-                placeholderTextColor="$textTertiary"
-                aria-label={t('travel.startDate')}
+                label={t('travel.startDate')}
+                error={errors.startDate?.message}
               />
             )}
           />
-          {errors.startDate && (
-            <ErrorText testID="trip-start-date-error">{errors.startDate.message}</ErrorText>
-          )}
         </YStack>
         <YStack gap="$sm" flex={1}>
           <SectionLabel>{t('travel.endDate')}</SectionLabel>
@@ -310,19 +307,16 @@ export function TripForm({
             control={control}
             name="endDate"
             render={({ field: { onChange, value } }) => (
-              <FormInput
+              <DatePickerInput
                 testID="trip-end-date-input"
                 value={value}
-                onChangeText={onChange}
+                onChange={onChange}
                 placeholder="YYYY-MM-DD"
-                placeholderTextColor="$textTertiary"
-                aria-label={t('travel.endDate')}
+                label={t('travel.endDate')}
+                error={errors.endDate?.message}
               />
             )}
           />
-          {errors.endDate && (
-            <ErrorText testID="trip-end-date-error">{errors.endDate.message}</ErrorText>
-          )}
         </YStack>
       </XStack>
 

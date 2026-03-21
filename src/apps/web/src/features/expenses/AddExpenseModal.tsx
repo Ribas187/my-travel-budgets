@@ -11,6 +11,7 @@ import {
   PrimaryButton,
   Body,
   Heading,
+  DatePickerInput,
 } from '@repo/ui';
 import { createExpenseSchema } from '@repo/core';
 import type { TravelDetail, Expense } from '@repo/api-client';
@@ -431,6 +432,24 @@ export function AddExpenseModal({ open, onClose, travel, expense }: AddExpenseMo
               placeholder={t('expense.descriptionPlaceholder')}
               placeholderTextColor="$textTertiary"
               aria-label={t('expense.description')}
+            />
+          )}
+        />
+      </YStack>
+
+      {/* Date */}
+      <YStack gap="$sm">
+        <SectionLabel>{t('expense.date')}</SectionLabel>
+        <Controller
+          control={control}
+          name="date"
+          render={({ field: { onChange, value } }) => (
+            <DatePickerInput
+              testID="expense-date-input"
+              value={value}
+              onChange={onChange}
+              placeholder="YYYY-MM-DD"
+              label={t('expense.date')}
             />
           )}
         />
