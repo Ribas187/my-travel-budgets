@@ -200,7 +200,7 @@ function TravelLayout() {
     />
   ) : undefined;
 
-  const userName = userMe?.name ?? '';
+  const userName = userMe?.name || userMe?.email || '';
   const userInitial = userName ? userName.charAt(0).toUpperCase() : '?';
 
   return (

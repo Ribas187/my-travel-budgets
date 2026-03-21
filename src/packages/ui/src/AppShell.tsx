@@ -14,13 +14,14 @@ const ContentArea = styled(YStack, {
 
 const MobileFrame = styled(YStack, {
   flex: 1,
-  height: '100%',
+  height: '100dvh',
+  maxHeight: '100dvh',
   backgroundColor: '$backgroundPrimary',
 });
 
 const MobileContent = styled(YStack, {
   flex: 1,
-  overflow: 'auto',
+  overflow: 'scroll',
 });
 
 interface AppShellProps {

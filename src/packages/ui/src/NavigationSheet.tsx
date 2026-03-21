@@ -1,4 +1,4 @@
-import type { ReactNode } from 'react';
+import { type ReactNode, useEffect } from 'react';
 import { Sheet, styled, XStack, YStack, Text } from 'tamagui';
 
 interface NavigationSheetItem {
@@ -76,6 +76,17 @@ export function NavigationSheet({
   userInitial,
   items,
 }: NavigationSheetProps) {
+  useEffect(() => {
+    if (!open || typeof window === 'undefined') return;
+    const handleKeyDown = (e: Event) => {
+      if ((e as unknown as { key: string }).key === 'Escape') {
+        onOpenChange(false);
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [open, onOpenChange]);
+
   return (
     <Sheet
       modal
