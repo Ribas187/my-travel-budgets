@@ -137,6 +137,8 @@
   "nav.profile": "Profile",
   "nav.categories": "Categories",
   "nav.addExpense": "Add expense",
+  "nav.myTravels": "My Travels",
+  "nav.logout": "Logout",
 
   "budget.title": "Budget Breakdown",
   "budget.summary": "Summary",
@@ -148,6 +150,7 @@
   "budget.manage": "Manage",
   "budget.expenses": "{{count}} expenses",
   "budget.noBudgetSet": "No budget set",
+  "budget.manageCategories": "Manage Categories",
 
   "summary.title": "Trip Summary",
   "summary.complete": "Complete",

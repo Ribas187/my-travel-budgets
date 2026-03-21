@@ -19,3 +19,5 @@ export { CategoryProgressRow } from './CategoryProgressRow';
 export { CategoryDetailCard } from './CategoryDetailCard';
 export { InsightCard } from './InsightCard';
 export { getBudgetStatusColor, getBudgetStatus } from './budgetStatus';
+export { NavigationSheet } from './NavigationSheet';
+export type { NavigationSheetProps, NavigationSheetItem } from './NavigationSheet';
