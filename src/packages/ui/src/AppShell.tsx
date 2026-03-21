@@ -20,7 +20,7 @@ const MobileFrame = styled(YStack, {
 
 const MobileContent = styled(YStack, {
   flex: 1,
-  overflow: 'hidden',
+  overflow: 'auto',
 });
 
 interface AppShellProps {
