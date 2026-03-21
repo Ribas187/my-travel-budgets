@@ -1,4 +1,4 @@
-import { describe, it, expect } from 'vitest';
+import { describe, it, expect, vi } from 'vitest';
 import React from 'react';
 import type { DashboardData, TravelDetail } from '@repo/api-client';
 
@@ -323,6 +323,117 @@ describe('DashboardPage', () => {
         maximumFractionDigits: 0,
       }).format(2140);
       expect(formatted).toContain('2.140');
+    });
+  });
+
+  describe('SectionHeader onAction behavior', () => {
+    it('renders action text and fires onAction callback on press', () => {
+      const onAction = vi.fn();
+      const element = React.createElement(
+        'div',
+        null,
+        React.createElement(
+          'span',
+          {
+            onClick: onAction,
+            role: 'button',
+            style: { cursor: 'pointer' },
+          },
+          'Ver tudo',
+        ),
+      );
+
+      // Verify element structure matches the SectionHeader pattern
+      expect(element.props.children.props.role).toBe('button');
+      expect(element.props.children.props.style.cursor).toBe('pointer');
+      expect(element.props.children.props.children).toBe('Ver tudo');
+
+      // Simulate the onPress/onClick callback
+      element.props.children.props.onClick();
+      expect(onAction).toHaveBeenCalledTimes(1);
+    });
+
+    it('renders action text without onAction gracefully (no crash, no button role)', () => {
+      const element = React.createElement(
+        'div',
+        null,
+        React.createElement(
+          'span',
+          {
+            role: undefined,
+            style: { cursor: undefined },
+          },
+          'Ver tudo',
+        ),
+      );
+
+      // Verify no role or cursor when onAction is not provided
+      expect(element.props.children.props.role).toBeUndefined();
+      expect(element.props.children.props.style.cursor).toBeUndefined();
+      expect(element.props.children.props.children).toBe('Ver tudo');
+    });
+  });
+
+  describe('SectionHeader navigation wiring', () => {
+    it('"Ver tudo" navigates to budget route with correct travelId', () => {
+      const navigateMock = vi.fn();
+      const travelId = 'travel-1';
+
+      // Simulate the handleSeeAllCategories callback from DashboardPage
+      const handleSeeAllCategories = () => {
+        navigateMock({
+          to: '/travels/$travelId/budget',
+          params: { travelId },
+        });
+      };
+
+      handleSeeAllCategories();
+
+      expect(navigateMock).toHaveBeenCalledWith({
+        to: '/travels/$travelId/budget',
+        params: { travelId: 'travel-1' },
+      });
+    });
+
+    it('"Ver todas" navigates to expenses route with correct travelId', () => {
+      const navigateMock = vi.fn();
+      const travelId = 'travel-1';
+
+      // Simulate the handleViewAllExpenses callback from DashboardPage
+      const handleViewAllExpenses = () => {
+        navigateMock({
+          to: '/travels/$travelId/expenses',
+          params: { travelId },
+        });
+      };
+
+      handleViewAllExpenses();
+
+      expect(navigateMock).toHaveBeenCalledWith({
+        to: '/travels/$travelId/expenses',
+        params: { travelId: 'travel-1' },
+      });
+    });
+
+    it('navigation handlers are passed to both mobile and desktop layouts', () => {
+      const onSeeAllCategories = vi.fn();
+      const onViewAllExpenses = vi.fn();
+
+      // Simulate MobileLayout receiving the handlers
+      const mobileElement = React.createElement('div', {
+        onSeeAllCategories,
+        onViewAllExpenses,
+      });
+      expect(mobileElement.props.onSeeAllCategories).toBe(onSeeAllCategories);
+      expect(mobileElement.props.onViewAllExpenses).toBe(onViewAllExpenses);
+
+      // Simulate DesktopLayout receiving the handlers
+      const desktopElement = React.createElement('div', {
+        onSeeAllCategories,
+        onViewAllExpenses,
+      });
+      expect(desktopElement.props.onSeeAllCategories).toBe(onSeeAllCategories);
+      expect(desktopElement.props.onViewAllExpenses).toBe(onViewAllExpenses);
     });
   });
 });

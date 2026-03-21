@@ -1,5 +1,6 @@
-import { useMemo } from 'react';
+import { useMemo, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
+import { useNavigate } from '@tanstack/react-router';
 import { XStack, YStack, Text, useMedia, Separator } from 'tamagui';
 import { BudgetRing, CategoryProgressRow, StatCard, ExpenseRow, Heading, Body } from '@repo/ui';
 import type { DashboardData, TravelDetail, Expense, CategorySpending } from '@repo/api-client';
@@ -181,12 +182,30 @@ function StatsRow({
 
 // --- Section Header ---
 
-function SectionHeader({ title, action }: { title: string; action?: string }) {
+function SectionHeader({
+  title,
+  action,
+  onAction,
+}: {
+  title: string;
+  action?: string;
+  onAction?: () => void;
+}) {
   return (
     <XStack justifyContent="space-between" alignItems="center" paddingVertical="$sm">
       <Heading level={4}>{title}</Heading>
       {action && (
-        <Text fontFamily="$body" fontSize={14} color="$terracotta500" fontWeight="600">
+        <Text
+          fontFamily="$body"
+          fontSize={14}
+          color="$terracotta500"
+          fontWeight="600"
+          cursor={onAction ? 'pointer' : undefined}
+          onPress={onAction}
+          role={onAction ? 'button' : undefined}
+          hoverStyle={onAction ? { opacity: 0.7 } : undefined}
+          pressStyle={onAction ? { opacity: 0.7 } : undefined}
+        >
           {action}
         </Text>
       )}
@@ -264,12 +283,16 @@ function MobileLayout({
   travel,
   locale,
   t,
+  onSeeAllCategories,
+  onViewAllExpenses,
 }: {
   dashboard: DashboardData;
   recentExpenses: Expense[];
   travel: TravelDetail;
   locale: string;
   t: (key: string, opts?: Record<string, unknown>) => string;
+  onSeeAllCategories: () => void;
+  onViewAllExpenses: () => void;
 }) {
   const { overall, categorySpending, currency } = dashboard;
   const remaining = Math.max(0, overall.budget - overall.totalSpent);
@@ -311,14 +334,22 @@ function MobileLayout({
 
       {/* By Category */}
       <YStack>
-        <SectionHeader title={t('dashboard.byCategory')} action={t('dashboard.seeAll')} />
+        <SectionHeader
+          title={t('dashboard.byCategory')}
+          action={t('dashboard.seeAll')}
+          onAction={onSeeAllCategories}
+        />
         <CategoryList categories={categorySpending} currency={currency} locale={locale} />
       </YStack>
 
       {/* Recent Expenses */}
       {recentExpenses.length > 0 && (
         <YStack>
-          <SectionHeader title={t('dashboard.recentExpenses')} action={t('dashboard.viewAll')} />
+          <SectionHeader
+            title={t('dashboard.recentExpenses')}
+            action={t('dashboard.viewAll')}
+            onAction={onViewAllExpenses}
+          />
           <RecentExpenses expenses={recentExpenses} travel={travel} locale={locale} />
         </YStack>
       )}
@@ -334,12 +365,16 @@ function DesktopLayout({
   travel,
   locale,
   t,
+  onSeeAllCategories,
+  onViewAllExpenses,
 }: {
   dashboard: DashboardData;
   recentExpenses: Expense[];
   travel: TravelDetail;
   locale: string;
   t: (key: string, opts?: Record<string, unknown>) => string;
+  onSeeAllCategories: () => void;
+  onViewAllExpenses: () => void;
 }) {
   const { overall, categorySpending, currency } = dashboard;
   const remaining = Math.max(0, overall.budget - overall.totalSpent);
@@ -393,7 +428,11 @@ function DesktopLayout({
           borderColor="$borderDefault"
           padding="$cardPadding"
         >
-          <SectionHeader title={t('dashboard.budgetByCategory')} action={t('dashboard.seeAll')} />
+          <SectionHeader
+            title={t('dashboard.budgetByCategory')}
+            action={t('dashboard.seeAll')}
+            onAction={onSeeAllCategories}
+          />
           <CategoryList categories={categorySpending} currency={currency} locale={locale} />
         </YStack>
 
@@ -406,7 +445,11 @@ function DesktopLayout({
           borderColor="$borderDefault"
           padding="$cardPadding"
         >
-          <SectionHeader title={t('dashboard.recentExpenses')} action={t('dashboard.viewAll')} />
+          <SectionHeader
+            title={t('dashboard.recentExpenses')}
+            action={t('dashboard.viewAll')}
+            onAction={onViewAllExpenses}
+          />
           {recentExpenses.length > 0 ? (
             <RecentExpenses expenses={recentExpenses} travel={travel} locale={locale} />
           ) : (
@@ -428,9 +471,18 @@ export function DashboardPage() {
   const locale = i18n.language;
   const media = useMedia();
   const isDesktop = media.gtTablet;
+  const navigate = useNavigate();
 
   const { data: dashboard, isLoading: isDashboardLoading } = useDashboard(travel.id);
   const { data: expenses } = useTravelExpenses(travel.id, { limit: 5 });
+
+  const handleSeeAllCategories = useCallback(() => {
+    navigate({ to: '/travels/$travelId/budget', params: { travelId: travel.id } });
+  }, [navigate, travel.id]);
+
+  const handleViewAllExpenses = useCallback(() => {
+    navigate({ to: '/travels/$travelId/expenses', params: { travelId: travel.id } });
+  }, [navigate, travel.id]);
 
   const recentExpenses = useMemo(() => {
     if (!expenses) return [];
@@ -464,6 +516,8 @@ export function DashboardPage() {
         travel={travel}
         locale={locale}
         t={t}
+        onSeeAllCategories={handleSeeAllCategories}
+        onViewAllExpenses={handleViewAllExpenses}
       />
     );
   }
@@ -475,6 +529,8 @@ export function DashboardPage() {
       travel={travel}
       locale={locale}
       t={t}
+      onSeeAllCategories={handleSeeAllCategories}
+      onViewAllExpenses={handleViewAllExpenses}
     />
   );
 }
