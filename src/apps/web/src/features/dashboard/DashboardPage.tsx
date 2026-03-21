@@ -1,7 +1,7 @@
 import { useMemo, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from '@tanstack/react-router';
-import { XStack, YStack, Text, useMedia, Separator } from 'tamagui';
+import { XStack, YStack, Text, useMedia, Separator, styled } from 'tamagui';
 import { BudgetRing, CategoryProgressRow, StatCard, ExpenseRow, Heading, Body } from '@repo/ui';
 import type { DashboardData, TravelDetail, Expense, CategorySpending } from '@repo/api-client';
 
@@ -275,6 +275,51 @@ function RecentExpenses({
   );
 }
 
+// --- Header Avatar ---
+
+const HeaderAvatarCircle = styled(XStack, {
+  width: 36,
+  height: 36,
+  borderRadius: '$full',
+  backgroundColor: '$brandPrimary',
+  alignItems: 'center',
+  justifyContent: 'center',
+  cursor: 'pointer',
+  pressStyle: { opacity: 0.7 },
+});
+
+function DashboardHeader({
+  travelName,
+  userInitial,
+  onAvatarPress,
+}: {
+  travelName: string;
+  userInitial: string;
+  onAvatarPress?: () => void;
+}) {
+  return (
+    <XStack
+      justifyContent="space-between"
+      alignItems="center"
+      paddingHorizontal="$screenPaddingHorizontal"
+      paddingTop="$lg"
+      paddingBottom="$sm"
+    >
+      <Heading level={3}>{travelName}</Heading>
+      <HeaderAvatarCircle
+        onPress={onAvatarPress}
+        role="button"
+        aria-label="Open navigation menu"
+        data-testid="header-avatar"
+      >
+        <Text fontFamily="$heading" fontSize={16} fontWeight="600" color="$white">
+          {userInitial}
+        </Text>
+      </HeaderAvatarCircle>
+    </XStack>
+  );
+}
+
 // --- Mobile Layout ---
 
 function MobileLayout({
@@ -285,6 +330,7 @@ function MobileLayout({
   t,
   onSeeAllCategories,
   onViewAllExpenses,
+  onAvatarPress,
 }: {
   dashboard: DashboardData;
   recentExpenses: Expense[];
@@ -293,6 +339,7 @@ function MobileLayout({
   t: (key: string, opts?: Record<string, unknown>) => string;
   onSeeAllCategories: () => void;
   onViewAllExpenses: () => void;
+  onAvatarPress?: () => void;
 }) {
   const { overall, categorySpending, currency } = dashboard;
   const remaining = Math.max(0, overall.budget - overall.totalSpent);
@@ -300,15 +347,24 @@ function MobileLayout({
   const totalDays = getTripTotalDays(travel.startDate, travel.endDate);
   const avgPerDay = overall.totalSpent / daysSinceStart;
 
+  // Derive user initial from travel members
+  const currentMember = (travel.members ?? []).find((m) => m.userId != null);
+  const memberName = currentMember?.user?.name ?? '';
+  const userInitial = memberName ? memberName.charAt(0).toUpperCase() : '?';
+
   return (
     <YStack
       gap="$lg"
-      padding="$screenPaddingHorizontal"
-      paddingTop="$2xl"
       data-testid="dashboard-mobile"
     >
+      <DashboardHeader
+        travelName={travel.name}
+        userInitial={userInitial}
+        onAvatarPress={onAvatarPress}
+      />
+
       {/* BudgetRing */}
-      <YStack alignItems="center">
+      <YStack alignItems="center" paddingHorizontal="$screenPaddingHorizontal">
         <BudgetRing
           total={overall.budget}
           spent={overall.totalSpent}
@@ -317,42 +373,44 @@ function MobileLayout({
         />
       </YStack>
 
-      {/* Stats row */}
-      <StatsRow
-        spent={overall.totalSpent}
-        remaining={remaining}
-        avgPerDay={avgPerDay}
-        currency={currency}
-        locale={locale}
-        dayLabel={t('dashboard.dayOfTrip', { current: daysSinceStart, total: totalDays })}
-        t={t}
-      />
-
-      <Body size="secondary" textAlign="center" color="$textTertiary">
-        {t('dashboard.dayOfTrip', { current: daysSinceStart, total: totalDays })}
-      </Body>
-
-      {/* By Category */}
-      <YStack>
-        <SectionHeader
-          title={t('dashboard.byCategory')}
-          action={t('dashboard.seeAll')}
-          onAction={onSeeAllCategories}
+      <YStack gap="$lg" paddingHorizontal="$screenPaddingHorizontal">
+        {/* Stats row */}
+        <StatsRow
+          spent={overall.totalSpent}
+          remaining={remaining}
+          avgPerDay={avgPerDay}
+          currency={currency}
+          locale={locale}
+          dayLabel={t('dashboard.dayOfTrip', { current: daysSinceStart, total: totalDays })}
+          t={t}
         />
-        <CategoryList categories={categorySpending} currency={currency} locale={locale} />
-      </YStack>
 
-      {/* Recent Expenses */}
-      {recentExpenses.length > 0 && (
+        <Body size="secondary" textAlign="center" color="$textTertiary">
+          {t('dashboard.dayOfTrip', { current: daysSinceStart, total: totalDays })}
+        </Body>
+
+        {/* By Category */}
         <YStack>
           <SectionHeader
-            title={t('dashboard.recentExpenses')}
-            action={t('dashboard.viewAll')}
-            onAction={onViewAllExpenses}
+            title={t('dashboard.byCategory')}
+            action={t('dashboard.seeAll')}
+            onAction={onSeeAllCategories}
           />
-          <RecentExpenses expenses={recentExpenses} travel={travel} locale={locale} />
+          <CategoryList categories={categorySpending} currency={currency} locale={locale} />
         </YStack>
-      )}
+
+        {/* Recent Expenses */}
+        {recentExpenses.length > 0 && (
+          <YStack>
+            <SectionHeader
+              title={t('dashboard.recentExpenses')}
+              action={t('dashboard.viewAll')}
+              onAction={onViewAllExpenses}
+            />
+            <RecentExpenses expenses={recentExpenses} travel={travel} locale={locale} />
+          </YStack>
+        )}
+      </YStack>
     </YStack>
   );
 }
@@ -467,7 +525,7 @@ function DesktopLayout({
 
 export function DashboardPage() {
   const { t, i18n } = useTranslation();
-  const { travel } = useTravelContext();
+  const { travel, onOpenNavigationSheet } = useTravelContext();
   const locale = i18n.language;
   const media = useMedia();
   const isDesktop = media.gtTablet;
@@ -531,6 +589,7 @@ export function DashboardPage() {
       t={t}
       onSeeAllCategories={handleSeeAllCategories}
       onViewAllExpenses={handleViewAllExpenses}
+      onAvatarPress={onOpenNavigationSheet}
     />
   );
 }

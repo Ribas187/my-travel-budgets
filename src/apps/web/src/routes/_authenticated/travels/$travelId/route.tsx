@@ -1,10 +1,12 @@
-import { useState } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 import { createFileRoute, Outlet, useNavigate, useLocation } from '@tanstack/react-router';
 import { useTranslation } from 'react-i18next';
-import { YStack, Spinner, Text, View } from 'tamagui';
-import { AppShell, BottomNav, DesktopSidebar, FAB, Body, PrimaryButton } from '@repo/ui';
+import { YStack, Spinner, Text, View, useMedia } from 'tamagui';
+import { AppShell, BottomNav, DesktopSidebar, FAB, Body, PrimaryButton, NavigationSheet } from '@repo/ui';
+import type { NavigationSheetItem } from '@repo/ui';
 
 import { useTravelDetail } from '@/hooks/useTravelDetail';
+import { useUserMe } from '@/hooks/useUserMe';
 import { useAuth } from '@/providers/AuthProvider';
 import { AddExpenseModal } from '@/features/expenses/AddExpenseModal';
 import { TravelProvider } from '@/contexts/TravelContext';
@@ -42,10 +44,49 @@ function TravelLayout() {
   const { t } = useTranslation();
   const { travelId } = Route.useParams();
   const { data: travel, isLoading } = useTravelDetail(travelId);
-  const { token } = useAuth();
+  const { token, logout } = useAuth();
+  const { data: userMe } = useUserMe();
   const navigate = useNavigate();
   const location = useLocation();
+  const media = useMedia();
+  const isDesktop = media.gtTablet;
   const [addExpenseOpen, setAddExpenseOpen] = useState(false);
+  const [sheetOpen, setSheetOpen] = useState(false);
+
+  const handleOpenSheet = useCallback(() => {
+    setSheetOpen(true);
+  }, []);
+
+  const sheetItems = useMemo<NavigationSheetItem[]>(() => [
+    {
+      key: 'profile',
+      label: t('nav.profile'),
+      icon: <Text fontSize={18}>👤</Text>,
+      onPress: () => {
+        setSheetOpen(false);
+        navigate({ to: '/profile' as any });
+      },
+    },
+    {
+      key: 'myTravels',
+      label: t('nav.myTravels'),
+      icon: <Text fontSize={18}>✈️</Text>,
+      onPress: () => {
+        setSheetOpen(false);
+        navigate({ to: '/travels' as any });
+      },
+    },
+    {
+      key: 'logout',
+      label: t('nav.logout'),
+      icon: <Text fontSize={18}>🚪</Text>,
+      onPress: () => {
+        setSheetOpen(false);
+        logout();
+      },
+      destructive: true,
+    },
+  ], [t, navigate, logout]);
 
   const activeTab = getActiveTab(location.pathname, travelId);
 
@@ -159,11 +200,24 @@ function TravelLayout() {
     />
   ) : undefined;
 
+  const userName = userMe?.name ?? '';
+  const userInitial = userName ? userName.charAt(0).toUpperCase() : '?';
+
   return (
-    <TravelProvider travel={travel} isOwner={isOwner} currentUserId={currentUserId}>
+    <TravelProvider travel={travel} isOwner={isOwner} currentUserId={currentUserId} onOpenNavigationSheet={handleOpenSheet}>
       <AppShell sidebar={sidebar} bottomNav={bottomNav}>
         <Outlet />
       </AppShell>
+
+      {!isDesktop && (
+        <NavigationSheet
+          open={sheetOpen}
+          onOpenChange={setSheetOpen}
+          userName={userName}
+          userInitial={userInitial}
+          items={sheetItems}
+        />
+      )}
 
       <AddExpenseModal
         open={addExpenseOpen}
