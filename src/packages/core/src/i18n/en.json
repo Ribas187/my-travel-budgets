@@ -7,6 +7,7 @@
   "common.error": "Something went wrong",
   "common.confirm": "Confirm",
   "common.back": "Back",
+  "common.backTo": "Back to {{name}}",
   "common.close": "Close",
   "common.search": "Search",
   "common.noResults": "No results found",
