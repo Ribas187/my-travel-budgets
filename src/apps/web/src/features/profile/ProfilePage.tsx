@@ -1,9 +1,9 @@
 import { useState, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useNavigate } from '@tanstack/react-router';
+import { useNavigate, useRouter } from '@tanstack/react-router';
 import { styled, XStack, YStack, Text, View, Input } from 'tamagui';
-import { User } from 'lucide-react';
-import { Heading, Body, PrimaryButton } from '@repo/ui';
+import { User, Map, ChevronRight } from 'lucide-react';
+import { Heading, Body, PrimaryButton, BackHeader } from '@repo/ui';
 
 import { useAuth } from '@/providers/AuthProvider';
 import { useUserMe } from '@/hooks/useUserMe';
@@ -66,6 +66,18 @@ const LanguageOption = styled(XStack, {
   gap: '$sm',
 });
 
+const NavigationRow = styled(XStack, {
+  paddingVertical: '$md',
+  paddingHorizontal: '$lg',
+  borderRadius: '$lg',
+  borderWidth: 1,
+  borderColor: '$borderDefault',
+  alignItems: 'center',
+  justifyContent: 'space-between',
+  cursor: 'pointer',
+  backgroundColor: '$white',
+});
+
 const LogoutButton = styled(XStack, {
   paddingVertical: '$md',
   paddingHorizontal: '$xl',
@@ -80,6 +92,7 @@ const LogoutButton = styled(XStack, {
 export function ProfilePage() {
   const { t, i18n } = useTranslation();
   const navigate = useNavigate();
+  const router = useRouter();
   const { logout } = useAuth();
   const { data: user } = useUserMe();
   const updateUser = useUpdateUser();
@@ -118,6 +131,18 @@ export function ProfilePage() {
     [i18n],
   );
 
+  const handleBack = useCallback(() => {
+    if (window.history.length > 1) {
+      router.history.back();
+    } else {
+      navigate({ to: '/travels' });
+    }
+  }, [router, navigate]);
+
+  const handleMyTravels = useCallback(() => {
+    navigate({ to: '/travels' });
+  }, [navigate]);
+
   const handleLogout = useCallback(() => {
     logout();
     setTimeout(() => navigate({ to: '/login' }), 0);
@@ -140,8 +165,12 @@ export function ProfilePage() {
       width="100%"
       data-testid="profile-page"
     >
-      {/* Header */}
-      <Heading level={2}>{t('profile.title')}</Heading>
+      {/* Back Header */}
+      <BackHeader
+        title={t('profile.title')}
+        onBack={handleBack}
+        accessibilityLabel={t('profile.backToApp')}
+      />
 
       {/* Avatar + User Info */}
       <YStack alignItems="center" gap="$md">
@@ -237,6 +266,23 @@ export function ProfilePage() {
           </LanguageOption>
         </YStack>
       </SectionCard>
+
+      {/* My Travels Navigation */}
+      <NavigationRow
+        onPress={handleMyTravels}
+        data-testid="my-travels-row"
+        role="button"
+        aria-label={t('profile.myTravels')}
+        tabIndex={0}
+      >
+        <XStack alignItems="center" gap="$sm">
+          <Map size={20} color="#8C8580" />
+          <Text fontFamily="$body" fontSize={15} fontWeight="600" color="$textPrimary">
+            {t('profile.myTravels')}
+          </Text>
+        </XStack>
+        <ChevronRight size={18} color="#8C8580" />
+      </NavigationRow>
 
       {/* Logout */}
       <LogoutButton
