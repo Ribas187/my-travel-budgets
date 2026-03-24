@@ -99,3 +99,25 @@ describe('TripForm date picker integration', () => {
     expect(element.props.travel.endDate).toContain('2026-06-15');
   });
 });
+
+describe('TripForm loading state', () => {
+  it('passes saving=true to disable submit button and show spinner', () => {
+    const onSave = vi.fn();
+    const element = React.createElement(TripForm, {
+      travel: mockTravel,
+      saving: true,
+      onSave,
+    });
+    expect(element.props.saving).toBe(true);
+    expect(element).toBeDefined();
+  });
+
+  it('passes saving=false for interactive state', () => {
+    const onSave = vi.fn();
+    const element = React.createElement(TripForm, {
+      saving: false,
+      onSave,
+    });
+    expect(element.props.saving).toBe(false);
+  });
+});

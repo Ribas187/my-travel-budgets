@@ -3,7 +3,7 @@ import { createFileRoute, useNavigate, useSearch } from '@tanstack/react-router'
 import { useTranslation } from 'react-i18next';
 import { Star } from 'lucide-react';
 import { z } from 'zod';
-import { styled, XStack, YStack, Text } from 'tamagui';
+import { styled, XStack, YStack, Text, Spinner } from 'tamagui';
 import { Heading, Body, PrimaryButton } from '@repo/ui';
 import type { Travel } from '@repo/api-client';
 
@@ -48,6 +48,7 @@ const ProgressBarTrack = styled(XStack, {
 interface TravelCardProps {
   travel: Travel;
   isMainTravel?: boolean;
+  loading?: boolean;
   onToggleMain?: () => void;
   onPress: () => void;
 }
@@ -69,7 +70,7 @@ function formatBudget(amount: number, currency: string, locale: string): string 
   }).format(amount);
 }
 
-export function TravelCard({ travel, isMainTravel, onToggleMain, onPress }: TravelCardProps) {
+export function TravelCard({ travel, isMainTravel, loading, onToggleMain, onPress }: TravelCardProps) {
   const { t, i18n } = useTranslation();
   const locale = i18n.language;
 
@@ -82,6 +83,7 @@ export function TravelCard({ travel, isMainTravel, onToggleMain, onPress }: Trav
 
   const handleStarPress = (e: React.MouseEvent | React.KeyboardEvent) => {
     e.stopPropagation();
+    if (loading) return;
     onToggleMain?.();
   };
 
@@ -98,7 +100,8 @@ export function TravelCard({ travel, isMainTravel, onToggleMain, onPress }: Trav
           <XStack
             role="button"
             aria-label={isMainTravel ? t('travel.removeMainTravel') : t('travel.setMainTravel')}
-            cursor="pointer"
+            aria-disabled={loading}
+            cursor={loading ? 'default' : 'pointer'}
             padding="$xs"
             onPress={handleStarPress}
             testID={`star-toggle-${travel.id}`}
@@ -110,12 +113,16 @@ export function TravelCard({ travel, isMainTravel, onToggleMain, onPress }: Trav
               }
             }}
           >
-            <Star
-              size={20}
-              fill={isMainTravel ? 'currentColor' : 'none'}
-              color={isMainTravel ? '#f59e0b' : '#9ca3af'}
-              data-testid={isMainTravel ? 'star-filled' : 'star-outline'}
-            />
+            {loading ? (
+              <Spinner size="small" color="#9ca3af" data-testid="star-spinner" />
+            ) : (
+              <Star
+                size={20}
+                fill={isMainTravel ? 'currentColor' : 'none'}
+                color={isMainTravel ? '#f59e0b' : '#9ca3af'}
+                data-testid={isMainTravel ? 'star-filled' : 'star-outline'}
+              />
+            )}
           </XStack>
         )}
       </XStack>
@@ -273,6 +280,7 @@ function TravelsPage() {
               key={travel.id}
               travel={travel}
               isMainTravel={user?.mainTravelId === travel.id}
+              loading={setMainTravel.isPending}
               onToggleMain={() => handleToggleMain(travel.id)}
               onPress={() => handleTravelPress(travel.id)}
             />

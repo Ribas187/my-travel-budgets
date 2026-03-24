@@ -227,9 +227,10 @@ function DeleteExpenseDialog({
             paddingHorizontal="$lg"
             paddingVertical="$sm"
             borderRadius="$lg"
-            cursor="pointer"
+            cursor={loading ? 'default' : 'pointer'}
             opacity={loading ? 0.6 : 1}
             onPress={loading ? undefined : onConfirm}
+            aria-disabled={loading}
             data-testid="delete-confirm"
           >
             <Text fontFamily="$body" fontSize={14} fontWeight="600" color="$white">
