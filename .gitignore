@@ -41,6 +41,7 @@ qa-screenshots/
 test-results/
 playwright-report/
 .playwright-mcp/
+.tmp/
 
 # Caching
 __pycache__/
