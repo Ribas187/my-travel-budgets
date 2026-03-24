@@ -69,6 +69,9 @@
   "expense.updated": "Expense updated",
   "expense.deleted": "Expense deleted",
   "expense.deleteConfirm": "Delete \"{{description}}\" ({{amount}})?",
+  "expense.noCategoriesTitle": "No categories yet",
+  "expense.noCategoriesMessage": "You need to create at least one category before adding expenses.",
+  "expense.noCategoriesCta": "Go to Categories",
 
   "category.add": "Add Category",
   "category.budgetLimit": "Budget limit",

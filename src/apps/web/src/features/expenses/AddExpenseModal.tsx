@@ -2,6 +2,7 @@ import { useState, useCallback, useEffect } from 'react';
 import { useForm, Controller } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useTranslation } from 'react-i18next';
+import { useNavigate } from '@tanstack/react-router';
 import { styled, XStack, YStack, Text, View, Sheet, Input, useMedia } from 'tamagui';
 import {
   AmountInput,
@@ -246,6 +247,7 @@ function DeleteExpenseDialog({
 export function AddExpenseModal({ open, onClose, travel, expense }: AddExpenseModalProps) {
   const { t, i18n } = useTranslation();
   const locale = i18n.language;
+  const navigate = useNavigate();
   const isEditMode = !!expense;
   const createExpense = useCreateExpense(travel.id);
   const updateExpense = useUpdateExpense(travel.id);
@@ -376,6 +378,34 @@ export function AddExpenseModal({ open, onClose, travel, expense }: AddExpenseMo
   const isSaveDisabled = !isValid || watchedAmount <= 0 || isPending;
 
   const modalTitle = isEditMode ? t('expense.edit') : t('expense.add');
+
+  const hasNoCategories = (travel.categories ?? []).length === 0;
+
+  const noCategoriesContent = (
+    <YStack
+      flex={1}
+      alignItems="center"
+      justifyContent="center"
+      padding="$screenPaddingHorizontal"
+      gap="$lg"
+      data-testid="no-categories-guard"
+    >
+      <Text fontSize={64}>📁</Text>
+      <Heading level={3} textAlign="center">
+        {t('expense.noCategoriesTitle')}
+      </Heading>
+      <Body size="secondary" textAlign="center" color="$textTertiary">
+        {t('expense.noCategoriesMessage')}
+      </Body>
+      <PrimaryButton
+        label={t('expense.noCategoriesCta')}
+        onPress={() => {
+          onClose();
+          navigate({ to: '/travels/$travelId/categories', params: { travelId: travel.id } });
+        }}
+      />
+    </YStack>
+  );
 
   const formContent = (
     <YStack gap="$lg" testID="add-expense-form">
@@ -578,7 +608,7 @@ export function AddExpenseModal({ open, onClose, travel, expense }: AddExpenseMo
           ✕
         </CloseButton>
       </XStack>
-      {formContent}
+      {hasNoCategories ? noCategoriesContent : formContent}
     </>
   );
 

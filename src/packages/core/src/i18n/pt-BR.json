@@ -69,6 +69,9 @@
   "expense.updated": "Despesa atualizada",
   "expense.deleted": "Despesa excluída",
   "expense.deleteConfirm": "Excluir \"{{description}}\" ({{amount}})?",
+  "expense.noCategoriesTitle": "Nenhuma categoria ainda",
+  "expense.noCategoriesMessage": "Você precisa criar pelo menos uma categoria antes de adicionar despesas.",
+  "expense.noCategoriesCta": "Ir para Categorias",
 
   "category.add": "Adicionar Categoria",
   "category.budgetLimit": "Limite de orçamento",
