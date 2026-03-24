@@ -12,6 +12,9 @@ export function useRemoveAvatar() {
       queryClient.invalidateQueries({
         queryKey: queryKeys.users.me,
       });
+      queryClient.invalidateQueries({
+        queryKey: queryKeys.travels.all,
+      });
     },
   });
 }

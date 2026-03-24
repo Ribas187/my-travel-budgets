@@ -12,6 +12,9 @@ export function useUploadAvatar() {
       queryClient.invalidateQueries({
         queryKey: queryKeys.users.me,
       });
+      queryClient.invalidateQueries({
+        queryKey: queryKeys.travels.all,
+      });
     },
   });
 }
