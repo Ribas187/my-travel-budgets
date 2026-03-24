@@ -151,8 +151,7 @@ test.describe('Add category', () => {
     await page.locator('[data-testid="category-name-input"]').fill('Food & Drinks');
     await page.locator('[data-testid="category-budget-input"]').fill('500');
 
-    // Select an icon preset (first one is already selected by default — 🍔)
-    await page.locator('[data-testid="icon-preset-0"]').click();
+    // Default emoji (🍔) and color are already pre-selected
 
     // Save
     await page.locator('[data-testid="category-save-btn"]').click();
