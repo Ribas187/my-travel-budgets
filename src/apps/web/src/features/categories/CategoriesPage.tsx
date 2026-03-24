@@ -1,7 +1,13 @@
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { styled, XStack, YStack, Text, View, Spinner } from 'tamagui';
-import { CategoryEditCard, PrimaryButton, Heading, Body } from '@repo/ui';
+import { CategoryEditCard, PrimaryButton, Heading, Body, EmojiPicker, ColorPicker } from '@repo/ui';
+import {
+  CATEGORY_EMOJIS,
+  CATEGORY_COLORS,
+  DEFAULT_CATEGORY_EMOJI,
+  DEFAULT_CATEGORY_COLOR,
+} from '@repo/core';
 import type { Category, CreateCategoryInput, UpdateCategoryInput } from '@repo/api-client';
 import type { TravelDetail } from '@repo/api-client';
 
@@ -12,14 +18,6 @@ import { useUpdateCategory } from '@/hooks/useUpdateCategory';
 import { useDeleteCategory } from '@/hooks/useDeleteCategory';
 import { useTravelExpenses } from '@/hooks/useTravelExpenses';
 import { showToast } from '@/lib/toast';
-
-const ICON_PRESETS = [
-  { icon: '🍔', color: '#F59E0B' },
-  { icon: '🚗', color: '#3B82F6' },
-  { icon: '🏨', color: '#8B5CF6' },
-  { icon: '🎭', color: '#EC4899' },
-  { icon: '🛍️', color: '#10B981' },
-];
 
 const AddButton = styled(Text, {
   fontFamily: '$body',
@@ -32,26 +30,12 @@ const AddButton = styled(Text, {
   },
 });
 
-const IconOption = styled(View, {
-  width: 44,
-  height: 44,
-  borderRadius: 22,
+const PreviewCircle = styled(View, {
+  width: 56,
+  height: 56,
+  borderRadius: 28,
   alignItems: 'center',
   justifyContent: 'center',
-  cursor: 'pointer',
-
-  variants: {
-    selected: {
-      true: {
-        borderWidth: 2,
-        borderColor: '$brandPrimary',
-      },
-      false: {
-        borderWidth: 1,
-        borderColor: '$borderDefault',
-      },
-    },
-  } as const,
 });
 
 const FormField = styled(YStack, {
@@ -102,23 +86,23 @@ const EmptyContainer = styled(YStack, {
 interface CategoryFormState {
   name: string;
   budgetLimit: string;
-  selectedPresetIndex: number;
+  selectedEmoji: string;
+  selectedColor: string;
 }
 
 const DEFAULT_FORM: CategoryFormState = {
   name: '',
   budgetLimit: '',
-  selectedPresetIndex: 0,
+  selectedEmoji: DEFAULT_CATEGORY_EMOJI,
+  selectedColor: DEFAULT_CATEGORY_COLOR,
 };
 
 function getFormFromCategory(category: Category): CategoryFormState {
-  const presetIndex = ICON_PRESETS.findIndex(
-    (p) => p.icon === category.icon && p.color === category.color,
-  );
   return {
     name: category.name,
     budgetLimit: category.budgetLimit != null ? String(category.budgetLimit) : '',
-    selectedPresetIndex: presetIndex >= 0 ? presetIndex : 0,
+    selectedEmoji: category.icon,
+    selectedColor: category.color,
   };
 }
 
@@ -170,7 +154,6 @@ export function CategoriesPage({ travel, isOwner }: CategoriesPageProps) {
   }, []);
 
   const handleSave = useCallback(() => {
-    const preset = ICON_PRESETS[form.selectedPresetIndex]!;
     const budgetLimit = form.budgetLimit ? Number(form.budgetLimit) : null;
 
     if (!form.name.trim()) return;
@@ -178,8 +161,8 @@ export function CategoriesPage({ travel, isOwner }: CategoriesPageProps) {
     if (expandedId === 'new') {
       const data: CreateCategoryInput = {
         name: form.name.trim(),
-        icon: preset.icon,
-        color: preset.color,
+        icon: form.selectedEmoji,
+        color: form.selectedColor,
         budgetLimit,
       };
       createCategory.mutate(data, {
@@ -191,8 +174,8 @@ export function CategoriesPage({ travel, isOwner }: CategoriesPageProps) {
     } else if (expandedId) {
       const data: UpdateCategoryInput = {
         name: form.name.trim(),
-        icon: preset.icon,
-        color: preset.color,
+        icon: form.selectedEmoji,
+        color: form.selectedColor,
         budgetLimit,
       };
       updateCategory.mutate(
@@ -227,6 +210,12 @@ export function CategoriesPage({ travel, isOwner }: CategoriesPageProps) {
   );
 
   const isSaving = createCategory.isPending || updateCategory.isPending;
+
+  const emojiGroupLabels = useMemo(
+    () =>
+      Object.fromEntries(CATEGORY_EMOJIS.map((g) => [g.groupKey, t(g.groupKey)])),
+    [t],
+  );
 
   const renderForm = () => (
     <YStack gap="$md">
@@ -274,26 +263,35 @@ export function CategoriesPage({ travel, isOwner }: CategoriesPageProps) {
         </FormInput>
       </FormField>
 
+      <XStack alignItems="center" gap="$md" marginVertical="$sm">
+        <PreviewCircle
+          backgroundColor={form.selectedColor + '22'}
+          testID="category-live-preview"
+        >
+          <Text fontSize={28}>{form.selectedEmoji}</Text>
+        </PreviewCircle>
+        <Text fontFamily="$body" fontSize={13} color="$textTertiary">
+          {t('category.icon')} & {t('category.color')}
+        </Text>
+      </XStack>
+
       <FormField>
-        <FormLabel>
-          {t('category.icon')} / {t('category.color')}
-        </FormLabel>
-        <XStack gap="$sm" flexWrap="wrap">
-          {ICON_PRESETS.map((preset, index) => (
-            <IconOption
-              key={`${preset.icon}-${preset.color}`}
-              selected={form.selectedPresetIndex === index}
-              backgroundColor={preset.color + '22'}
-              onPress={() => setForm((f) => ({ ...f, selectedPresetIndex: index }))}
-              role="radio"
-              aria-checked={form.selectedPresetIndex === index}
-              aria-label={preset.icon}
-              testID={`icon-preset-${index}`}
-            >
-              <Text fontSize={22}>{preset.icon}</Text>
-            </IconOption>
-          ))}
-        </XStack>
+        <FormLabel>{t('category.icon')}</FormLabel>
+        <EmojiPicker
+          groups={CATEGORY_EMOJIS}
+          selectedEmoji={form.selectedEmoji}
+          onSelect={(emoji) => setForm((f) => ({ ...f, selectedEmoji: emoji }))}
+          groupLabels={emojiGroupLabels}
+        />
+      </FormField>
+
+      <FormField>
+        <FormLabel>{t('category.color')}</FormLabel>
+        <ColorPicker
+          colors={CATEGORY_COLORS}
+          selectedColor={form.selectedColor}
+          onSelect={(hex) => setForm((f) => ({ ...f, selectedColor: hex }))}
+        />
       </FormField>
     </YStack>
   );
@@ -409,8 +407,8 @@ export function CategoriesPage({ travel, isOwner }: CategoriesPageProps) {
           <CategoryEditCard
             name={form.name || t('category.name')}
             expanded
-            icon={<Text fontSize={22}>{ICON_PRESETS[form.selectedPresetIndex]?.icon}</Text>}
-            iconBackgroundColor={ICON_PRESETS[form.selectedPresetIndex]?.color + '22'}
+            icon={<Text fontSize={22}>{form.selectedEmoji}</Text>}
+            iconBackgroundColor={form.selectedColor + '22'}
             actions={renderActions()}
           >
             {renderForm()}
