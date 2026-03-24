@@ -10,15 +10,19 @@ import { UsersController } from './users.controller';
 import { UsersService } from './users.service';
 
 import { CommonAuthModule } from '@/modules/common/auth';
+import { PrismaModule } from '@/modules/prisma/prisma.module';
+import { PrismaService } from '@/modules/prisma/prisma.service';
 
 const TEST_JWT_SECRET = 'unit-test-jwt-secret-min-32-characters!!';
 
 const mockGetMe = jest.fn();
 const mockUpdateMe = jest.fn();
+const mockSetMainTravel = jest.fn();
 
 const usersServiceMock = {
   getMe: mockGetMe,
   updateMe: mockUpdateMe,
+  setMainTravel: mockSetMainTravel,
 };
 
 describe('UsersController', () => {
@@ -43,6 +47,7 @@ describe('UsersController', () => {
             }),
           ],
         }),
+        PrismaModule,
         CommonAuthModule,
       ],
       controllers: [UsersController],
@@ -52,7 +57,18 @@ describe('UsersController', () => {
           useValue: usersServiceMock,
         },
       ],
-    }).compile();
+    })
+      .overrideProvider(PrismaService)
+      .useValue({
+        user: {
+          findUnique: jest.fn().mockResolvedValue({
+            id: 'user-1',
+            email: 'user@test.com',
+            name: 'Test User',
+          }),
+        },
+      })
+      .compile();
 
     app = module.createNestApplication();
     app.useGlobalPipes(new ValidationPipe({ whitelist: true }));
@@ -64,27 +80,29 @@ describe('UsersController', () => {
     await app.close();
   });
 
+  const authToken = () => jwtService.sign({ sub: 'user-1', email: 'user@test.com' });
+
+  const baseProfile = {
+    id: 'user-1',
+    email: 'user@test.com',
+    name: 'Test User',
+    avatarUrl: null,
+    mainTravelId: null,
+    createdAt: new Date('2024-01-01'),
+    updatedAt: new Date('2024-01-02'),
+  };
+
   describe('GET /users/me', () => {
     it('returns 401 without auth', async () => {
       await request(app.getHttpServer()).get('/users/me').expect(HttpStatus.UNAUTHORIZED);
     });
 
-    it('returns 200 with user profile when authenticated', async () => {
-      const profile = {
-        id: 'user-1',
-        email: 'user@test.com',
-        name: 'Test User',
-        avatarUrl: null,
-        createdAt: new Date('2024-01-01'),
-        updatedAt: new Date('2024-01-02'),
-      };
-      mockGetMe.mockResolvedValue(profile);
-
-      const token = jwtService.sign({ sub: 'user-1', email: 'user@test.com' });
+    it('returns 200 with user profile including mainTravelId when authenticated', async () => {
+      mockGetMe.mockResolvedValue(baseProfile);
 
       const res = await request(app.getHttpServer())
         .get('/users/me')
-        .set('Authorization', `Bearer ${token}`)
+        .set('Authorization', `Bearer ${authToken()}`)
         .expect(HttpStatus.OK);
 
       expect(res.body).toMatchObject({
@@ -92,6 +110,7 @@ describe('UsersController', () => {
         email: 'user@test.com',
         name: 'Test User',
         avatarUrl: null,
+        mainTravelId: null,
       });
     });
   });
@@ -105,21 +124,12 @@ describe('UsersController', () => {
     });
 
     it('returns 200 with updated profile when authenticated', async () => {
-      const updated = {
-        id: 'user-1',
-        email: 'user@test.com',
-        name: 'New Name',
-        avatarUrl: null,
-        createdAt: new Date('2024-01-01'),
-        updatedAt: new Date(),
-      };
+      const updated = { ...baseProfile, name: 'New Name', updatedAt: new Date() };
       mockUpdateMe.mockResolvedValue(updated);
-
-      const token = jwtService.sign({ sub: 'user-1', email: 'user@test.com' });
 
       const res = await request(app.getHttpServer())
         .patch('/users/me')
-        .set('Authorization', `Bearer ${token}`)
+        .set('Authorization', `Bearer ${authToken()}`)
         .send({ name: 'New Name' })
         .expect(HttpStatus.OK);
 
@@ -128,6 +138,53 @@ describe('UsersController', () => {
         email: 'user@test.com',
         name: 'New Name',
       });
+    });
+  });
+
+  describe('PATCH /users/me/main-travel', () => {
+    it('returns 401 without auth', async () => {
+      await request(app.getHttpServer())
+        .patch('/users/me/main-travel')
+        .send({ travelId: 'travel-1' })
+        .expect(HttpStatus.UNAUTHORIZED);
+    });
+
+    it('returns 200 when setting mainTravelId', async () => {
+      const updated = { ...baseProfile, mainTravelId: 'travel-1' };
+      mockSetMainTravel.mockResolvedValue(updated);
+
+      const res = await request(app.getHttpServer())
+        .patch('/users/me/main-travel')
+        .set('Authorization', `Bearer ${authToken()}`)
+        .send({ travelId: '550e8400-e29b-41d4-a716-446655440000' })
+        .expect(HttpStatus.OK);
+
+      expect(mockSetMainTravel).toHaveBeenCalledWith('user-1', {
+        travelId: '550e8400-e29b-41d4-a716-446655440000',
+      });
+      expect(res.body).toMatchObject({ mainTravelId: 'travel-1' });
+    });
+
+    it('returns 200 when clearing mainTravelId with null', async () => {
+      const updated = { ...baseProfile, mainTravelId: null };
+      mockSetMainTravel.mockResolvedValue(updated);
+
+      const res = await request(app.getHttpServer())
+        .patch('/users/me/main-travel')
+        .set('Authorization', `Bearer ${authToken()}`)
+        .send({ travelId: null })
+        .expect(HttpStatus.OK);
+
+      expect(mockSetMainTravel).toHaveBeenCalledWith('user-1', { travelId: null });
+      expect(res.body).toMatchObject({ mainTravelId: null });
+    });
+
+    it('returns 400 when travelId is not a valid UUID', async () => {
+      await request(app.getHttpServer())
+        .patch('/users/me/main-travel')
+        .set('Authorization', `Bearer ${authToken()}`)
+        .send({ travelId: 'not-a-uuid' })
+        .expect(HttpStatus.BAD_REQUEST);
     });
   });
 });
