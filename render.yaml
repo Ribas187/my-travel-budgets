@@ -5,7 +5,7 @@ services:
     region: oregon
     plan: free
     rootDir: .
-    buildCommand: NODE_ENV=development pnpm install && pnpm build && cd src/apps/api && npx prisma migrate deploy
+    buildCommand: NODE_ENV=development pnpm install && pnpm turbo run build --filter=@app/api... && cd src/apps/api && npx prisma migrate deploy
     startCommand: NODE_ENV=production cd src/apps/api && node dist/main
     envVars:
       - key: PORT
