@@ -56,10 +56,13 @@ function getCategoryById(categoryId: string, categories: Category[]): Category |
 const FilterBar = styled(ScrollView, {
   flexDirection: 'row',
   marginBottom: '$sm',
+  flexGrow: 0,
+  flexShrink: 0,
 });
 
 const FilterBarContent = styled(XStack, {
   gap: '$sm',
+  alignItems: 'center',
 });
 
 const SearchContainer = styled(XStack, {
