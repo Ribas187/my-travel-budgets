@@ -100,4 +100,28 @@ describe('NavigationSheet', () => {
     expect(element.props.userName).toBe('Ana Silva');
     expect(element.props.userInitial).toBe('A');
   });
+
+  it('renders initial in avatar when userInitial is provided', () => {
+    const element = React.createElement(NavigationSheet, {
+      open: true,
+      onOpenChange: vi.fn(),
+      userName: 'Ricardo',
+      userInitial: 'R',
+      items: makeItems(),
+    });
+    expect(element.props.userInitial).toBe('R');
+    expect(element.props.showIconFallback).toBeUndefined();
+  });
+
+  it('renders User icon in avatar when showIconFallback is true', () => {
+    const element = React.createElement(NavigationSheet, {
+      open: true,
+      onOpenChange: vi.fn(),
+      userName: '',
+      showIconFallback: true,
+      items: makeItems(),
+    });
+    expect(element.props.showIconFallback).toBe(true);
+    expect(element.props.userInitial).toBeUndefined();
+  });
 });

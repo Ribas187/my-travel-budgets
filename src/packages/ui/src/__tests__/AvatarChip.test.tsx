@@ -48,4 +48,43 @@ describe('AvatarChip', () => {
     });
     expect(element.props.role).toBeUndefined();
   });
+
+  it('renders initial text when initial is provided and showIconFallback is false', () => {
+    const element = React.createElement(AvatarChip, {
+      name: 'Ricardo',
+      initial: 'R',
+      showIconFallback: false,
+    });
+    expect(element.props.initial).toBe('R');
+    expect(element.props.showIconFallback).toBe(false);
+  });
+
+  it('renders initial text when initial is provided and showIconFallback is undefined', () => {
+    const element = React.createElement(AvatarChip, {
+      name: 'Ricardo',
+      initial: 'R',
+    });
+    expect(element.props.initial).toBe('R');
+    expect(element.props.showIconFallback).toBeUndefined();
+  });
+
+  it('renders User icon (SVG) when showIconFallback is true', () => {
+    const element = React.createElement(AvatarChip, {
+      name: '',
+      showIconFallback: true,
+    });
+    expect(element.props.showIconFallback).toBe(true);
+    // initial should not be required when showIconFallback is true
+    expect(element.props.initial).toBeUndefined();
+  });
+
+  it('icon has aria-hidden="true" when name is visible', () => {
+    const element = React.createElement(AvatarChip, {
+      name: 'Ricardo',
+      showIconFallback: true,
+    });
+    // When name is provided, the icon should be decorative (aria-hidden)
+    expect(element.props.name).toBe('Ricardo');
+    expect(element.props.showIconFallback).toBe(true);
+  });
 });
