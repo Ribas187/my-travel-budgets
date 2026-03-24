@@ -6,6 +6,11 @@
       "sourceType": "github",
       "computedHash": "51c53259bba830ebad6741b2ab69d213d5a4d02835f7f27925a0e4e93515fc22"
     },
+    "clean-ddd-hexagonal": {
+      "source": "ccheney/robust-skills",
+      "sourceType": "github",
+      "computedHash": "b9a54e257685086d0034bd8277964452b7208e2f18bf68d158996936ce667b6a"
+    },
     "interface-design": {
       "source": "dammyjay93/interface-design",
       "sourceType": "github",
@@ -15,6 +20,11 @@
       "source": "inferen-sh/skills",
       "sourceType": "github",
       "computedHash": "081e388a6bd35c8e11a7b08de47fea59e64fc5422bf1bb898f2d94175ab0eda3"
+    },
+    "nestjs-best-practices": {
+      "source": "kadajett/agent-nestjs-skills",
+      "sourceType": "github",
+      "computedHash": "1b6f82e889d19d305e38e35594de08eca0242321f353cafa4cf5e61dd3aa1a73"
     },
     "tamagui": {
       "source": "tamagui/tamagui",
