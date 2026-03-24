@@ -1,6 +1,8 @@
-import { createFileRoute, useNavigate } from '@tanstack/react-router';
+import { useEffect, useRef } from 'react';
+import { createFileRoute, useNavigate, useSearch } from '@tanstack/react-router';
 import { useTranslation } from 'react-i18next';
 import { Star } from 'lucide-react';
+import { z } from 'zod';
 import { styled, XStack, YStack, Text } from 'tamagui';
 import { Heading, Body, PrimaryButton } from '@repo/ui';
 import type { Travel } from '@repo/api-client';
@@ -9,7 +11,12 @@ import { useTravels } from '@/hooks/useTravels';
 import { useUserMe } from '@/hooks/useUserMe';
 import { useSetMainTravel } from '@/hooks/useSetMainTravel';
 
+const travelsSearchSchema = z.object({
+  from: z.string().optional(),
+});
+
 export const Route = createFileRoute('/_authenticated/travels/')({
+  validateSearch: travelsSearchSchema,
   component: TravelsPage,
 });
 
@@ -215,6 +222,22 @@ function TravelsPage() {
   const { data: travels, isLoading } = useTravels();
   const { data: user } = useUserMe();
   const setMainTravel = useSetMainTravel();
+  const { from } = useSearch({ from: '/_authenticated/travels/' });
+  const redirectedRef = useRef(false);
+
+  // FR-3.4: Redirect to main travel summary only after login
+  useEffect(() => {
+    if (redirectedRef.current || from !== 'login' || isLoading || !user?.mainTravelId || !travels) return;
+    const isAccessible = travels.some((t) => t.id === user.mainTravelId);
+    if (isAccessible) {
+      redirectedRef.current = true;
+      navigate({
+        to: '/travels/$travelId/summary',
+        params: { travelId: user.mainTravelId! },
+        replace: true,
+      });
+    }
+  }, [user, travels, isLoading, navigate, from]);
 
   const handleCreateTrip = () => {
     navigate({ to: '/travels/new' });

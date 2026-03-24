@@ -38,7 +38,7 @@ function VerifyPage() {
       try {
         const session = await apiClient.auth.verify(token);
         login(session.accessToken);
-        navigate({ to: '/travels' });
+        navigate({ to: '/travels', search: { from: 'login' } });
       } catch {
         setError(t('auth.verifyError'));
       }
