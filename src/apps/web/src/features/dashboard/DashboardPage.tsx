@@ -292,10 +292,12 @@ function DashboardHeader({
   travelName,
   userInitial,
   onAvatarPress,
+  openMenuLabel = 'Open navigation menu',
 }: {
   travelName: string;
   userInitial: string;
   onAvatarPress?: () => void;
+  openMenuLabel?: string;
 }) {
   return (
     <XStack
@@ -309,7 +311,7 @@ function DashboardHeader({
       <HeaderAvatarCircle
         onPress={onAvatarPress}
         role="button"
-        aria-label="Open navigation menu"
+        aria-label={openMenuLabel}
         data-testid="header-avatar"
       >
         <Text fontFamily="$heading" fontSize={16} fontWeight="600" color="$white">
@@ -361,6 +363,7 @@ function MobileLayout({
         travelName={travel.name}
         userInitial={userInitial}
         onAvatarPress={onAvatarPress}
+        openMenuLabel={t('nav.openMenu')}
       />
 
       {/* BudgetRing */}
@@ -370,6 +373,8 @@ function MobileLayout({
           spent={overall.totalSpent}
           currency={currency}
           locale={locale}
+          remainingLabel={t('budget.remaining')}
+          spentLabel={t('budget.spent')}
         />
       </YStack>
 

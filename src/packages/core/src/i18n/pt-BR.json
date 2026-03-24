@@ -177,6 +177,18 @@
   "datePicker.openCalendar": "Abrir calendário",
   "datePicker.selectedDate": "Selecionado: {{date}}",
 
+  "common.unknown": "Desconhecido",
+  "common.current": "Atual",
+
+  "app.title": "My Travel Budgets",
+
+  "budget.remaining": "Restante",
+  "budget.spent": "gasto",
+  "budget.expenseCount": "{{count}} despesas",
+  "budget.overBudgetByAmount": "Acima do orçamento em {{amount}}",
+
+  "nav.openMenu": "Abrir menu de navegação",
+
   "category.emojiGroup.food": "Comida & Bebida",
   "category.emojiGroup.transport": "Transporte",
   "category.emojiGroup.accommodation": "Hospedagem",

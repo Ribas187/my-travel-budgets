@@ -101,6 +101,10 @@ interface CategoryDetailCardProps {
   currency: string;
   locale: string;
   onSetBudget?: () => void;
+  expenseCountLabel?: string;
+  overBudgetByLabel?: string;
+  onTrackLabel?: string;
+  setBudgetLabel?: string;
 }
 
 function formatAmount(amount: number, currency: string, locale: string): string {
@@ -122,6 +126,10 @@ export function CategoryDetailCard({
   currency,
   locale,
   onSetBudget,
+  expenseCountLabel,
+  overBudgetByLabel,
+  onTrackLabel = 'On track',
+  setBudgetLabel = 'Set a budget',
 }: CategoryDetailCardProps) {
   const percentage = budget && budget > 0 ? Math.round((spent / budget) * 100) : 0;
   const progressWidth = Math.min(percentage, 100);
@@ -146,7 +154,7 @@ export function CategoryDetailCard({
             )}
           </TitleRow>
           <MetaText>
-            {expenseCount} expenses · {formatAmount(spent, currency, locale)}
+            {expenseCountLabel ?? `${expenseCount} expenses`} · {formatAmount(spent, currency, locale)}
             {budget !== null && budget > 0 && ` / ${formatAmount(budget, currency, locale)}`}
           </MetaText>
         </HeaderContent>
@@ -165,14 +173,14 @@ export function CategoryDetailCard({
       {budget !== null && budget > 0 && (
         <PacingText color={progressColor} data-testid="pacing-text">
           {isOverBudget
-            ? `Over budget by ${formatAmount(overAmount, currency, locale)}`
-            : 'On track'}
+            ? (overBudgetByLabel ?? `Over budget by ${formatAmount(overAmount, currency, locale)}`)
+            : onTrackLabel}
         </PacingText>
       )}
 
       {budget === null && onSetBudget && (
         <SetBudgetButton onPress={onSetBudget} role="button" data-testid="set-budget-cta">
-          <SetBudgetText>Set a budget</SetBudgetText>
+          <SetBudgetText>{setBudgetLabel}</SetBudgetText>
         </SetBudgetButton>
       )}
     </CardFrame>

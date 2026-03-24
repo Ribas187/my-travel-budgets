@@ -55,19 +55,20 @@ interface ColorPickerProps {
   colors: CategoryColor[];
   selectedColor: string;
   onSelect: (hex: string) => void;
+  currentLabel?: string;
 }
 
-export function ColorPicker({ colors, selectedColor, onSelect }: ColorPickerProps) {
+export function ColorPicker({ colors, selectedColor, onSelect, currentLabel = 'Current' }: ColorPickerProps) {
   const isInCuratedSet = colors.some((c) => c.hex === selectedColor);
   const allItems = isInCuratedSet
     ? colors
-    : [{ hex: selectedColor, name: 'Current' }, ...colors];
+    : [{ hex: selectedColor, name: currentLabel }, ...colors];
 
   return (
     <PaletteGrid role="radiogroup" aria-label="Color palette">
       {allItems.map((color) => {
         const isSelected = color.hex === selectedColor;
-        const isCurrent = !isInCuratedSet && color.name === 'Current';
+        const isCurrent = !isInCuratedSet && color.name === currentLabel;
 
         return (
           <YStack key={color.hex} alignItems="center">
@@ -84,7 +85,7 @@ export function ColorPicker({ colors, selectedColor, onSelect }: ColorPickerProp
                 {isSelected && <CheckmarkText>✓</CheckmarkText>}
               </SwatchInner>
             </SwatchButton>
-            {isCurrent && <CurrentLabel>Current</CurrentLabel>}
+            {isCurrent && <CurrentLabel>{currentLabel}</CurrentLabel>}
           </YStack>
         );
       })}

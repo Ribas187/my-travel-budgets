@@ -273,6 +273,10 @@ export function BudgetBreakdownPage() {
             currency={currency}
             locale={locale}
             onSetBudget={cat.budgetLimit === null ? handleNavigateToCategories : undefined}
+            expenseCountLabel={t('budget.expenseCount', { count: expenseCountByCategory[cat.categoryId] ?? 0 })}
+            overBudgetByLabel={cat.budgetLimit && cat.totalSpent >= cat.budgetLimit ? t('budget.overBudgetByAmount', { amount: formatCurrency(cat.totalSpent - cat.budgetLimit, currency, locale) }) : undefined}
+            onTrackLabel={t('budget.onTrack')}
+            setBudgetLabel={t('budget.setBudget')}
           />
         ))}
       </YStack>

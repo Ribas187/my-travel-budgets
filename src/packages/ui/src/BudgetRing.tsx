@@ -45,6 +45,8 @@ interface BudgetRingProps {
   locale: string;
   size?: number;
   strokeWidth?: number;
+  remainingLabel?: string;
+  spentLabel?: string;
 }
 
 function formatCurrency(amount: number, currency: string, locale: string): string {
@@ -62,6 +64,8 @@ export function BudgetRing({
   locale,
   size = 180,
   strokeWidth = 12,
+  remainingLabel = 'Remaining',
+  spentLabel = 'spent',
 }: BudgetRingProps) {
   const percentage = total > 0 ? (spent / total) * 100 : 0;
   const remaining = Math.max(0, total - spent);
@@ -108,10 +112,10 @@ export function BudgetRing({
         />
       </svg>
       <InnerLabel>
-        <OverlineText>Remaining</OverlineText>
+        <OverlineText>{remainingLabel}</OverlineText>
         <AmountText>{formatCurrency(remaining, currency, locale)}</AmountText>
         <SubtitleText color={progressColor}>
-          {formatCurrency(spent, currency, locale)} spent
+          {formatCurrency(spent, currency, locale)} {spentLabel}
         </SubtitleText>
       </InnerLabel>
     </RingContainer>

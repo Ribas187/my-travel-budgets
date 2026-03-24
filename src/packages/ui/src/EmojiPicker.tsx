@@ -59,6 +59,7 @@ interface EmojiPickerProps {
   selectedEmoji: string;
   onSelect: (emoji: string) => void;
   groupLabels: Record<string, string>;
+  currentLabel?: string;
 }
 
 export function EmojiPicker({
@@ -66,6 +67,7 @@ export function EmojiPicker({
   selectedEmoji,
   onSelect,
   groupLabels,
+  currentLabel = 'Current',
 }: EmojiPickerProps) {
   const allEmojis = groups.flatMap((g) => g.emojis);
   const isInCuratedSet = allEmojis.includes(selectedEmoji);
@@ -74,7 +76,7 @@ export function EmojiPicker({
     <YStack role="radiogroup" aria-label="Emoji picker">
       {!isInCuratedSet && (
         <GroupContainer>
-          <GroupLabel>Current</GroupLabel>
+          <GroupLabel>{currentLabel}</GroupLabel>
           <EmojiGrid>
             <YStack alignItems="center">
               <EmojiButton
@@ -88,7 +90,7 @@ export function EmojiPicker({
               >
                 <EmojiText>{selectedEmoji}</EmojiText>
               </EmojiButton>
-              <CurrentBadge>Current</CurrentBadge>
+              <CurrentBadge>{currentLabel}</CurrentBadge>
             </YStack>
           </EmojiGrid>
         </GroupContainer>

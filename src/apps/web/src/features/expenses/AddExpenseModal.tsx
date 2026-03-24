@@ -142,10 +142,10 @@ function getCurrencySymbol(currencyCode: string): string {
   return currency?.symbol ?? currencyCode;
 }
 
-function getMemberDisplayName(member: TravelDetail['members'][number]): string {
+function getMemberDisplayName(member: TravelDetail['members'][number], unknownLabel = 'Unknown'): string {
   if (member.user?.name) return member.user.name;
   if (member.guestName) return member.guestName;
-  return member.user?.email ?? 'Unknown';
+  return member.user?.email ?? unknownLabel;
 }
 
 function getMemberInitial(member: TravelDetail['members'][number]): string {
@@ -507,10 +507,10 @@ export function AddExpenseModal({ open, onClose, travel, expense }: AddExpenseMo
                     onPress={() => setValue('memberId', member.id, { shouldValidate: true })}
                     role="radio"
                     aria-checked={isSelected}
-                    aria-label={getMemberDisplayName(member)}
+                    aria-label={getMemberDisplayName(member, t('common.unknown'))}
                   >
                     <AvatarChip
-                      name={getMemberDisplayName(member)}
+                      name={getMemberDisplayName(member, t('common.unknown'))}
                       initial={getMemberInitial(member)}
                       avatarColor={AVATAR_COLORS[index % AVATAR_COLORS.length]}
                       role={member.role === 'owner' ? t('member.admin') : undefined}

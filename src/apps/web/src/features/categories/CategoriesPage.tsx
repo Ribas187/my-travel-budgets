@@ -282,6 +282,7 @@ export function CategoriesPage({ travel, isOwner }: CategoriesPageProps) {
           selectedEmoji={form.selectedEmoji}
           onSelect={(emoji) => setForm((f) => ({ ...f, selectedEmoji: emoji }))}
           groupLabels={emojiGroupLabels}
+          currentLabel={t('common.current')}
         />
       </FormField>
 
@@ -291,6 +292,7 @@ export function CategoriesPage({ travel, isOwner }: CategoriesPageProps) {
           colors={CATEGORY_COLORS}
           selectedColor={form.selectedColor}
           onSelect={(hex) => setForm((f) => ({ ...f, selectedColor: hex }))}
+          currentLabel={t('common.current')}
         />
       </FormField>
     </YStack>

@@ -75,7 +75,7 @@ function LoginPage() {
 
   return (
     <YStack flex={1} alignItems="center" justifyContent="center" padding="$2xl" gap="$lg">
-      <Heading level={1}>My Travel Budgets</Heading>
+      <Heading level={1}>{t('app.title')}</Heading>
       <Text fontFamily="$body" color="$textSecondary" marginBottom="$lg">
         {t('auth.login')}
       </Text>
