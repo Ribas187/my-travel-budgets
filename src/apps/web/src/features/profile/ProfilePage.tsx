@@ -2,28 +2,35 @@ import { useState, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate, useRouter } from '@tanstack/react-router';
 import { styled, XStack, YStack, Text, View, Input } from 'tamagui';
-import { User, Map, ChevronRight } from 'lucide-react';
-import { Heading, Body, PrimaryButton, BackHeader } from '@repo/ui';
+import { Camera, Map, ChevronRight } from 'lucide-react';
+import { Heading, Body, PrimaryButton, BackHeader, UserAvatar } from '@repo/ui';
 
 import { useAuth } from '@/providers/AuthProvider';
 import { useUserMe } from '@/hooks/useUserMe';
 import { useUpdateUser } from '@/hooks/useUpdateUser';
 import { showToast } from '@/lib/toast';
+import { AvatarUploadModal } from './AvatarUploadModal';
 
-const AvatarCircle = styled(XStack, {
-  width: 80,
-  height: 80,
+const AvatarWrapper = styled(View, {
+  position: 'relative' as any,
+  cursor: 'pointer',
   borderRadius: 40,
-  alignItems: 'center',
-  justifyContent: 'center',
-  backgroundColor: '$brandPrimary',
+  overflow: 'hidden',
 });
 
-const AvatarInitial = styled(Text, {
-  fontFamily: '$heading',
-  fontSize: 32,
-  fontWeight: '700',
-  color: '$white',
+const CameraOverlay = styled(XStack, {
+  position: 'absolute' as any,
+  top: 0,
+  left: 0,
+  right: 0,
+  bottom: 0,
+  backgroundColor: 'rgba(0,0,0,0.4)',
+  alignItems: 'center',
+  justifyContent: 'center',
+  opacity: 0,
+  hoverStyle: {
+    opacity: 1,
+  },
 });
 
 const SectionCard = styled(YStack, {
@@ -99,6 +106,7 @@ export function ProfilePage() {
 
   const [isEditingName, setIsEditingName] = useState(false);
   const [nameValue, setNameValue] = useState('');
+  const [isUploadModalOpen, setIsUploadModalOpen] = useState(false);
 
   const handleStartEdit = useCallback(() => {
     setNameValue(user?.name ?? '');
@@ -148,10 +156,16 @@ export function ProfilePage() {
     setTimeout(() => navigate({ to: '/login' }), 0);
   }, [logout, navigate]);
 
+  const handleOpenUpload = useCallback(() => {
+    setIsUploadModalOpen(true);
+  }, []);
+
+  const handleCloseUpload = useCallback(() => {
+    setIsUploadModalOpen(false);
+  }, []);
+
   if (!user) return null;
 
-  const hasName = !!user.name;
-  const initial = hasName ? user.name.charAt(0).toUpperCase() : undefined;
   const currentLanguage = i18n.language;
 
   return (
@@ -174,13 +188,28 @@ export function ProfilePage() {
 
       {/* Avatar + User Info */}
       <YStack alignItems="center" gap="$md">
-        <AvatarCircle data-testid="profile-avatar">
-          {hasName ? (
-            <AvatarInitial>{initial}</AvatarInitial>
-          ) : (
-            <User size={36} color="white" role="img" aria-label="User" data-testid="profile-avatar-icon" />
-          )}
-        </AvatarCircle>
+        <AvatarWrapper
+          onPress={handleOpenUpload}
+          data-testid="profile-avatar"
+          role="button"
+          aria-label={t('profile.changePhoto')}
+          tabIndex={0}
+          onKeyDown={(e: any) => {
+            if (e.key === 'Enter' || e.key === ' ') {
+              e.preventDefault();
+              handleOpenUpload();
+            }
+          }}
+        >
+          <UserAvatar
+            avatarUrl={user.avatarUrl}
+            name={user.name}
+            size={80}
+          />
+          <CameraOverlay>
+            <Camera size={24} color="white" />
+          </CameraOverlay>
+        </AvatarWrapper>
         <Heading level={3}>{user.name}</Heading>
         <Body size="secondary" color="$textTertiary">
           {user.email}
@@ -295,6 +324,13 @@ export function ProfilePage() {
           {t('profile.logout')}
         </Text>
       </LogoutButton>
+
+      {/* Upload Modal */}
+      <AvatarUploadModal
+        open={isUploadModalOpen}
+        onClose={handleCloseUpload}
+        onSuccess={handleCloseUpload}
+      />
     </YStack>
   );
 }

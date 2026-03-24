@@ -24,6 +24,7 @@
     "i18next-browser-languagedetector": "^8.0.0",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
+    "react-easy-crop": "^5.5.7",
     "react-hook-form": "^7.56.0",
     "react-i18next": "^15.5.0",
     "tamagui": "^1.141.5",
