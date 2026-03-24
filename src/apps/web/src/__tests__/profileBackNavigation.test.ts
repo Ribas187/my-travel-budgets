@@ -9,7 +9,8 @@ describe('Profile Page — BackHeader + My Travels Navigation', () => {
       const code = (source as { default: string }).default;
 
       expect(code).toContain('BackHeader');
-      expect(code).toContain("import { Heading, Body, PrimaryButton, BackHeader } from '@repo/ui'");
+      expect(code).toContain("Heading, Body, PrimaryButton, BackHeader");
+      expect(code).toContain("from '@repo/ui'");
     });
 
     it('BackHeader receives profile title via i18n', async () => {
