@@ -14,6 +14,7 @@ import {
   TEST_EXPENSE,
   TEST_DASHBOARD,
   TEST_USER_ME,
+  TEST_AVATAR_URL,
   TRAVEL_ID,
 } from './fixtures';
 
@@ -296,6 +297,26 @@ export async function setupApiMocks(page: Page): Promise<MockState> {
         return route.fulfill({ status: 204, body: '' });
       }
       return route.fallback();
+    }
+
+    // ── Users: avatar upload ──
+    if (pathname === '/users/me/avatar' && method === 'POST') {
+      state.user = { ...state.user, avatarUrl: TEST_AVATAR_URL, updatedAt: new Date().toISOString() };
+      return route.fulfill({
+        status: 200,
+        contentType: 'application/json',
+        body: JSON.stringify(state.user),
+      });
+    }
+
+    // ── Users: avatar remove ──
+    if (pathname === '/users/me/avatar' && method === 'DELETE') {
+      state.user = { ...state.user, avatarUrl: null, updatedAt: new Date().toISOString() };
+      return route.fulfill({
+        status: 200,
+        contentType: 'application/json',
+        body: JSON.stringify(state.user),
+      });
     }
 
     // ── Users: /users/me/main-travel ──

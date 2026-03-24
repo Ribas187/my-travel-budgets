@@ -141,6 +141,8 @@ export const TEST_TRAVEL_2 = {
   updatedAt: '2026-01-02T00:00:00.000Z',
 };
 
+export const TEST_AVATAR_URL = 'https://res.cloudinary.com/demo/image/upload/v1234567/avatars/00000000-0000-4000-8000-000000000001';
+
 export const TEST_DASHBOARD = {
   currency: 'EUR',
   overall: {
