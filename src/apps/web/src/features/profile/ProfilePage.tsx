@@ -2,6 +2,7 @@ import { useState, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from '@tanstack/react-router';
 import { styled, XStack, YStack, Text, View, Input } from 'tamagui';
+import { User } from 'lucide-react';
 import { Heading, Body, PrimaryButton } from '@repo/ui';
 
 import { useAuth } from '@/providers/AuthProvider';
@@ -124,7 +125,8 @@ export function ProfilePage() {
 
   if (!user) return null;
 
-  const initial = user.name.charAt(0).toUpperCase();
+  const hasName = !!user.name;
+  const initial = hasName ? user.name.charAt(0).toUpperCase() : undefined;
   const currentLanguage = i18n.language;
 
   return (
@@ -144,7 +146,11 @@ export function ProfilePage() {
       {/* Avatar + User Info */}
       <YStack alignItems="center" gap="$md">
         <AvatarCircle data-testid="profile-avatar">
-          <AvatarInitial>{initial}</AvatarInitial>
+          {hasName ? (
+            <AvatarInitial>{initial}</AvatarInitial>
+          ) : (
+            <User size={36} color="white" role="img" aria-label="User" data-testid="profile-avatar-icon" />
+          )}
         </AvatarCircle>
         <Heading level={3}>{user.name}</Heading>
         <Body size="secondary" color="$textTertiary">

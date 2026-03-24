@@ -1,4 +1,5 @@
 import { type ReactNode, useEffect } from 'react';
+import { User } from 'lucide-react';
 import { Sheet, styled, XStack, YStack, Text } from 'tamagui';
 
 interface NavigationSheetItem {
@@ -13,7 +14,8 @@ interface NavigationSheetProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   userName: string;
-  userInitial: string;
+  userInitial?: string;
+  showIconFallback?: boolean;
   items: NavigationSheetItem[];
 }
 
@@ -74,6 +76,7 @@ export function NavigationSheet({
   onOpenChange,
   userName,
   userInitial,
+  showIconFallback,
   items,
 }: NavigationSheetProps) {
   useEffect(() => {
@@ -113,7 +116,11 @@ export function NavigationSheet({
           borderBottomColor="$borderSubtle"
         >
           <AvatarCircle>
-            <InitialText>{userInitial}</InitialText>
+            {showIconFallback ? (
+              <User size={20} color="white" aria-hidden={userName ? 'true' : undefined} role={!userName ? 'img' : undefined} aria-label={!userName ? 'User' : undefined} />
+            ) : (
+              <InitialText>{userInitial}</InitialText>
+            )}
           </AvatarCircle>
           <UserName>{userName}</UserName>
         </XStack>

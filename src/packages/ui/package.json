@@ -12,6 +12,7 @@
   "dependencies": {
     "@repo/core": "workspace:^",
     "@tamagui/config": "^1.141.5",
+    "lucide-react": "^1.6.0",
     "tamagui": "^1.141.5"
   },
   "devDependencies": {

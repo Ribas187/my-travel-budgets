@@ -201,7 +201,8 @@ function TravelLayout() {
   ) : undefined;
 
   const userName = userMe?.name || userMe?.email || '';
-  const userInitial = userName ? userName.charAt(0).toUpperCase() : '?';
+  const userInitial = userName ? userName.charAt(0).toUpperCase() : undefined;
+  const showIconFallback = !userName;
 
   return (
     <TravelProvider travel={travel} isOwner={isOwner} currentUserId={currentUserId} onOpenNavigationSheet={handleOpenSheet}>
@@ -215,6 +216,7 @@ function TravelLayout() {
           onOpenChange={setSheetOpen}
           userName={userName}
           userInitial={userInitial}
+          showIconFallback={showIconFallback}
           items={sheetItems}
         />
       )}

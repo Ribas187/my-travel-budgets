@@ -1,3 +1,4 @@
+import { User } from 'lucide-react';
 import { styled, XStack, YStack, Text, View } from 'tamagui';
 
 const ChipFrame = styled(XStack, {
@@ -44,17 +45,22 @@ const RoleBadgeText = styled(Text, {
 
 interface AvatarChipProps {
   name: string;
-  initial: string;
+  initial?: string;
+  showIconFallback?: boolean;
   avatarColor?: string;
   role?: string;
   onPress?: () => void;
 }
 
-export function AvatarChip({ name, initial, avatarColor, role, onPress }: AvatarChipProps) {
+export function AvatarChip({ name, initial, showIconFallback, avatarColor, role, onPress }: AvatarChipProps) {
   return (
     <ChipFrame onPress={onPress} cursor={onPress ? 'pointer' : undefined}>
       <AvatarCircle backgroundColor={avatarColor || '$brandPrimary'}>
-        <InitialText>{initial}</InitialText>
+        {showIconFallback ? (
+          <User size={16} color="white" aria-hidden={name ? 'true' : undefined} role={!name ? 'img' : undefined} aria-label={!name ? 'User' : undefined} />
+        ) : (
+          <InitialText>{initial}</InitialText>
+        )}
       </AvatarCircle>
       <YStack>
         <XStack alignItems="center" gap="$xs">
