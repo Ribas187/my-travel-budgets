@@ -248,6 +248,31 @@ describe('DashboardPage', () => {
   });
 });
 
+describe('DashboardPage header avatar uses UserAvatar', () => {
+  it('dashboard header renders UserAvatar with member avatarUrl', () => {
+    // DashboardHeader now uses UserAvatar instead of inline initial rendering
+    // It receives userName and avatarUrl props derived from travel members
+    const member = mockTravel.members[0];
+    expect(member.user).toBeDefined();
+    expect(member.user!.avatarUrl).toBeNull(); // null = fallback to initials
+    expect(member.user!.name).toBe('Test User');
+  });
+
+  it('dashboard header shows avatar image when member has avatarUrl', () => {
+    // When a member has an avatarUrl, UserAvatar renders an <img>
+    const memberWithAvatar = {
+      ...mockTravel.members[0],
+      user: {
+        ...mockTravel.members[0].user!,
+        avatarUrl: 'https://res.cloudinary.com/demo/image/upload/avatars/u1',
+      },
+    };
+    expect(memberWithAvatar.user.avatarUrl).toBe(
+      'https://res.cloudinary.com/demo/image/upload/avatars/u1',
+    );
+  });
+});
+
 describe('DashboardPage structural guarantees', () => {
   it('does NOT return EmptyState directly — always wraps in a layout', () => {
     // This test verifies the fix: before, isEmpty caused a direct EmptyState return

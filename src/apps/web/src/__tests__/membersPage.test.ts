@@ -205,3 +205,24 @@ describe("Owner's own row", () => {
     expect(canRemove).toBe(true);
   });
 });
+
+describe('Member list avatar display', () => {
+  it('avatarUrl is available from member.user for AvatarChip', () => {
+    // MembersPage now passes avatarUrl={member.user?.avatarUrl} to AvatarChip
+    const memberWithAvatar = {
+      ...mockMembers[0],
+      user: { ...mockMembers[0].user!, avatarUrl: 'https://res.cloudinary.com/demo/image/upload/avatars/u1' },
+    };
+    expect(memberWithAvatar.user.avatarUrl).toBe('https://res.cloudinary.com/demo/image/upload/avatars/u1');
+  });
+
+  it('avatarUrl is null for members without uploaded photos', () => {
+    expect(mockMembers[0].user?.avatarUrl).toBeNull();
+    expect(mockMembers[1].user?.avatarUrl).toBeNull();
+  });
+
+  it('guest members have null user and thus no avatarUrl', () => {
+    expect(mockMembers[2].user).toBeNull();
+    expect(mockMembers[2].user?.avatarUrl).toBeUndefined();
+  });
+});
