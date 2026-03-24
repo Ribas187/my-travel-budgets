@@ -5,13 +5,9 @@ services:
     region: oregon
     plan: free
     rootDir: .
-    buildCommand: pnpm install && pnpm db:generate && cd src/apps/api && pnpm build && npx prisma migrate deploy
-    startCommand: cd src/apps/api && node dist/main
+    buildCommand: NODE_ENV=development pnpm install && pnpm db:generate && cd src/apps/api && pnpm build && npx prisma migrate deploy
+    startCommand: NODE_ENV=production cd src/apps/api && node dist/main
     envVars:
-      - key: NODE_ENV
-        value: production
-      - key: NODE_INSTALL_DEVDEPENDENCIES
-        value: "true"
       - key: PORT
         value: "3000"
       - key: DATABASE_URL
