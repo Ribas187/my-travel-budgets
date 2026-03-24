@@ -14,6 +14,7 @@ describe('validateEnv', () => {
       JWT_SECRET: 'secret',
       JWT_EXPIRES_IN: '30d',
       RESEND_API_KEY: 're_test',
+      CLOUDINARY_URL: 'cloudinary://key:secret@cloud',
       PORT: '3000',
     });
     expect(env.PORT).toBe('3000');
@@ -26,6 +27,7 @@ describe('validateEnv', () => {
       'JWT_SECRET',
       'JWT_EXPIRES_IN',
       'RESEND_API_KEY',
+      'CLOUDINARY_URL',
       'PORT',
     ] as const;
     const backup: Partial<Record<(typeof keys)[number], string | undefined>> = {};

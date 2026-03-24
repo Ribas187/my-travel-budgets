@@ -1,4 +1,4 @@
-import { useState, useCallback, useRef } from 'react';
+import { useState, useCallback, useRef, useEffect } from 'react';
 import Cropper from 'react-easy-crop';
 import { useTranslation } from 'react-i18next';
 import { styled, XStack, YStack, Text, View, Spinner } from 'tamagui';
@@ -145,6 +145,17 @@ export function AvatarUploadModal({ open, onClose, onSuccess }: AvatarUploadModa
     setError(null);
     fileInputRef.current?.click();
   }, []);
+
+  useEffect(() => {
+    if (!open) return;
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        handleClose();
+      }
+    };
+    document.addEventListener('keydown', handleKeyDown);
+    return () => document.removeEventListener('keydown', handleKeyDown);
+  }, [open, handleClose]);
 
   if (!open) return null;
 

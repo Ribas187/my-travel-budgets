@@ -8,7 +8,14 @@ export class CloudinaryService {
 
   constructor(private readonly config: ConfigService) {
     const cloudinaryUrl = this.config.getOrThrow<string>('CLOUDINARY_URL');
-    cloudinary.config(cloudinaryUrl);
+    // Parse cloudinary:// URL into config object
+    // Format: cloudinary://api_key:api_secret@cloud_name
+    const parsed = new URL(cloudinaryUrl);
+    cloudinary.config({
+      cloud_name: parsed.hostname,
+      api_key: parsed.username,
+      api_secret: parsed.password,
+    });
   }
 
   async upload(
