@@ -1,4 +1,4 @@
-import { useState, useCallback, useEffect } from 'react';
+import { useState, useCallback, useEffect, useRef } from 'react';
 import { useForm, Controller } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useTranslation } from 'react-i18next';
@@ -255,6 +255,7 @@ export function AddExpenseModal({ open, onClose, travel, expense }: AddExpenseMo
   const deleteExpense = useDeleteExpense(travel.id);
   const [amountText, setAmountText] = useState('');
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
+  const amountInputRef = useRef<HTMLInputElement>(null);
 
   const {
     control,
@@ -417,8 +418,7 @@ export function AddExpenseModal({ open, onClose, travel, expense }: AddExpenseMo
         position="relative"
         cursor="text"
         onPress={() => {
-          const el = document.querySelector<HTMLInputElement>('[data-testid="amount-input"]');
-          el?.focus();
+          amountInputRef.current?.focus();
         }}
       >
         <AmountInput
@@ -427,6 +427,7 @@ export function AddExpenseModal({ open, onClose, travel, expense }: AddExpenseMo
           hint={t('expense.amount')}
         />
         <Input
+          ref={amountInputRef}
           testID="amount-input"
           value={amountText}
           onChangeText={handleAmountChange}
@@ -445,6 +446,7 @@ export function AddExpenseModal({ open, onClose, travel, expense }: AddExpenseMo
           height="100%"
           opacity={0.01}
           zIndex={1}
+          tabIndex={0}
           aria-label={t('expense.amount')}
         />
       </YStack>

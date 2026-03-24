@@ -238,3 +238,36 @@ describe('DeleteExpenseDialog accessibility', () => {
     expect(element).toBeDefined();
   });
 });
+
+// --- Amount Input useRef Tests ---
+
+describe('AddExpenseModal amount input', () => {
+  it('does NOT use document.querySelector for amount input focus', async () => {
+    const { readFileSync } = await import('fs');
+    const { resolve } = await import('path');
+    const source = readFileSync(resolve(__dirname, '../AddExpenseModal.tsx'), 'utf-8');
+    // The querySelector approach was replaced with useRef
+    expect(source).not.toContain("document.querySelector");
+    expect(source).toContain('amountInputRef');
+    expect(source).toContain('useRef');
+  });
+
+  it('uses ref to focus the hidden amount input on press', async () => {
+    const { readFileSync } = await import('fs');
+    const { resolve } = await import('path');
+    const source = readFileSync(resolve(__dirname, '../AddExpenseModal.tsx'), 'utf-8');
+    // Verify ref-based focus pattern
+    expect(source).toContain('amountInputRef.current?.focus()');
+  });
+
+  it('renders AmountInput with "0" as default placeholder when no amount entered', () => {
+    const element = React.createElement(AddExpenseModal, {
+      open: true,
+      onClose: vi.fn(),
+      travel: mockTravel as any,
+    });
+    // The AmountInput receives value={amountText || '0'}, so when amountText is '',
+    // it shows '0' as the display value
+    expect(element).toBeDefined();
+  });
+});

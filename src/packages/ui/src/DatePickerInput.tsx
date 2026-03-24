@@ -42,6 +42,10 @@ export function DatePickerInput({
     [onChange],
   );
 
+  const handleFocus = useCallback((e: React.FocusEvent<HTMLInputElement>) => {
+    e.target.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+  }, []);
+
   return (
     <YStack testID={testID}>
       {label && <LabelText>{label}</LabelText>}
@@ -50,6 +54,7 @@ export function DatePickerInput({
         type="date"
         value={value}
         onChange={handleChange}
+        onFocus={handleFocus}
         disabled={disabled}
         aria-label={label}
         data-testid={testID ? `${testID}-input` : 'date-picker-input'}

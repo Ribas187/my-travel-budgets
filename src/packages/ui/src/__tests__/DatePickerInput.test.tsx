@@ -75,3 +75,16 @@ describe('DatePickerInput', () => {
     expect(element.props.value).toBe('2026-06-15');
   });
 });
+
+describe('DatePickerInput scroll-into-view on focus', () => {
+  it('has onFocus handler that calls scrollIntoView', async () => {
+    // Verify the source code contains the scrollIntoView call on focus
+    const { readFileSync } = await import('fs');
+    const { resolve } = await import('path');
+    const source = readFileSync(resolve(__dirname, '../DatePickerInput.tsx'), 'utf-8');
+    expect(source).toContain('onFocus');
+    expect(source).toContain('scrollIntoView');
+    expect(source).toContain("block: 'nearest'");
+    expect(source).toContain("behavior: 'smooth'");
+  });
+});
