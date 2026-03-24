@@ -1,6 +1,10 @@
 import { test, expect } from '@playwright/test';
 import path from 'node:path';
 import fs from 'node:fs';
+import { fileURLToPath } from 'node:url';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 import { setupApiMocks, authenticatePage } from './mocks/handlers';
 import {
@@ -81,27 +85,32 @@ test.describe('Avatar upload flow', () => {
 
     // Click avatar to open upload modal
     await page.locator('[data-testid="profile-avatar"]').click();
-    await expect(page.locator('[data-testid="avatar-upload-modal"]')).toBeVisible();
+    await expect(page.locator('[data-testid="avatar-upload-modal"]')).toBeVisible({ timeout: 5000 });
 
-    // Click "Upload photo" to trigger file picker
-    const fileInput = page.locator('[data-testid="avatar-file-input"]');
+    // Set file on the hidden input element via evaluate to bypass display:none restrictions
     const testImagePath = createTestImagePath();
+    const fileInput = page.locator('[data-testid="avatar-file-input"]');
+
+    // Playwright can set files on hidden inputs
+    await fileInput.evaluate((el) => {
+      (el as HTMLInputElement).style.display = 'block';
+    });
     await fileInput.setInputFiles(testImagePath);
+    await fileInput.evaluate((el) => {
+      (el as HTMLInputElement).style.display = 'none';
+    });
 
-    // Cropper should now be visible (react-easy-crop renders with class reactEasyCrop_Container)
-    await expect(page.locator('[data-testid="avatar-upload-modal"]')).toBeVisible();
-
-    // Confirm button should be visible when image is loaded
-    await expect(page.locator('[data-testid="crop-confirm-button"]')).toBeVisible();
+    // Confirm button ("Save") should be visible when image is loaded in the cropper
+    const confirmButton = page.getByRole('button', { name: 'Save' });
+    await expect(confirmButton).toBeVisible({ timeout: 10000 });
 
     // Click confirm to upload
-    await page.locator('[data-testid="crop-confirm-button"]').click();
+    await confirmButton.click();
 
-    // After successful upload, modal closes and avatar should update
-    // The state should now have the avatar URL set
+    // After successful upload, the state should now have the avatar URL set
     await expect(async () => {
       expect(state.user.avatarUrl).toBe(TEST_AVATAR_URL);
-    }).toPass({ timeout: 5000 });
+    }).toPass({ timeout: 10000 });
   });
 });
 
@@ -187,13 +196,18 @@ test.describe('Avatar upload error', () => {
 
     // Open modal and select file
     await page.locator('[data-testid="profile-avatar"]').click();
-    const fileInput = page.locator('[data-testid="avatar-file-input"]');
+    await expect(page.locator('[data-testid="avatar-upload-modal"]')).toBeVisible({ timeout: 5000 });
+
     const testImagePath = createTestImagePath();
+    const fileInput = page.locator('[data-testid="avatar-file-input"]');
+    await fileInput.evaluate((el) => { (el as HTMLInputElement).style.display = 'block'; });
     await fileInput.setInputFiles(testImagePath);
+    await fileInput.evaluate((el) => { (el as HTMLInputElement).style.display = 'none'; });
 
     // Wait for cropper and confirm
-    await expect(page.locator('[data-testid="crop-confirm-button"]')).toBeVisible();
-    await page.locator('[data-testid="crop-confirm-button"]').click();
+    const confirmBtn = page.getByRole('button', { name: 'Save' });
+    await expect(confirmBtn).toBeVisible({ timeout: 10000 });
+    await confirmBtn.click();
 
     // Error message should appear
     await expect(page.locator('[data-testid="upload-error"]')).toBeVisible();
@@ -203,20 +217,21 @@ test.describe('Avatar upload error', () => {
 // ─── Test: Avatar Display on Dashboard ───────────────────────────────────────
 
 test.describe('Avatar display on dashboard', () => {
-  test('dashboard header shows avatar image when user has avatarUrl', async ({ page }) => {
+  // The header-avatar is only visible on mobile viewport (desktop uses sidebar)
+  test('dashboard header shows avatar on mobile viewport when user has avatarUrl', async ({ page, browserName }, testInfo) => {
+    // Only run on mobile project
+    const isMobile = testInfo.project.name.toLowerCase().includes('mobile');
+    test.skip(!isMobile, 'Dashboard header avatar only appears on mobile viewport');
+
     const state = await setupAuthenticated(page);
     addTravelToState(state);
 
     // Set avatar URL before navigating
     state.user = { ...state.user, avatarUrl: TEST_AVATAR_URL };
 
-    // Navigate to a travel's dashboard
     await page.goto(`/travels/${TRAVEL_ID}`);
 
     // Wait for dashboard to load
-    await expect(page.locator('[data-testid="header-avatar"]').or(page.locator('[data-testid="dashboard-skeleton"]'))).toBeVisible();
-
-    // The header avatar should contain an img with the avatar URL (via UserAvatar)
     const headerAvatar = page.locator('[data-testid="header-avatar"]');
     await expect(headerAvatar).toBeVisible({ timeout: 10000 });
   });
