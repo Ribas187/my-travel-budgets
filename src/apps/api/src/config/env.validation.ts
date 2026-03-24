@@ -21,6 +21,10 @@ class EnvironmentVariables {
   @IsString()
   @IsNotEmpty()
   PORT!: string;
+
+  @IsString()
+  @IsNotEmpty()
+  CLOUDINARY_URL!: string;
 }
 
 export function validateEnv(config: Record<string, unknown>): EnvironmentVariables {

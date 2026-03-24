@@ -18,11 +18,15 @@ const TEST_JWT_SECRET = 'unit-test-jwt-secret-min-32-characters!!';
 const mockGetMe = jest.fn();
 const mockUpdateMe = jest.fn();
 const mockSetMainTravel = jest.fn();
+const mockUploadAvatar = jest.fn();
+const mockRemoveAvatar = jest.fn();
 
 const usersServiceMock = {
   getMe: mockGetMe,
   updateMe: mockUpdateMe,
   setMainTravel: mockSetMainTravel,
+  uploadAvatar: mockUploadAvatar,
+  removeAvatar: mockRemoveAvatar,
 };
 
 describe('UsersController', () => {
@@ -185,6 +189,92 @@ describe('UsersController', () => {
         .set('Authorization', `Bearer ${authToken()}`)
         .send({ travelId: 'not-a-uuid' })
         .expect(HttpStatus.BAD_REQUEST);
+    });
+  });
+
+  describe('POST /users/me/avatar', () => {
+    // A minimal valid JPEG (with proper magic bytes) for supertest
+    const validJpeg = Buffer.from(
+      [0xff, 0xd8, 0xff, 0xe0, 0x00, 0x10, 0x4a, 0x46, 0x49, 0x46, ...Array(100).fill(0x00)],
+    );
+
+    it('returns 401 without auth', async () => {
+      await request(app.getHttpServer())
+        .post('/users/me/avatar')
+        .attach('file', validJpeg, 'avatar.jpg')
+        .expect(HttpStatus.UNAUTHORIZED);
+    });
+
+    it('returns 200 with avatarUrl on successful upload', async () => {
+      const updated = {
+        ...baseProfile,
+        avatarUrl: 'https://res.cloudinary.com/test/avatars/user-1.jpg',
+      };
+      mockUploadAvatar.mockResolvedValue(updated);
+
+      const res = await request(app.getHttpServer())
+        .post('/users/me/avatar')
+        .set('Authorization', `Bearer ${authToken()}`)
+        .attach('file', validJpeg, { filename: 'avatar.jpg', contentType: 'image/jpeg' })
+        .expect(HttpStatus.OK);
+
+      expect(res.body).toMatchObject({
+        avatarUrl: 'https://res.cloudinary.com/test/avatars/user-1.jpg',
+      });
+      expect(mockUploadAvatar).toHaveBeenCalledWith(
+        'user-1',
+        expect.objectContaining({ buffer: expect.any(Buffer) }),
+      );
+    });
+
+    it('returns 400 when file type is invalid', async () => {
+      await request(app.getHttpServer())
+        .post('/users/me/avatar')
+        .set('Authorization', `Bearer ${authToken()}`)
+        .attach('file', Buffer.from('not-an-image'), 'avatar.txt')
+        .expect(HttpStatus.BAD_REQUEST);
+    });
+
+    it('returns 400 when file is too large', async () => {
+      const largeBuffer = Buffer.alloc(6 * 1024 * 1024); // 6 MB
+      // Add JPEG magic bytes
+      largeBuffer[0] = 0xff;
+      largeBuffer[1] = 0xd8;
+      largeBuffer[2] = 0xff;
+
+      await request(app.getHttpServer())
+        .post('/users/me/avatar')
+        .set('Authorization', `Bearer ${authToken()}`)
+        .attach('file', largeBuffer, 'large.jpg')
+        .expect(HttpStatus.BAD_REQUEST);
+    });
+
+    it('returns 400 when no file is provided', async () => {
+      await request(app.getHttpServer())
+        .post('/users/me/avatar')
+        .set('Authorization', `Bearer ${authToken()}`)
+        .expect(HttpStatus.BAD_REQUEST);
+    });
+  });
+
+  describe('DELETE /users/me/avatar', () => {
+    it('returns 401 without auth', async () => {
+      await request(app.getHttpServer())
+        .delete('/users/me/avatar')
+        .expect(HttpStatus.UNAUTHORIZED);
+    });
+
+    it('returns 200 with null avatarUrl on successful removal', async () => {
+      const updated = { ...baseProfile, avatarUrl: null };
+      mockRemoveAvatar.mockResolvedValue(updated);
+
+      const res = await request(app.getHttpServer())
+        .delete('/users/me/avatar')
+        .set('Authorization', `Bearer ${authToken()}`)
+        .expect(HttpStatus.OK);
+
+      expect(res.body).toMatchObject({ avatarUrl: null });
+      expect(mockRemoveAvatar).toHaveBeenCalledWith('user-1');
     });
   });
 });
