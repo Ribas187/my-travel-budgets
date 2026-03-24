@@ -47,6 +47,8 @@
   "travel.destinationPlaceholder": "Where are you going?",
   "travel.namePlaceholder": "e.g. Summer in Europe",
   "travel.deleteWarning": "This action is permanent and cannot be undone.",
+  "travel.setMainTravel": "Set as main travel",
+  "travel.removeMainTravel": "Remove as main travel",
 
   "expense.add": "Add Expense",
   "expense.amount": "Amount",

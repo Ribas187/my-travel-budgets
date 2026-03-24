@@ -47,6 +47,8 @@
   "travel.destinationPlaceholder": "Para onde você vai?",
   "travel.namePlaceholder": "ex. Verão na Europa",
   "travel.deleteWarning": "Esta ação é permanente e não pode ser desfeita.",
+  "travel.setMainTravel": "Definir como viagem principal",
+  "travel.removeMainTravel": "Remover como viagem principal",
 
   "expense.add": "Adicionar Despesa",
   "expense.amount": "Valor",

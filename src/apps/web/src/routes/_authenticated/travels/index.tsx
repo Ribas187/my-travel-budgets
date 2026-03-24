@@ -1,10 +1,13 @@
 import { createFileRoute, useNavigate } from '@tanstack/react-router';
 import { useTranslation } from 'react-i18next';
+import { Star } from 'lucide-react';
 import { styled, XStack, YStack, Text } from 'tamagui';
 import { Heading, Body, PrimaryButton } from '@repo/ui';
 import type { Travel } from '@repo/api-client';
 
 import { useTravels } from '@/hooks/useTravels';
+import { useUserMe } from '@/hooks/useUserMe';
+import { useSetMainTravel } from '@/hooks/useSetMainTravel';
 
 export const Route = createFileRoute('/_authenticated/travels/')({
   component: TravelsPage,
@@ -37,6 +40,8 @@ const ProgressBarTrack = styled(XStack, {
 
 interface TravelCardProps {
   travel: Travel;
+  isMainTravel?: boolean;
+  onToggleMain?: () => void;
   onPress: () => void;
 }
 
@@ -57,8 +62,8 @@ function formatBudget(amount: number, currency: string, locale: string): string 
   }).format(amount);
 }
 
-export function TravelCard({ travel, onPress }: TravelCardProps) {
-  const { i18n } = useTranslation();
+export function TravelCard({ travel, isMainTravel, onToggleMain, onPress }: TravelCardProps) {
+  const { t, i18n } = useTranslation();
   const locale = i18n.language;
 
   const dateRange = formatDateRange(travel.startDate, travel.endDate, locale);
@@ -68,6 +73,11 @@ export function TravelCard({ travel, onPress }: TravelCardProps) {
   // so we show the budget amount. Progress bar stays at 0 until dashboard data is available.
   const progress = 0;
 
+  const handleStarPress = (e: React.MouseEvent | React.KeyboardEvent) => {
+    e.stopPropagation();
+    onToggleMain?.();
+  };
+
   return (
     <CardFrame
       onPress={onPress}
@@ -75,7 +85,33 @@ export function TravelCard({ travel, onPress }: TravelCardProps) {
       aria-label={travel.name}
       testID={`travel-card-${travel.id}`}
     >
-      <Heading level={3}>{travel.name}</Heading>
+      <XStack justifyContent="space-between" alignItems="flex-start">
+        <Heading level={3} flex={1}>{travel.name}</Heading>
+        {onToggleMain && (
+          <XStack
+            role="button"
+            aria-label={isMainTravel ? t('travel.removeMainTravel') : t('travel.setMainTravel')}
+            cursor="pointer"
+            padding="$xs"
+            onPress={handleStarPress}
+            testID={`star-toggle-${travel.id}`}
+            tabIndex={0}
+            onKeyDown={(e: React.KeyboardEvent) => {
+              if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault();
+                handleStarPress(e);
+              }
+            }}
+          >
+            <Star
+              size={20}
+              fill={isMainTravel ? 'currentColor' : 'none'}
+              color={isMainTravel ? '#f59e0b' : '#9ca3af'}
+              data-testid={isMainTravel ? 'star-filled' : 'star-outline'}
+            />
+          </XStack>
+        )}
+      </XStack>
       <Body size="secondary">{dateRange}</Body>
       <XStack justifyContent="space-between" alignItems="center" marginTop="$xs">
         <Body size="secondary">{budgetFormatted}</Body>
@@ -177,6 +213,8 @@ function TravelsPage() {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const { data: travels, isLoading } = useTravels();
+  const { data: user } = useUserMe();
+  const setMainTravel = useSetMainTravel();
 
   const handleCreateTrip = () => {
     navigate({ to: '/travels/new' });
@@ -185,6 +223,11 @@ function TravelsPage() {
   const handleTravelPress = (travelId: string) => {
     // Route will be created in a future task
     navigate({ to: `/travels/${travelId}` as string });
+  };
+
+  const handleToggleMain = (travelId: string) => {
+    const newMainId = user?.mainTravelId === travelId ? null : travelId;
+    setMainTravel.mutate(newMainId);
   };
 
   return (
@@ -206,6 +249,8 @@ function TravelsPage() {
             <TravelCard
               key={travel.id}
               travel={travel}
+              isMainTravel={user?.mainTravelId === travel.id}
+              onToggleMain={() => handleToggleMain(travel.id)}
               onPress={() => handleTravelPress(travel.id)}
             />
           ))}
