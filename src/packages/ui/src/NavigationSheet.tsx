@@ -1,6 +1,7 @@
 import { type ReactNode, useEffect } from 'react';
-import { User } from 'lucide-react';
 import { Sheet, styled, XStack, YStack, Text } from 'tamagui';
+
+import { UserAvatar } from './UserAvatar';
 
 interface NavigationSheetItem {
   key: string;
@@ -16,24 +17,9 @@ interface NavigationSheetProps {
   userName: string;
   userInitial?: string;
   showIconFallback?: boolean;
+  avatarUrl?: string | null;
   items: NavigationSheetItem[];
 }
-
-const AvatarCircle = styled(XStack, {
-  width: 40,
-  height: 40,
-  borderRadius: '$full',
-  backgroundColor: '$brandPrimary',
-  alignItems: 'center',
-  justifyContent: 'center',
-});
-
-const InitialText = styled(Text, {
-  fontFamily: '$heading',
-  fontSize: 18,
-  fontWeight: '600',
-  color: '$white',
-});
 
 const UserName = styled(Text, {
   fontFamily: '$body',
@@ -77,6 +63,7 @@ export function NavigationSheet({
   userName,
   userInitial,
   showIconFallback,
+  avatarUrl,
   items,
 }: NavigationSheetProps) {
   useEffect(() => {
@@ -115,13 +102,11 @@ export function NavigationSheet({
           borderBottomWidth={1}
           borderBottomColor="$borderSubtle"
         >
-          <AvatarCircle>
-            {showIconFallback ? (
-              <User size={20} color="white" aria-hidden={userName ? 'true' : undefined} role={!userName ? 'img' : undefined} aria-label={!userName ? 'User' : undefined} />
-            ) : (
-              <InitialText>{userInitial}</InitialText>
-            )}
-          </AvatarCircle>
+          <UserAvatar
+            avatarUrl={avatarUrl ?? null}
+            name={userName || userInitial || ''}
+            size={40}
+          />
           <UserName>{userName}</UserName>
         </XStack>
 

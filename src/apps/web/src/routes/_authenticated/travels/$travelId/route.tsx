@@ -217,6 +217,7 @@ function TravelLayout() {
           userName={userName}
           userInitial={userInitial}
           showIconFallback={showIconFallback}
+          avatarUrl={userMe?.avatarUrl ?? null}
           items={sheetItems}
         />
       )}

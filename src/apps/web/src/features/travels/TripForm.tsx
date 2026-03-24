@@ -437,6 +437,7 @@ export function TripForm({
                   name={getMemberDisplayName(member)}
                   initial={getMemberInitial(member)}
                   avatarColor={AVATAR_COLORS[index % AVATAR_COLORS.length]}
+                  avatarUrl={member.user?.avatarUrl}
                   role={member.role === 'owner' ? t('member.admin') : undefined}
                 />
               </YStack>

@@ -1,9 +1,8 @@
 import { useMemo, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from '@tanstack/react-router';
-import { User } from 'lucide-react';
 import { XStack, YStack, Text, useMedia, Separator, styled } from 'tamagui';
-import { BudgetRing, CategoryProgressRow, StatCard, ExpenseRow, Heading, Body } from '@repo/ui';
+import { BudgetRing, CategoryProgressRow, StatCard, ExpenseRow, Heading, Body, UserAvatar } from '@repo/ui';
 import type { DashboardData, TravelDetail, Expense, CategorySpending } from '@repo/api-client';
 
 import { useTravelContext } from '@/contexts/TravelContext';
@@ -280,25 +279,16 @@ function RecentExpenses({
 
 // --- Header Avatar ---
 
-const HeaderAvatarCircle = styled(XStack, {
-  width: 36,
-  height: 36,
-  borderRadius: '$full',
-  backgroundColor: '$brandPrimary',
-  alignItems: 'center',
-  justifyContent: 'center',
-  cursor: 'pointer',
-  pressStyle: { opacity: 0.7 },
-});
-
 function DashboardHeader({
   travelName,
-  userInitial,
+  userName,
+  avatarUrl,
   onAvatarPress,
   openMenuLabel = 'Open navigation menu',
 }: {
   travelName: string;
-  userInitial?: string;
+  userName: string;
+  avatarUrl: string | null;
   onAvatarPress?: () => void;
   openMenuLabel?: string;
 }) {
@@ -311,20 +301,16 @@ function DashboardHeader({
       paddingBottom="$sm"
     >
       <Heading level={3}>{travelName}</Heading>
-      <HeaderAvatarCircle
+      <XStack
         onPress={onAvatarPress}
+        cursor="pointer"
+        pressStyle={{ opacity: 0.7 }}
         role="button"
         aria-label={openMenuLabel}
         data-testid="header-avatar"
       >
-        {userInitial ? (
-          <Text fontFamily="$heading" fontSize={16} fontWeight="600" color="$white">
-            {userInitial}
-          </Text>
-        ) : (
-          <User size={18} color="white" role="img" aria-label="User" />
-        )}
-      </HeaderAvatarCircle>
+        <UserAvatar avatarUrl={avatarUrl} name={userName} size={36} />
+      </XStack>
     </XStack>
   );
 }
@@ -360,10 +346,10 @@ function MobileLayout({
   const totalDays = getTripTotalDays(travel.startDate, travel.endDate);
   const avgPerDay = overall.totalSpent / daysSinceStart;
 
-  // Derive user initial from travel members
+  // Derive user info from travel members
   const currentMember = (travel.members ?? []).find((m) => m.userId != null);
   const memberName = currentMember?.user?.name ?? '';
-  const userInitial = memberName ? memberName.charAt(0).toUpperCase() : undefined;
+  const memberAvatarUrl = currentMember?.user?.avatarUrl ?? null;
 
   return (
     <YStack
@@ -373,7 +359,8 @@ function MobileLayout({
     >
       <DashboardHeader
         travelName={travel.name}
-        userInitial={userInitial}
+        userName={memberName}
+        avatarUrl={memberAvatarUrl}
         onAvatarPress={onAvatarPress}
         openMenuLabel={t('nav.openMenu')}
       />

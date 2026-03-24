@@ -8,6 +8,7 @@ import { Heading, Body, PrimaryButton, BackHeader, UserAvatar } from '@repo/ui';
 import { useAuth } from '@/providers/AuthProvider';
 import { useUserMe } from '@/hooks/useUserMe';
 import { useUpdateUser } from '@/hooks/useUpdateUser';
+import { useRemoveAvatar } from '@/hooks/useRemoveAvatar';
 import { showToast } from '@/lib/toast';
 import { AvatarUploadModal } from './AvatarUploadModal';
 
@@ -103,6 +104,7 @@ export function ProfilePage() {
   const { logout } = useAuth();
   const { data: user } = useUserMe();
   const updateUser = useUpdateUser();
+  const removeAvatar = useRemoveAvatar();
 
   const [isEditingName, setIsEditingName] = useState(false);
   const [nameValue, setNameValue] = useState('');
@@ -164,6 +166,14 @@ export function ProfilePage() {
     setIsUploadModalOpen(false);
   }, []);
 
+  const handleRemoveAvatar = useCallback(() => {
+    removeAvatar.mutate(undefined, {
+      onSuccess: () => {
+        showToast(t('profile.removeSuccess'), 'success');
+      },
+    });
+  }, [removeAvatar, t]);
+
   if (!user) return null;
 
   const currentLanguage = i18n.language;
@@ -214,6 +224,19 @@ export function ProfilePage() {
         <Body size="secondary" color="$textTertiary">
           {user.email}
         </Body>
+        {user.avatarUrl && (
+          <Text
+            fontFamily="$body"
+            fontSize={14}
+            fontWeight="600"
+            color="$coral500"
+            cursor="pointer"
+            onPress={handleRemoveAvatar}
+            data-testid="remove-photo-button"
+          >
+            {t('profile.removePhoto')}
+          </Text>
+        )}
       </YStack>
 
       {/* Name Section */}

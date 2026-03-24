@@ -199,6 +199,7 @@ export function TripSummaryPage() {
                   name={displayName}
                   initial={initial}
                   avatarColor={AVATAR_COLORS[index % AVATAR_COLORS.length]}
+                  avatarUrl={member.user?.avatarUrl}
                 />
               </XStack>
               <YStack alignItems="flex-end">

@@ -144,6 +144,7 @@ function MemberRow({
           name={displayName}
           initial={initial}
           avatarColor={getAvatarColor(index)}
+          avatarUrl={member.user?.avatarUrl}
           role={roleBadge}
         />
       </XStack>
