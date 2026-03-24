@@ -32,3 +32,4 @@ pnpm typecheck        # Type-check all packages
 ## Implementation Rules
 
 - For the Frontend, always start by Web and then go to Mobile.
+- Never add hardcoded text strings to the codebase. Always use i18n.

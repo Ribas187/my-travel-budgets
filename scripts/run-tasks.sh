@@ -276,13 +276,20 @@ for task_file in "${TASK_FILES[@]}"; do
 
 Task file: $TASK_PATH"
 
-  # Run Claude with the execute-task prompt
-  # Using --print to run non-interactively
+  # Save prompt to temp file to avoid stdin pipe (which suppresses streaming)
+  PROMPT_FILE=$(mktemp)
+  EXIT_CODE_FILE=$(mktemp)
+  printf '%s\n' "$PROMPT" > "$PROMPT_FILE"
+
+  # Use script to allocate a PTY so claude streams output in real-time.
+  # script -q also logs all output to LOG_FILE (replaces tee).
   set +e
-  echo "$PROMPT" | claude --print \
-    --allowedTools "Edit,Write,Read,Glob,Grep,Bash" \
-    2>&1 | tee "$LOG_FILE"
-  EXIT_CODE=${PIPESTATUS[0]}
+  script -q "$LOG_FILE" bash -c '
+    claude --print --allowedTools "Edit,Write,Read,Glob,Grep,Bash" < "$1" 2>&1
+    echo $? > "$2"
+  ' _ "$PROMPT_FILE" "$EXIT_CODE_FILE"
+  EXIT_CODE=$(cat "$EXIT_CODE_FILE" 2>/dev/null || echo 1)
+  rm -f "$PROMPT_FILE" "$EXIT_CODE_FILE"
   set -e
 
   if [[ $EXIT_CODE -eq 0 ]]; then

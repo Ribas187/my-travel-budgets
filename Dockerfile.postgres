@@ -1,0 +1,11 @@
+FROM postgres:16-alpine
+
+# Defaults aligned with src/apps/api/.env.example
+ENV POSTGRES_USER=user
+ENV POSTGRES_PASSWORD=password
+ENV POSTGRES_DB=travel_budgets
+
+EXPOSE 5432
+
+# Basic healthcheck so orchestration/tools can wait for readiness
+HEALTHCHECK --interval=5s --timeout=3s --retries=20 CMD pg_isready -U "$POSTGRES_USER" -d "$POSTGRES_DB"

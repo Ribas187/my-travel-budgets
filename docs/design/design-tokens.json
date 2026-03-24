@@ -1,0 +1,357 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "meta": {
+    "name": "My Travel Budgets",
+    "version": "1.0.0",
+    "description": "Design tokens for Tamagui implementation",
+    "generatedFrom": "Paper MCP design file 'My Travel Budget'"
+  },
+  "color": {
+    "primitive": {
+      "warmWhite": "#FAF8F5",
+      "parchment": "#F5F2EE",
+      "sand": "#F0EDE8",
+      "stone": "#D4CFC8",
+      "muted": "#8C8580",
+      "secondary": "#5C5650",
+      "ink": "#1A1815",
+      "white": "#FFFFFF",
+      "teal50": "#F0FDFA",
+      "teal500": "#0D9488",
+      "amber50": "#FEF3C7",
+      "amber500": "#F59E0B",
+      "amber900": "#92400E",
+      "coral500": "#EF4444",
+      "terracotta500": "#C2410C",
+      "terracotta600": "#E8590C",
+      "blue50": "#DBEAFE",
+      "blue500": "#3B82F6",
+      "pink50": "#FCE7F3",
+      "pink500": "#EC4899",
+      "violet50": "#EDE9FE",
+      "violet500": "#8B5CF6"
+    },
+    "semantic": {
+      "background": {
+        "primary": "#FAF8F5",
+        "secondary": "#F5F2EE",
+        "card": "#FFFFFF",
+        "elevated": "#FFFFFF"
+      },
+      "text": {
+        "primary": "#1A1815",
+        "secondary": "#5C5650",
+        "tertiary": "#8C8580",
+        "disabled": "#D4CFC8",
+        "inverse": "#FFFFFF"
+      },
+      "border": {
+        "default": "rgba(26, 24, 21, 0.06)",
+        "subtle": "rgba(26, 24, 21, 0.08)",
+        "emphasis": "rgba(26, 24, 21, 0.1)",
+        "strong": "rgba(26, 24, 21, 0.12)"
+      },
+      "brand": {
+        "primary": "#C2410C",
+        "primaryGradientStart": "#C2410C",
+        "primaryGradientEnd": "#E8590C",
+        "accent": "#F59E0B"
+      },
+      "status": {
+        "safe": "#0D9488",
+        "safeBackground": "#F0FDFA",
+        "warning": "#F59E0B",
+        "warningBackground": "#FEF3C7",
+        "warningText": "#92400E",
+        "danger": "#EF4444",
+        "dangerBackground": "rgba(239, 68, 68, 0.04)"
+      },
+      "category": {
+        "food": {
+          "icon": "#F59E0B",
+          "background": "#FEF3C7"
+        },
+        "transport": {
+          "icon": "#3B82F6",
+          "background": "#DBEAFE"
+        },
+        "activities": {
+          "icon": "#EC4899",
+          "background": "#FCE7F3"
+        },
+        "lodging": {
+          "icon": "#8B5CF6",
+          "background": "#EDE9FE"
+        },
+        "shopping": {
+          "icon": "#0D9488",
+          "background": "#F0FDFA"
+        }
+      },
+      "interactive": {
+        "buttonBackground": "rgba(26, 24, 21, 0.06)",
+        "buttonBackgroundHover": "rgba(26, 24, 21, 0.1)",
+        "inputBackground": "#F5F2EE",
+        "chipDefault": "#FFFFFF",
+        "chipActive": "#1A1815",
+        "chipActiveText": "#FAF8F5"
+      }
+    }
+  },
+  "typography": {
+    "fontFamily": {
+      "display": "Fredoka",
+      "body": "Nunito"
+    },
+    "scale": {
+      "heroAmount": {
+        "fontFamily": "Fredoka",
+        "fontSize": 56,
+        "fontWeight": "700",
+        "letterSpacing": "-0.03em"
+      },
+      "displayLarge": {
+        "fontFamily": "Fredoka",
+        "fontSize": 36,
+        "fontWeight": "700",
+        "letterSpacing": "-0.02em"
+      },
+      "displayMedium": {
+        "fontFamily": "Fredoka",
+        "fontSize": 32,
+        "fontWeight": "700",
+        "letterSpacing": "-0.02em"
+      },
+      "heading1": {
+        "fontFamily": "Fredoka",
+        "fontSize": 28,
+        "fontWeight": "700",
+        "letterSpacing": "-0.02em"
+      },
+      "heading2": {
+        "fontFamily": "Fredoka",
+        "fontSize": 24,
+        "fontWeight": "600",
+        "letterSpacing": "-0.02em"
+      },
+      "heading3": {
+        "fontFamily": "Fredoka",
+        "fontSize": 22,
+        "fontWeight": "600",
+        "letterSpacing": "-0.02em"
+      },
+      "heading4": {
+        "fontFamily": "Fredoka",
+        "fontSize": 18,
+        "fontWeight": "600",
+        "letterSpacing": "0"
+      },
+      "statLarge": {
+        "fontFamily": "Fredoka",
+        "fontSize": 22,
+        "fontWeight": "700",
+        "letterSpacing": "0"
+      },
+      "statPercentage": {
+        "fontFamily": "Fredoka",
+        "fontSize": 20,
+        "fontWeight": "700",
+        "letterSpacing": "0"
+      },
+      "bodyLarge": {
+        "fontFamily": "Nunito",
+        "fontSize": 16,
+        "fontWeight": "500",
+        "lineHeight": 24
+      },
+      "bodyDefault": {
+        "fontFamily": "Nunito",
+        "fontSize": 15,
+        "fontWeight": "600",
+        "lineHeight": 22
+      },
+      "bodySecondary": {
+        "fontFamily": "Nunito",
+        "fontSize": 14,
+        "fontWeight": "500",
+        "lineHeight": 20
+      },
+      "caption": {
+        "fontFamily": "Nunito",
+        "fontSize": 13,
+        "fontWeight": "500",
+        "lineHeight": 18
+      },
+      "captionStrong": {
+        "fontFamily": "Nunito",
+        "fontSize": 13,
+        "fontWeight": "700",
+        "lineHeight": 18
+      },
+      "overline": {
+        "fontFamily": "Nunito",
+        "fontSize": 13,
+        "fontWeight": "500",
+        "letterSpacing": "0.04em",
+        "textTransform": "uppercase"
+      },
+      "label": {
+        "fontFamily": "Nunito",
+        "fontSize": 13,
+        "fontWeight": "600",
+        "letterSpacing": "0.02em"
+      },
+      "small": {
+        "fontFamily": "Nunito",
+        "fontSize": 12,
+        "fontWeight": "600",
+        "lineHeight": 16
+      },
+      "tabLabel": {
+        "fontFamily": "Nunito",
+        "fontSize": 11,
+        "fontWeight": "600",
+        "lineHeight": 14
+      },
+      "tabLabelActive": {
+        "fontFamily": "Nunito",
+        "fontSize": 11,
+        "fontWeight": "700",
+        "lineHeight": 14
+      },
+      "avatarInitial": {
+        "fontFamily": "Fredoka",
+        "fontSize": 14,
+        "fontWeight": "600"
+      },
+      "buttonPrimary": {
+        "fontFamily": "Fredoka",
+        "fontSize": 18,
+        "fontWeight": "600",
+        "letterSpacing": "0.01em"
+      },
+      "buttonSecondary": {
+        "fontFamily": "Nunito",
+        "fontSize": 15,
+        "fontWeight": "700"
+      },
+      "amountDisplay": {
+        "fontFamily": "Nunito",
+        "fontSize": 16,
+        "fontWeight": "700"
+      }
+    }
+  },
+  "spacing": {
+    "unit": 4,
+    "scale": {
+      "xs": 4,
+      "sm": 8,
+      "md": 12,
+      "lg": 16,
+      "xl": 20,
+      "2xl": 24,
+      "3xl": 32,
+      "4xl": 40,
+      "5xl": 48
+    },
+    "layout": {
+      "screenPaddingHorizontal": 24,
+      "cardPadding": 24,
+      "cardPaddingCompact": 16,
+      "sectionGap": 24,
+      "listItemPaddingVertical": 12,
+      "listItemPaddingHorizontal": 24,
+      "chipGap": 10,
+      "iconTextGap": 12,
+      "statusBarPadding": 12
+    }
+  },
+  "radius": {
+    "xs": 3,
+    "sm": 8,
+    "md": 10,
+    "lg": 12,
+    "xl": 14,
+    "2xl": 16,
+    "3xl": 20,
+    "pill": 20,
+    "full": 9999
+  },
+  "elevation": {
+    "none": {
+      "shadowColor": "transparent",
+      "shadowOffset": { "width": 0, "height": 0 },
+      "shadowOpacity": 0,
+      "shadowRadius": 0
+    },
+    "card": {
+      "borderWidth": 1,
+      "borderColor": "rgba(26, 24, 21, 0.06)"
+    },
+    "fab": {
+      "shadowColor": "#C2410C",
+      "shadowOffset": { "width": 0, "height": 4 },
+      "shadowOpacity": 0.35,
+      "shadowRadius": 16
+    },
+    "button": {
+      "shadowColor": "#C2410C",
+      "shadowOffset": { "width": 0, "height": 4 },
+      "shadowOpacity": 0.3,
+      "shadowRadius": 16
+    }
+  },
+  "gradient": {
+    "brandPrimary": {
+      "colors": ["#C2410C", "#E8590C"],
+      "start": { "x": 0, "y": 0 },
+      "end": { "x": 1, "y": 1 }
+    },
+    "fabButton": {
+      "colors": ["#C2410C", "#F59E0B"],
+      "start": { "x": 0, "y": 0 },
+      "end": { "x": 1, "y": 1 }
+    },
+    "avatarRicardo": {
+      "colors": ["#F59E0B", "#C2410C"],
+      "start": { "x": 0, "y": 0 },
+      "end": { "x": 1, "y": 1 }
+    },
+    "avatarAna": {
+      "colors": ["#0D9488", "#3B82F6"],
+      "start": { "x": 0, "y": 0 },
+      "end": { "x": 1, "y": 1 }
+    },
+    "avatarMiguel": {
+      "colors": ["#8B5CF6", "#EC4899"],
+      "start": { "x": 0, "y": 0 },
+      "end": { "x": 1, "y": 1 }
+    },
+    "avatarSofia": {
+      "colors": ["#F59E0B", "#EF4444"],
+      "start": { "x": 0, "y": 0 },
+      "end": { "x": 1, "y": 1 }
+    }
+  },
+  "animation": {
+    "micro": {
+      "duration": 150,
+      "easing": "ease-out"
+    },
+    "default": {
+      "duration": 250,
+      "easing": "ease-out"
+    },
+    "expand": {
+      "duration": 300,
+      "easing": "ease-in-out"
+    }
+  },
+  "breakpoints": {
+    "mobile": 390,
+    "tablet": 768,
+    "desktop": 1024,
+    "wide": 1440
+  }
+}

@@ -1,0 +1,343 @@
+{
+  "meta": {
+    "name": "My Travel Budgets — Component Specs",
+    "version": "1.0.0",
+    "stack": "React Native + Tamagui"
+  },
+  "components": {
+    "BudgetRing": {
+      "description": "Circular progress ring showing total budget health",
+      "props": {
+        "total": "number",
+        "spent": "number",
+        "currency": "string"
+      },
+      "specs": {
+        "size": 180,
+        "strokeWidth": 12,
+        "trackColor": "$sand",
+        "progressColor": "$teal500 (safe) | $amber500 (warning >70%) | $coral500 (over 100%)",
+        "innerLabel": {
+          "title": { "style": "overline", "color": "$muted" },
+          "amount": { "style": "displayLarge", "color": "$ink" },
+          "subtitle": { "style": "caption", "color": "$teal500" }
+        }
+      },
+      "usedIn": ["HomeDashboard", "DesktopDashboard"]
+    },
+    "CategoryProgressRow": {
+      "description": "Category with name, icon, spent/budget amounts, and progress bar",
+      "props": {
+        "name": "string",
+        "icon": "ReactNode",
+        "iconColor": "string",
+        "iconBackground": "string",
+        "spent": "number",
+        "budget": "number",
+        "currency": "string"
+      },
+      "specs": {
+        "iconContainer": { "size": 44, "borderRadius": 14 },
+        "progressBar": {
+          "height": 6,
+          "borderRadius": 3,
+          "trackColor": "$sand"
+        },
+        "progressColors": {
+          "safe": "$teal500 (<70%)",
+          "warning": "$amber500 (70-100%)",
+          "danger": "$coral500 (>100%)"
+        },
+        "amountText": { "style": "bodySecondary", "fontWeight": "700" },
+        "gap": 12
+      },
+      "usedIn": ["HomeDashboard", "BudgetBreakdown", "DesktopDashboard"]
+    },
+    "ExpenseRow": {
+      "description": "Single expense item showing icon, name, metadata, and amount",
+      "props": {
+        "title": "string",
+        "category": "string",
+        "time": "string",
+        "paidBy": "string",
+        "amount": "number",
+        "currency": "string"
+      },
+      "specs": {
+        "iconContainer": { "size": 44, "borderRadius": 14 },
+        "iconContainerSmall": { "size": 40, "borderRadius": 12 },
+        "titleText": { "style": "bodyDefault" },
+        "metadataText": { "style": "caption", "color": "$muted" },
+        "amountText": { "style": "amountDisplay" },
+        "paddingVertical": 12,
+        "paddingHorizontal": 24,
+        "gap": 12
+      },
+      "usedIn": ["HomeDashboard", "ExpenseList", "DesktopDashboard"]
+    },
+    "DayGroupHeader": {
+      "description": "Date header for grouped expense list with daily total",
+      "props": {
+        "label": "string",
+        "total": "number",
+        "currency": "string"
+      },
+      "specs": {
+        "dateText": {
+          "style": "captionStrong",
+          "color": "$muted",
+          "textTransform": "uppercase",
+          "letterSpacing": "0.04em"
+        },
+        "totalText": { "style": "captionStrong", "color": "$ink" },
+        "padding": "8px 24px"
+      },
+      "usedIn": ["ExpenseList"]
+    },
+    "CategoryChip": {
+      "description": "Selectable category chip with icon and label",
+      "props": {
+        "label": "string",
+        "icon": "ReactNode",
+        "selected": "boolean"
+      },
+      "specs": {
+        "default": {
+          "backgroundColor": "$white",
+          "borderWidth": 1,
+          "borderColor": "rgba(26,24,21,0.1)",
+          "textColor": "$secondary",
+          "fontWeight": "600"
+        },
+        "selected": {
+          "backgroundColor": "category background color",
+          "borderWidth": 2,
+          "borderColor": "category icon color",
+          "textColor": "category dark variant",
+          "fontWeight": "700"
+        },
+        "padding": "10px 16px",
+        "borderRadius": 12,
+        "gap": 8,
+        "iconSize": 16
+      },
+      "usedIn": ["QuickAddExpense"]
+    },
+    "FilterChip": {
+      "description": "Filter pill for expense list",
+      "props": {
+        "label": "string",
+        "active": "boolean"
+      },
+      "specs": {
+        "default": {
+          "backgroundColor": "$white",
+          "borderWidth": 1,
+          "borderColor": "rgba(26,24,21,0.1)",
+          "textColor": "$secondary"
+        },
+        "active": {
+          "backgroundColor": "$ink",
+          "textColor": "$warmWhite"
+        },
+        "padding": "8px 16px",
+        "borderRadius": 20,
+        "fontSize": 13
+      },
+      "usedIn": ["ExpenseList"]
+    },
+    "AmountInput": {
+      "description": "Large centered amount input with cursor indicator",
+      "props": {
+        "value": "number",
+        "currency": "string"
+      },
+      "specs": {
+        "integerPart": { "style": "heroAmount", "color": "$ink" },
+        "decimalPart": { "style": "heroAmount", "color": "$stone" },
+        "cursorBar": {
+          "width": 80,
+          "height": 3,
+          "borderRadius": 2,
+          "color": "$terracotta500"
+        },
+        "label": {
+          "style": "bodySecondary",
+          "color": "$muted",
+          "text": "How much?"
+        }
+      },
+      "usedIn": ["QuickAddExpense"]
+    },
+    "BudgetImpactBanner": {
+      "description": "Warning banner showing budget impact before saving expense",
+      "props": {
+        "category": "string",
+        "percentageAfter": "number"
+      },
+      "specs": {
+        "backgroundColor": "$amber50",
+        "borderRadius": 14,
+        "padding": "14px 16px",
+        "iconColor": "$amber900",
+        "textStyle": {
+          "style": "bodySecondary",
+          "fontWeight": "600",
+          "color": "$amber900"
+        },
+        "thresholds": {
+          "warning": ">= 70%",
+          "danger": ">= 100%"
+        }
+      },
+      "usedIn": ["QuickAddExpense"]
+    },
+    "PrimaryButton": {
+      "description": "Main CTA button with gradient background",
+      "props": {
+        "label": "string",
+        "onPress": "function",
+        "loading": "boolean",
+        "disabled": "boolean"
+      },
+      "specs": {
+        "background": "gradient.brandPrimary",
+        "shadow": "elevation.button",
+        "padding": 18,
+        "borderRadius": 16,
+        "textStyle": "buttonPrimary",
+        "textColor": "$white",
+        "disabledOpacity": 0.5
+      },
+      "usedIn": ["QuickAddExpense", "EditTrip", "EditCategories"]
+    },
+    "FAB": {
+      "description": "Floating action button for quick expense entry",
+      "specs": {
+        "size": 56,
+        "borderRadius": "full",
+        "background": "gradient.fabButton",
+        "shadow": "elevation.fab",
+        "iconSize": 26,
+        "iconColor": "$white",
+        "iconStrokeWidth": 2.5,
+        "position": "center of bottom nav, elevated -32px"
+      },
+      "usedIn": ["BottomNav"]
+    },
+    "BottomNav": {
+      "description": "Mobile bottom tab bar with 4 tabs + centered FAB",
+      "tabs": ["Home", "Expenses", "Budget", "Group"],
+      "specs": {
+        "backgroundColor": "$white",
+        "borderTop": "1px solid rgba(26,24,21,0.06)",
+        "padding": "10px 16px 28px 16px",
+        "activeColor": "$terracotta500",
+        "inactiveColor": "$muted",
+        "iconSize": 22,
+        "labelStyle": "tabLabel / tabLabelActive"
+      },
+      "usedIn": ["HomeDashboard"]
+    },
+    "DesktopSidebar": {
+      "description": "Desktop navigation sidebar",
+      "specs": {
+        "width": 260,
+        "backgroundColor": "$white",
+        "borderRight": "1px solid rgba(26,24,21,0.06)",
+        "padding": "28px 20px",
+        "navItemPadding": "12px 14px",
+        "navItemRadius": 12,
+        "activeBackground": "rgba(194,65,12,0.08)",
+        "activeColor": "$terracotta500",
+        "inactiveColor": "$secondary",
+        "iconSize": 20,
+        "gap": 4
+      },
+      "items": ["Dashboard", "Expenses", "Budget", "Categories", "Group"],
+      "footer": ["Settings", "UserAvatar"],
+      "usedIn": ["DesktopDashboard"]
+    },
+    "StatCard": {
+      "description": "Key metric card showing label, value, and helper text",
+      "props": {
+        "label": "string",
+        "value": "string",
+        "helper": "string",
+        "valueColor": "string"
+      },
+      "specs": {
+        "backgroundColor": "$white",
+        "borderRadius": 16,
+        "border": "1px solid rgba(26,24,21,0.06)",
+        "padding": 24,
+        "labelStyle": { "style": "caption", "color": "$muted" },
+        "valueStyle": { "style": "displayMedium" },
+        "helperStyle": { "style": "caption", "color": "$muted" }
+      },
+      "usedIn": ["DesktopDashboard", "TripSummary"]
+    },
+    "CategoryEditCard": {
+      "description": "Expandable category card for editing name, budget, and icon",
+      "states": {
+        "collapsed": {
+          "borderRadius": 16,
+          "border": "1px solid rgba(26,24,21,0.06)",
+          "padding": 16,
+          "showEditIcon": true,
+          "showChevron": true
+        },
+        "expanded": {
+          "borderRadius": 16,
+          "border": "2px solid $terracotta500",
+          "padding": 16,
+          "fields": ["categoryName", "budgetLimit", "iconColorPicker"],
+          "actions": ["Cancel", "Save"],
+          "destructive": "Delete Category"
+        }
+      },
+      "usedIn": ["EditCategories"]
+    },
+    "AvatarChip": {
+      "description": "User avatar with gradient background and name",
+      "props": {
+        "name": "string",
+        "initial": "string",
+        "gradient": "GradientConfig",
+        "role": "string (optional)"
+      },
+      "specs": {
+        "avatarSize": 28,
+        "borderRadius": "full",
+        "initialStyle": "avatarInitial",
+        "nameStyle": { "style": "bodySecondary", "fontWeight": "600" },
+        "roleBadge": {
+          "backgroundColor": "$teal50",
+          "textColor": "$teal500",
+          "fontSize": 11,
+          "padding": "2px 8px",
+          "borderRadius": 6
+        }
+      },
+      "usedIn": ["EditTrip", "TripSummary", "QuickAddExpense"]
+    },
+    "InsightCard": {
+      "description": "Post-trip insight row with icon and description",
+      "props": {
+        "title": "string",
+        "description": "string",
+        "icon": "ReactNode",
+        "iconBackground": "string"
+      },
+      "specs": {
+        "backgroundColor": "$white",
+        "borderRadius": 14,
+        "border": "1px solid rgba(26,24,21,0.06)",
+        "padding": 16,
+        "iconContainer": { "size": 44, "borderRadius": 14 },
+        "gap": 14
+      },
+      "usedIn": ["TripSummary"]
+    }
+  }
+}

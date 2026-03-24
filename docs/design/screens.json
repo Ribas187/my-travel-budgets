@@ -1,0 +1,290 @@
+{
+  "meta": {
+    "name": "My Travel Budgets — Screen Specifications",
+    "version": "1.0.0",
+    "paperFile": "My Travel Budget",
+    "screenshotExport": "Export from Paper app: Select artboard > Right-click > Export as PNG @2x"
+  },
+  "screens": [
+    {
+      "id": "01-home-dashboard",
+      "name": "Home Dashboard",
+      "platform": "mobile",
+      "artboardSize": { "width": 390, "height": 844 },
+      "paperNodeId": "1-0",
+      "screenshot": "screenshots/01-home-dashboard-mobile.png",
+      "goal": "At-a-glance budget health and quick access to recent activity",
+      "primaryActions": [
+        "View budget ring",
+        "Tap FAB to add expense",
+        "Tap category to see detail"
+      ],
+      "components": [
+        "StatusBar",
+        "HeaderWithAvatar",
+        "BudgetRing (inside white card)",
+        "BudgetStatsRow (spent/left/day)",
+        "SectionHeader (By Category)",
+        "CategoryProgressRow x3",
+        "SectionHeader (Recent Expenses)",
+        "ExpenseRow x2",
+        "BottomNav with FAB"
+      ],
+      "layout": {
+        "structure": "vertical scroll with fixed bottom nav",
+        "backgroundColor": "#FAF8F5",
+        "safeAreas": "top status bar, bottom home indicator"
+      },
+      "edgeStates": {
+        "empty": "No expenses yet — show illustration + 'Add your first expense' CTA",
+        "allSafe": "Budget ring fully teal, all categories show green amounts",
+        "warning": "Budget ring turns amber when >70% spent, affected categories show amber",
+        "overBudget": "Budget ring turns coral red, over-budget categories show red with exclamation"
+      }
+    },
+    {
+      "id": "02-quick-add-expense",
+      "name": "Quick Add Expense",
+      "platform": "mobile",
+      "artboardSize": { "width": 390, "height": 844 },
+      "paperNodeId": "3Z-0",
+      "screenshot": "screenshots/02-quick-add-expense-mobile.png",
+      "goal": "Log an expense in 2-3 taps — speed is paramount",
+      "primaryActions": ["Enter amount", "Select category", "Save"],
+      "components": [
+        "DragHandle",
+        "SheetHeader (Add Expense + close)",
+        "AmountInput (hero size)",
+        "DescriptionInput",
+        "CategoryChips (wrapping)",
+        "PaidBySelector",
+        "BudgetImpactBanner",
+        "PrimaryButton (Save Expense)"
+      ],
+      "layout": {
+        "structure": "bottom sheet modal, vertical stack",
+        "presentation": "modal sheet sliding up from bottom",
+        "dragHandle": "40px wide, 5px tall, centered"
+      },
+      "edgeStates": {
+        "emptyAmount": "Save button disabled, no budget impact shown",
+        "overBudget": "Impact banner turns red: 'Food & Drinks will exceed budget by €34'",
+        "loading": "Save button shows spinner, inputs disabled",
+        "success": "Sheet dismisses with checkmark toast"
+      }
+    },
+    {
+      "id": "03-expense-list",
+      "name": "Expense List + Filters",
+      "platform": "mobile",
+      "artboardSize": { "width": 390, "height": 844 },
+      "paperNodeId": "5U-0",
+      "screenshot": "screenshots/03-expense-list-mobile.png",
+      "goal": "Browse and filter all trip expenses by day and category",
+      "primaryActions": ["Filter by category", "Search expenses", "Tap expense for detail"],
+      "components": [
+        "StatusBar",
+        "Header (Expenses + search + filter icons)",
+        "FilterChips (horizontal scroll: All, Food, Transport, Activities...)",
+        "DayGroupHeader",
+        "ExpenseRow (repeated)",
+        "Divider between day groups"
+      ],
+      "layout": {
+        "structure": "vertical scroll, sticky header",
+        "grouping": "Expenses grouped by day, newest first",
+        "filterBehavior": "Single-select, 'All' is default"
+      },
+      "edgeStates": {
+        "empty": "No expenses — illustration + 'Start adding expenses'",
+        "filtered": "Show 'No food expenses yet' when filter yields no results",
+        "loading": "Skeleton rows for expense list"
+      }
+    },
+    {
+      "id": "04-budget-vs-actual",
+      "name": "Budget Breakdown",
+      "platform": "mobile",
+      "artboardSize": { "width": 390, "height": 844 },
+      "paperNodeId": "8U-0",
+      "screenshot": "screenshots/04-budget-vs-actual-mobile.png",
+      "goal": "Detailed spending vs budget comparison per category with pacing guidance",
+      "primaryActions": ["View overall spending bar", "See per-category detail", "Navigate back"],
+      "components": [
+        "StatusBar",
+        "BackHeader (Budget Breakdown)",
+        "SummaryCard (total budget vs spent, stacked bar, category legend)",
+        "CategoryDetailCard x3+ (icon, name, count, percentage, bar, pacing text)"
+      ],
+      "layout": {
+        "structure": "vertical scroll",
+        "cardSpacing": 12
+      },
+      "edgeStates": {
+        "noBudget": "Show 'Set a budget' CTA for categories without limits",
+        "overBudget": "Category card shows red percentage, red progress bar overflow indicator"
+      }
+    },
+    {
+      "id": "05-trip-summary",
+      "name": "Trip Summary",
+      "platform": "mobile",
+      "artboardSize": { "width": 390, "height": 844 },
+      "paperNodeId": "BX-0",
+      "screenshot": "screenshots/05-trip-summary-mobile.png",
+      "goal": "Post-trip review — total spending, insights, per-person breakdown",
+      "primaryActions": ["Review trip totals", "See insights", "View per-person amounts"],
+      "components": [
+        "StatusBar",
+        "TripHero (complete badge, trip name, date range, traveler count)",
+        "StatCard 2-column (Total Spent, Under Budget)",
+        "StatCard 3-column (Avg/Day, Expenses, Budget Used)",
+        "SectionHeader (Insights)",
+        "InsightCard x3 (Top Spender, Biggest Category, Biggest Day)",
+        "SectionHeader (Per Person)",
+        "PersonRow x4 (avatar, name, expense count, amount)"
+      ],
+      "layout": {
+        "structure": "vertical scroll",
+        "heroAlignment": "center"
+      }
+    },
+    {
+      "id": "06-desktop-dashboard",
+      "name": "Desktop Dashboard",
+      "platform": "desktop",
+      "artboardSize": { "width": 1440, "height": 900 },
+      "paperNodeId": "EN-0",
+      "screenshot": "screenshots/06-desktop-dashboard.png",
+      "goal": "Full dashboard view with sidebar navigation, stats, categories, and expenses",
+      "primaryActions": [
+        "Add expense via CTA button",
+        "Navigate via sidebar",
+        "View category detail"
+      ],
+      "components": [
+        "DesktopSidebar (logo, nav items, settings, user avatar)",
+        "TopBar (trip name, Add Expense button, notifications)",
+        "StatCard x4 row (Total Budget, Spent, Remaining, Daily Average)",
+        "Two-column layout:",
+        "  Left: Budget by Category card (CategoryProgressRow x5)",
+        "  Right: Recent Expenses card (ExpenseRow x5)"
+      ],
+      "layout": {
+        "structure": "sidebar (260px) + main content (flex)",
+        "mainPadding": "28px 40px",
+        "twoColumnGap": 16,
+        "navigation": "sidebar replaces bottom nav on desktop"
+      },
+      "breakpoints": {
+        "desktop": ">= 1024px shows sidebar layout",
+        "tablet": "768-1023px shows collapsible sidebar",
+        "mobile": "< 768px switches to bottom nav"
+      }
+    },
+    {
+      "id": "07-add-edit-categories",
+      "name": "Add/Edit Categories",
+      "platform": "mobile",
+      "artboardSize": { "width": 390, "height": 844 },
+      "paperNodeId": "EO-0",
+      "screenshot": "screenshots/07-add-edit-categories-mobile.png",
+      "goal": "Manage budget categories — create, edit name/budget/icon, delete",
+      "primaryActions": ["Add new category", "Edit existing category", "Delete category"],
+      "components": [
+        "BackHeader (Categories + Add button)",
+        "SubtitleText",
+        "CategoryEditCard collapsed x2",
+        "CategoryEditCard expanded x1 (showing edit form)",
+        "  - Text input: Category Name",
+        "  - Text input: Budget Limit",
+        "  - Icon/Color picker (5 options)",
+        "  - Cancel / Save buttons",
+        "  - Delete Category (destructive link)"
+      ],
+      "layout": {
+        "structure": "vertical scroll",
+        "expandBehavior": "accordion — only one category expanded at a time",
+        "expandedBorder": "2px solid $terracotta500"
+      },
+      "edgeStates": {
+        "noCategories": "Empty state with 'Create your first category' CTA",
+        "deleteConfirmation": "Confirmation dialog: 'Delete Activities? This will uncategorize 3 expenses.'",
+        "saving": "Save button shows spinner"
+      }
+    },
+    {
+      "id": "08-add-edit-trip",
+      "name": "Add/Edit Trip",
+      "platform": "mobile",
+      "artboardSize": { "width": 390, "height": 844 },
+      "paperNodeId": "EP-0",
+      "screenshot": "screenshots/08-add-edit-trip-mobile.png",
+      "goal": "Create or edit trip details — name, destination, dates, budget, travelers",
+      "primaryActions": ["Edit trip details", "Invite travelers", "Save changes", "Delete trip"],
+      "components": [
+        "CloseHeader (Edit Trip + X button)",
+        "TextInput: Trip Name",
+        "TextInput: Destination (with pin icon)",
+        "DateInput row: Start Date / End Date (with calendar icons)",
+        "SelectInput: Currency / TextInput: Total Budget",
+        "TravelersSection (label + Invite link)",
+        "AvatarChip grid (with Admin badge for owner)",
+        "PrimaryButton (Save Changes)",
+        "Divider",
+        "DeleteButton (outlined, danger color)",
+        "HelperText (permanent deletion warning)"
+      ],
+      "layout": {
+        "structure": "vertical scroll",
+        "twoColumnRows": ["Start/End Date", "Currency/Budget"],
+        "dangerZone": "separated by divider at bottom"
+      },
+      "edgeStates": {
+        "newTrip": "Title changes to 'New Trip', fields are empty, no Delete button",
+        "deleteConfirmation": "Confirmation dialog: 'Delete Lisbon 2026? All 47 expenses will be lost.'",
+        "inviteFlow": "Opens share sheet or invite modal with link",
+        "saving": "Save button shows spinner, inputs disabled"
+      }
+    }
+  ],
+  "navigation": {
+    "mobile": {
+      "type": "bottom-tab + modal",
+      "tabs": [
+        { "label": "Home", "icon": "home", "screen": "HomeDashboard" },
+        { "label": "Expenses", "icon": "list", "screen": "ExpenseList" },
+        {
+          "label": "Add",
+          "icon": "plus",
+          "screen": "QuickAddExpense",
+          "presentation": "modal"
+        },
+        { "label": "Budget", "icon": "wallet", "screen": "BudgetBreakdown" },
+        { "label": "Group", "icon": "users", "screen": "GroupMembers" }
+      ],
+      "secondaryScreens": [
+        {
+          "screen": "EditTrip",
+          "presentation": "modal",
+          "trigger": "trip name tap or settings"
+        },
+        {
+          "screen": "EditCategories",
+          "presentation": "push",
+          "trigger": "Budget > Manage"
+        },
+        {
+          "screen": "TripSummary",
+          "presentation": "push",
+          "trigger": "trip complete or settings"
+        }
+      ]
+    },
+    "desktop": {
+      "type": "sidebar",
+      "items": ["Dashboard", "Expenses", "Budget", "Categories", "Group"],
+      "footer": ["Settings", "UserProfile"]
+    }
+  }
+}
