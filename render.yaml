@@ -1,0 +1,28 @@
+services:
+  - type: web
+    name: my-travel-budgets-api
+    runtime: node
+    region: oregon
+    plan: free
+    rootDir: .
+    buildCommand: pnpm install && pnpm db:generate && cd src/apps/api && pnpm build && npx prisma migrate deploy
+    startCommand: cd src/apps/api && node dist/main
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: "3000"
+      - key: DATABASE_URL
+        sync: false
+      - key: JWT_SECRET
+        generateValue: true
+      - key: JWT_EXPIRES_IN
+        value: "30d"
+      - key: RESEND_API_KEY
+        sync: false
+      - key: RESEND_FROM_EMAIL
+        sync: false
+      - key: MAGIC_LINK_BASE_URL
+        sync: false
+      - key: CLOUDINARY_URL
+        sync: false
