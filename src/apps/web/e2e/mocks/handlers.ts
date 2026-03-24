@@ -290,9 +290,31 @@ export async function setupApiMocks(page: Page): Promise<MockState> {
       }
       if (method === 'DELETE') {
         state.travels = state.travels.filter((t) => t.id !== travelId);
+        if (state.user.mainTravelId === travelId) {
+          state.user = { ...state.user, mainTravelId: null };
+        }
         return route.fulfill({ status: 204, body: '' });
       }
       return route.fallback();
+    }
+
+    // ── Users: /users/me/main-travel ──
+    if (pathname === '/users/me/main-travel' && method === 'PATCH') {
+      const body = route.request().postDataJSON();
+      const travelId = body.travelId ?? null;
+      if (travelId && !state.travels.some((t) => t.id === travelId)) {
+        return route.fulfill({
+          status: 404,
+          contentType: 'application/json',
+          body: JSON.stringify({ message: 'Travel not found' }),
+        });
+      }
+      state.user = { ...state.user, mainTravelId: travelId, updatedAt: new Date().toISOString() };
+      return route.fulfill({
+        status: 200,
+        contentType: 'application/json',
+        body: JSON.stringify(state.user),
+      });
     }
 
     // ── Users: /users/me ──

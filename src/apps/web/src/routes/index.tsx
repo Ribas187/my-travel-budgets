@@ -1,4 +1,4 @@
-import { createFileRoute, redirect } from '@tanstack/react-router';
+import { createFileRoute, redirect, isRedirect } from '@tanstack/react-router';
 import { queryKeys } from '@repo/api-client';
 
 import { apiClient } from '@/apiClient';
@@ -29,8 +29,8 @@ export const Route = createFileRoute('/')({
         }
       }
     } catch (error) {
-      // Re-throw redirect errors
-      if (error && typeof error === 'object' && 'to' in error) {
+      // Re-throw redirect errors (TanStack Router redirects are Response objects)
+      if (isRedirect(error)) {
         throw error;
       }
       // For any other error (auth failure, network issue), fall through to /travels

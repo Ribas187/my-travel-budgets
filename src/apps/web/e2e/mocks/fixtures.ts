@@ -121,8 +121,24 @@ export const TEST_USER_ME = {
   email: TEST_USER.email,
   name: TEST_USER.name,
   avatarUrl: null,
+  mainTravelId: null as string | null,
   createdAt: TEST_USER.createdAt,
   updatedAt: TEST_USER.updatedAt,
+};
+
+export const TRAVEL_ID_2 = '00000000-0000-4000-8000-000000000200';
+
+export const TEST_TRAVEL_2 = {
+  id: TRAVEL_ID_2,
+  name: 'Winter in Japan',
+  description: 'Tokyo, Kyoto, Osaka',
+  imageUrl: null,
+  currency: 'JPY',
+  budget: 500000,
+  startDate: '2026-12-01',
+  endDate: '2026-12-14',
+  createdAt: '2026-01-02T00:00:00.000Z',
+  updatedAt: '2026-01-02T00:00:00.000Z',
 };
 
 export const TEST_DASHBOARD = {
