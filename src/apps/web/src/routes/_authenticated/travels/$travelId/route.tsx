@@ -205,7 +205,7 @@ function TravelLayout() {
   const showIconFallback = !userName;
 
   return (
-    <TravelProvider travel={travel} isOwner={isOwner} currentUserId={currentUserId} onOpenNavigationSheet={handleOpenSheet}>
+    <TravelProvider travel={travel} isOwner={isOwner} currentUserId={currentUserId} onOpenNavigationSheet={handleOpenSheet} onAddExpense={() => setAddExpenseOpen(true)}>
       <AppShell sidebar={sidebar} bottomNav={bottomNav}>
         <Outlet />
       </AppShell>

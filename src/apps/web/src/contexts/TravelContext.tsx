@@ -6,6 +6,7 @@ interface TravelContextValue {
   isOwner: boolean;
   currentUserId: string | null;
   onOpenNavigationSheet?: () => void;
+  onAddExpense?: () => void;
 }
 
 const TravelContext = createContext<TravelContextValue | null>(null);
@@ -15,10 +16,11 @@ export function TravelProvider({
   isOwner,
   currentUserId,
   onOpenNavigationSheet,
+  onAddExpense,
   children,
 }: TravelContextValue & { children: ReactNode }) {
   return (
-    <TravelContext.Provider value={{ travel, isOwner, currentUserId, onOpenNavigationSheet }}>
+    <TravelContext.Provider value={{ travel, isOwner, currentUserId, onOpenNavigationSheet, onAddExpense }}>
       {children}
     </TravelContext.Provider>
   );

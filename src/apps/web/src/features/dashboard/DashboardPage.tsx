@@ -9,6 +9,8 @@ import { useTravelContext } from '@/contexts/TravelContext';
 import { useDashboard } from '@/hooks/useDashboard';
 import { useTravelExpenses } from '@/hooks/useTravelExpenses';
 
+type TFunction = (key: string, opts?: Record<string, unknown>) => string;
+
 function formatCurrency(amount: number, currency: string, locale: string): string {
   return new Intl.NumberFormat(locale, {
     style: 'currency',
@@ -333,15 +335,19 @@ function MobileLayout({
   onSeeAllCategories,
   onViewAllExpenses,
   onAvatarPress,
+  isEmpty,
+  onAddExpense,
 }: {
   dashboard: DashboardData;
   recentExpenses: Expense[];
   travel: TravelDetail;
   locale: string;
-  t: (key: string, opts?: Record<string, unknown>) => string;
+  t: TFunction;
   onSeeAllCategories: () => void;
   onViewAllExpenses: () => void;
   onAvatarPress?: () => void;
+  isEmpty?: boolean;
+  onAddExpense?: () => void;
 }) {
   const { overall, categorySpending, currency } = dashboard;
   const remaining = Math.max(0, overall.budget - overall.totalSpent);
@@ -357,6 +363,7 @@ function MobileLayout({
   return (
     <YStack
       gap="$lg"
+      flex={1}
       data-testid="dashboard-mobile"
     >
       <DashboardHeader
@@ -366,56 +373,62 @@ function MobileLayout({
         openMenuLabel={t('nav.openMenu')}
       />
 
-      {/* BudgetRing */}
-      <YStack alignItems="center" paddingHorizontal="$screenPaddingHorizontal">
-        <BudgetRing
-          total={overall.budget}
-          spent={overall.totalSpent}
-          currency={currency}
-          locale={locale}
-          remainingLabel={t('budget.remaining')}
-          spentLabel={t('budget.spent')}
-        />
-      </YStack>
-
-      <YStack gap="$lg" paddingHorizontal="$screenPaddingHorizontal">
-        {/* Stats row */}
-        <StatsRow
-          spent={overall.totalSpent}
-          remaining={remaining}
-          avgPerDay={avgPerDay}
-          currency={currency}
-          locale={locale}
-          dayLabel={t('dashboard.dayOfTrip', { current: daysSinceStart, total: totalDays })}
-          t={t}
-        />
-
-        <Body size="secondary" textAlign="center" color="$textTertiary">
-          {t('dashboard.dayOfTrip', { current: daysSinceStart, total: totalDays })}
-        </Body>
-
-        {/* By Category */}
-        <YStack>
-          <SectionHeader
-            title={t('dashboard.byCategory')}
-            action={t('dashboard.seeAll')}
-            onAction={onSeeAllCategories}
-          />
-          <CategoryList categories={categorySpending} currency={currency} locale={locale} />
-        </YStack>
-
-        {/* Recent Expenses */}
-        {recentExpenses.length > 0 && (
-          <YStack>
-            <SectionHeader
-              title={t('dashboard.recentExpenses')}
-              action={t('dashboard.viewAll')}
-              onAction={onViewAllExpenses}
+      {isEmpty ? (
+        <EmptyState onAddExpense={onAddExpense ?? (() => {})} t={t} />
+      ) : (
+        <>
+          {/* BudgetRing */}
+          <YStack alignItems="center" paddingHorizontal="$screenPaddingHorizontal">
+            <BudgetRing
+              total={overall.budget}
+              spent={overall.totalSpent}
+              currency={currency}
+              locale={locale}
+              remainingLabel={t('budget.remaining')}
+              spentLabel={t('budget.spent')}
             />
-            <RecentExpenses expenses={recentExpenses} travel={travel} locale={locale} />
           </YStack>
-        )}
-      </YStack>
+
+          <YStack gap="$lg" paddingHorizontal="$screenPaddingHorizontal">
+            {/* Stats row */}
+            <StatsRow
+              spent={overall.totalSpent}
+              remaining={remaining}
+              avgPerDay={avgPerDay}
+              currency={currency}
+              locale={locale}
+              dayLabel={t('dashboard.dayOfTrip', { current: daysSinceStart, total: totalDays })}
+              t={t}
+            />
+
+            <Body size="secondary" textAlign="center" color="$textTertiary">
+              {t('dashboard.dayOfTrip', { current: daysSinceStart, total: totalDays })}
+            </Body>
+
+            {/* By Category */}
+            <YStack>
+              <SectionHeader
+                title={t('dashboard.byCategory')}
+                action={t('dashboard.seeAll')}
+                onAction={onSeeAllCategories}
+              />
+              <CategoryList categories={categorySpending} currency={currency} locale={locale} />
+            </YStack>
+
+            {/* Recent Expenses */}
+            {recentExpenses.length > 0 && (
+              <YStack>
+                <SectionHeader
+                  title={t('dashboard.recentExpenses')}
+                  action={t('dashboard.viewAll')}
+                  onAction={onViewAllExpenses}
+                />
+                <RecentExpenses expenses={recentExpenses} travel={travel} locale={locale} />
+              </YStack>
+            )}
+          </YStack>
+        </>
+      )}
     </YStack>
   );
 }
@@ -430,19 +443,36 @@ function DesktopLayout({
   t,
   onSeeAllCategories,
   onViewAllExpenses,
+  isEmpty,
+  onAddExpense,
 }: {
   dashboard: DashboardData;
   recentExpenses: Expense[];
   travel: TravelDetail;
   locale: string;
-  t: (key: string, opts?: Record<string, unknown>) => string;
+  t: TFunction;
   onSeeAllCategories: () => void;
   onViewAllExpenses: () => void;
+  isEmpty?: boolean;
+  onAddExpense?: () => void;
 }) {
   const { overall, categorySpending, currency } = dashboard;
   const remaining = Math.max(0, overall.budget - overall.totalSpent);
   const daysSinceStart = getDaysSinceStart(travel.startDate, travel.endDate);
   const avgPerDay = overall.totalSpent / daysSinceStart;
+
+  if (isEmpty) {
+    return (
+      <YStack
+        flex={1}
+        padding="$screenPaddingHorizontal"
+        paddingTop="$2xl"
+        data-testid="dashboard-desktop"
+      >
+        <EmptyState onAddExpense={onAddExpense ?? (() => {})} t={t} />
+      </YStack>
+    );
+  }
 
   return (
     <YStack
@@ -530,7 +560,7 @@ function DesktopLayout({
 
 export function DashboardPage() {
   const { t, i18n } = useTranslation();
-  const { travel, onOpenNavigationSheet } = useTravelContext();
+  const { travel, onOpenNavigationSheet, onAddExpense } = useTravelContext();
   const locale = i18n.language;
   const media = useMedia();
   const isDesktop = media.gtTablet;
@@ -567,10 +597,6 @@ export function DashboardPage() {
     return null;
   }
 
-  if (isEmpty) {
-    return <EmptyState onAddExpense={() => {}} t={t} />;
-  }
-
   if (isDesktop) {
     return (
       <DesktopLayout
@@ -581,6 +607,8 @@ export function DashboardPage() {
         t={t}
         onSeeAllCategories={handleSeeAllCategories}
         onViewAllExpenses={handleViewAllExpenses}
+        isEmpty={isEmpty}
+        onAddExpense={onAddExpense}
       />
     );
   }
@@ -595,6 +623,8 @@ export function DashboardPage() {
       onSeeAllCategories={handleSeeAllCategories}
       onViewAllExpenses={handleViewAllExpenses}
       onAvatarPress={onOpenNavigationSheet}
+      isEmpty={isEmpty}
+      onAddExpense={onAddExpense}
     />
   );
 }
