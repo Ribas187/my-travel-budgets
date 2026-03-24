@@ -7,15 +7,17 @@ datasource db {
 }
 
 model User {
-  id        String   @id @default(uuid())
-  email     String   @unique
-  name      String
-  avatarUrl String?
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id           String   @id @default(uuid())
+  email        String   @unique
+  name         String
+  avatarUrl    String?
+  mainTravelId String?
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
 
-  travels    Travel[]
-  memberships TravelMember[]
+  travels      Travel[]
+  memberships  TravelMember[]
+  mainTravel   Travel?  @relation("mainTravel", fields: [mainTravelId], references: [id], onDelete: SetNull)
 }
 
 model Travel {
@@ -31,10 +33,11 @@ model Travel {
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 
-  createdBy  User           @relation(fields: [createdById], references: [id])
-  members    TravelMember[]
-  categories Category[]
-  expenses   Expense[]
+  createdBy       User           @relation(fields: [createdById], references: [id])
+  members         TravelMember[]
+  categories      Category[]
+  expenses        Expense[]
+  mainTravelUsers User[]         @relation("mainTravel")
 }
 
 model TravelMember {

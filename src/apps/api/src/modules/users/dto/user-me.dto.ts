@@ -3,6 +3,7 @@ export class UserMeDto {
   email!: string;
   name!: string;
   avatarUrl!: string | null;
+  mainTravelId!: string | null;
   createdAt!: Date;
   updatedAt!: Date;
 }

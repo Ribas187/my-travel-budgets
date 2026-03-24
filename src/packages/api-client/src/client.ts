@@ -188,5 +188,8 @@ export class ApiClient {
 
     updateMe: (data: { name?: string }): Promise<UserMe> =>
       this.request('PATCH', '/users/me', { body: data }),
+
+    setMainTravel: (travelId: string | null): Promise<UserMe> =>
+      this.request('PATCH', '/users/me/main-travel', { body: { travelId } }),
   };
 }
