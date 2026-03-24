@@ -108,6 +108,7 @@ function LoginPage() {
           paddingVertical="$md"
           fontFamily="$body"
           fontSize={15}
+          minHeight={48}
           aria-label={t('auth.emailPlaceholder')}
         />
 

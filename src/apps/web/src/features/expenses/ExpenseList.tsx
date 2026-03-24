@@ -55,12 +55,11 @@ function getCategoryById(categoryId: string, categories: Category[]): Category |
 
 const FilterBar = styled(ScrollView, {
   flexDirection: 'row',
-  marginBottom: '$md',
+  marginBottom: '$sm',
 });
 
 const FilterBarContent = styled(XStack, {
   gap: '$sm',
-  paddingVertical: '$xs',
 });
 
 const SearchContainer = styled(XStack, {
@@ -80,6 +79,7 @@ const SearchInput = styled(Input, {
   borderWidth: 0,
   backgroundColor: 'transparent',
   paddingVertical: '$sm',
+  minHeight: 48,
 });
 
 const SearchToggle = styled(XStack, {
