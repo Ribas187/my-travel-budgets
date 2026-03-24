@@ -175,5 +175,14 @@
   "summary.travelers": "{{count}} travelers",
 
   "datePicker.openCalendar": "Open calendar",
-  "datePicker.selectedDate": "Selected: {{date}}"
+  "datePicker.selectedDate": "Selected: {{date}}",
+
+  "category.emojiGroup.food": "Food & Drink",
+  "category.emojiGroup.transport": "Transport",
+  "category.emojiGroup.accommodation": "Accommodation",
+  "category.emojiGroup.activities": "Activities",
+  "category.emojiGroup.shopping": "Shopping",
+  "category.emojiGroup.health": "Health",
+  "category.emojiGroup.services": "Services",
+  "category.emojiGroup.other": "Other"
 }

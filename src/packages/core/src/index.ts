@@ -4,5 +4,7 @@ export * from './schemas/category';
 export * from './schemas/expense';
 export * from './schemas/member';
 export * from './constants/currencies';
+export * from './constants/category-emojis';
+export * from './constants/category-colors';
 export * from './types/index';
 export * from './i18n/index';
