@@ -150,14 +150,14 @@ describe('NavigationSheet integration with TravelLayout', () => {
 
   it('user name and initial are derived correctly from useUserMe data', () => {
     const userName = 'Alice';
-    const userInitial = userName ? userName.charAt(0).toUpperCase() : '?';
+    const userInitial = userName ? userName.charAt(0).toUpperCase() : undefined;
 
     expect(userInitial).toBe('A');
 
-    // Edge case: empty name
+    // Edge case: empty name falls back to undefined (icon shown instead)
     const emptyName = '';
-    const emptyInitial = emptyName ? emptyName.charAt(0).toUpperCase() : '?';
-    expect(emptyInitial).toBe('?');
+    const emptyInitial = emptyName ? emptyName.charAt(0).toUpperCase() : undefined;
+    expect(emptyInitial).toBeUndefined();
   });
 
   it('sheet items array contains exactly 3 items: profile, myTravels, logout', () => {

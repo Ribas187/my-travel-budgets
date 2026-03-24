@@ -148,9 +148,9 @@ function MemberRow({
         />
       </XStack>
 
-      <YStack alignItems="flex-end" gap={2}>
+      <YStack alignItems="flex-end" gap={2} flexShrink={0}>
         {spending && (
-          <Text fontFamily="$body" fontSize={15} fontWeight="700" color="$textPrimary">
+          <Text fontFamily="$body" fontSize={15} fontWeight="700" color="$textPrimary" whiteSpace="nowrap">
             {formatCurrency(spending.totalSpent, currency, locale)}
           </Text>
         )}

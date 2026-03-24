@@ -4,6 +4,8 @@ import { styled, XStack, YStack, Text, View } from 'tamagui';
 const ChipFrame = styled(XStack, {
   alignItems: 'center',
   gap: '$sm',
+  flex: 1,
+  minWidth: 0,
 });
 
 const AvatarCircle = styled(XStack, {
@@ -12,6 +14,7 @@ const AvatarCircle = styled(XStack, {
   borderRadius: '$full',
   alignItems: 'center',
   justifyContent: 'center',
+  flexShrink: 0,
 });
 
 const InitialText = styled(Text, {
@@ -62,11 +65,11 @@ export function AvatarChip({ name, initial, showIconFallback, avatarColor, role,
           <InitialText>{initial}</InitialText>
         )}
       </AvatarCircle>
-      <YStack>
-        <XStack alignItems="center" gap="$xs">
-          <NameText>{name}</NameText>
+      <YStack flex={1} minWidth={0}>
+        <XStack alignItems="center" gap="$xs" minWidth={0}>
+          <NameText numberOfLines={1} flexShrink={1} overflow="hidden" textOverflow="ellipsis" whiteSpace="nowrap">{name}</NameText>
           {role && (
-            <RoleBadge>
+            <RoleBadge flexShrink={0}>
               <RoleBadgeText>{role}</RoleBadgeText>
             </RoleBadge>
           )}

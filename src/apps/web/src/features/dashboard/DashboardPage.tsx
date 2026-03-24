@@ -1,6 +1,7 @@
 import { useMemo, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from '@tanstack/react-router';
+import { User } from 'lucide-react';
 import { XStack, YStack, Text, useMedia, Separator, styled } from 'tamagui';
 import { BudgetRing, CategoryProgressRow, StatCard, ExpenseRow, Heading, Body } from '@repo/ui';
 import type { DashboardData, TravelDetail, Expense, CategorySpending } from '@repo/api-client';
@@ -297,7 +298,7 @@ function DashboardHeader({
   openMenuLabel = 'Open navigation menu',
 }: {
   travelName: string;
-  userInitial: string;
+  userInitial?: string;
   onAvatarPress?: () => void;
   openMenuLabel?: string;
 }) {
@@ -316,9 +317,13 @@ function DashboardHeader({
         aria-label={openMenuLabel}
         data-testid="header-avatar"
       >
-        <Text fontFamily="$heading" fontSize={16} fontWeight="600" color="$white">
-          {userInitial}
-        </Text>
+        {userInitial ? (
+          <Text fontFamily="$heading" fontSize={16} fontWeight="600" color="$white">
+            {userInitial}
+          </Text>
+        ) : (
+          <User size={18} color="white" role="img" aria-label="User" />
+        )}
       </HeaderAvatarCircle>
     </XStack>
   );
@@ -358,7 +363,7 @@ function MobileLayout({
   // Derive user initial from travel members
   const currentMember = (travel.members ?? []).find((m) => m.userId != null);
   const memberName = currentMember?.user?.name ?? '';
-  const userInitial = memberName ? memberName.charAt(0).toUpperCase() : '?';
+  const userInitial = memberName ? memberName.charAt(0).toUpperCase() : undefined;
 
   return (
     <YStack
