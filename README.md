@@ -6,22 +6,13 @@ Served at **mybudget.cards**
 
 ## Screenshots
 
-### Mobile
-
 <p align="center">
-  <img src="docs/screenshots/mobile-dashboard.png" alt="Dashboard" width="200"/>
+  <img src="docs/screenshots/mobile-dashboard.png" alt="Dashboard" width="180"/>
   &nbsp;&nbsp;
-  <img src="docs/screenshots/mobile-budget.png" alt="Budget Breakdown" width="200"/>
+  <img src="docs/screenshots/mobile-budget.png" alt="Budget Breakdown" width="180"/>
   &nbsp;&nbsp;
-  <img src="docs/screenshots/mobile-categories.png" alt="Categories" width="200"/>
+  <img src="docs/screenshots/mobile-categories.png" alt="Categories" width="180"/>
   &nbsp;&nbsp;
-  <img src="docs/screenshots/mobile-travels.png" alt="My Travels" width="200"/>
-</p>
-
-### Web
-
-<p align="center">
-  <img src="docs/screenshots/web-group.png" alt="Group Members — Web" width="720"/>
 </p>
 
 ## Tech Stack
