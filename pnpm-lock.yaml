@@ -307,6 +307,9 @@ importers:
 
   src/packages/ui:
     dependencies:
+      '@repo/core':
+        specifier: workspace:^
+        version: link:../core
       '@tamagui/config':
         specifier: ^1.141.5
         version: 1.144.4(react-dom@19.2.4(react@19.2.4))(react-native-reanimated@4.2.2(react-native-worklets@0.7.4(@babel/core@7.29.0)(react-native@0.79.0(@babel/core@7.29.0)(@types/react@19.2.14)(react@19.2.4))(react@19.2.4))(react-native@0.79.0(@babel/core@7.29.0)(@types/react@19.2.14)(react@19.2.4))(react@19.2.4))(react-native@0.79.0(@babel/core@7.29.0)(@types/react@19.2.14)(react@19.2.4))(react@19.2.4)

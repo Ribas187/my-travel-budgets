@@ -10,16 +10,17 @@
     "test": "vitest run"
   },
   "dependencies": {
-    "tamagui": "^1.141.5",
-    "@tamagui/config": "^1.141.5"
+    "@repo/core": "workspace:^",
+    "@tamagui/config": "^1.141.5",
+    "tamagui": "^1.141.5"
   },
   "devDependencies": {
     "@repo/eslint-config": "workspace:*",
     "@repo/typescript-config": "workspace:*",
-    "typescript": "^5.7.0",
-    "vitest": "^3.0.0",
     "@testing-library/react": "^16.0.0",
     "react": "^19.0.0",
-    "react-dom": "^19.0.0"
+    "react-dom": "^19.0.0",
+    "typescript": "^5.7.0",
+    "vitest": "^3.0.0"
   }
 }

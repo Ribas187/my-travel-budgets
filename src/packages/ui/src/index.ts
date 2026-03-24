@@ -24,3 +24,5 @@ export type { NavigationSheetProps, NavigationSheetItem } from './NavigationShee
 export { BackHeader } from './BackHeader';
 export { DatePickerInput } from './DatePickerInput';
 export type { DatePickerInputProps } from './DatePickerInput';
+export { ColorPicker } from './ColorPicker';
+export { EmojiPicker } from './EmojiPicker';
