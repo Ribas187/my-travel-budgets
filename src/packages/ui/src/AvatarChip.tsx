@@ -1,27 +1,12 @@
-import { User } from 'lucide-react';
 import { styled, XStack, YStack, Text, View } from 'tamagui';
+
+import { UserAvatar } from './UserAvatar';
 
 const ChipFrame = styled(XStack, {
   alignItems: 'center',
   gap: '$sm',
   flex: 1,
   minWidth: 0,
-});
-
-const AvatarCircle = styled(XStack, {
-  width: 28,
-  height: 28,
-  borderRadius: '$full',
-  alignItems: 'center',
-  justifyContent: 'center',
-  flexShrink: 0,
-});
-
-const InitialText = styled(Text, {
-  fontFamily: '$heading',
-  fontSize: 14,
-  fontWeight: '600',
-  color: '$white',
 });
 
 const NameText = styled(Text, {
@@ -51,20 +36,26 @@ interface AvatarChipProps {
   initial?: string;
   showIconFallback?: boolean;
   avatarColor?: string;
+  avatarUrl?: string | null;
   role?: string;
   onPress?: () => void;
 }
 
-export function AvatarChip({ name, initial, showIconFallback, avatarColor, role, onPress }: AvatarChipProps) {
+export function AvatarChip({ name, initial, showIconFallback, avatarColor, avatarUrl, role, onPress }: AvatarChipProps) {
+  // Derive the display name for UserAvatar:
+  // If showIconFallback is true and no initial, pass empty string so UserAvatar shows the icon fallback
+  const avatarName = showIconFallback && !initial ? '' : (initial || name.charAt(0));
+
   return (
     <ChipFrame onPress={onPress} cursor={onPress ? 'pointer' : undefined}>
-      <AvatarCircle backgroundColor={avatarColor || '$brandPrimary'}>
-        {showIconFallback ? (
-          <User size={16} color="white" aria-hidden={name ? 'true' : undefined} role={!name ? 'img' : undefined} aria-label={!name ? 'User' : undefined} />
-        ) : (
-          <InitialText>{initial}</InitialText>
-        )}
-      </AvatarCircle>
+      <XStack flexShrink={0}>
+        <UserAvatar
+          avatarUrl={avatarUrl ?? null}
+          name={avatarName}
+          size={28}
+          backgroundColor={avatarColor}
+        />
+      </XStack>
       <YStack flex={1} minWidth={0}>
         <XStack alignItems="center" gap="$xs" minWidth={0}>
           <NameText numberOfLines={1} flexShrink={1} overflow="hidden" textOverflow="ellipsis" whiteSpace="nowrap">{name}</NameText>

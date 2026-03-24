@@ -191,5 +191,42 @@ export class ApiClient {
 
     setMainTravel: (travelId: string | null): Promise<UserMe> =>
       this.request('PATCH', '/users/me/main-travel', { body: { travelId } }),
+
+    uploadAvatar: async (file: Blob): Promise<UserMe> => {
+      const formData = new FormData();
+      formData.append('file', file);
+
+      const headers: Record<string, string> = {};
+      const token = this.getToken();
+      if (token) {
+        headers['Authorization'] = `Bearer ${token}`;
+      }
+
+      const response = await fetch(`${this.baseUrl}/users/me/avatar`, {
+        method: 'POST',
+        headers,
+        body: formData,
+      });
+
+      if (!response.ok) {
+        let errorBody: { message?: string; errors?: string[] } = {};
+        try {
+          errorBody = await response.json();
+        } catch {
+          // response body is not JSON
+        }
+        const apiError: ApiError = {
+          statusCode: response.status,
+          message: errorBody.message ?? response.statusText,
+          errors: errorBody.errors,
+        };
+        throw apiError;
+      }
+
+      return response.json() as Promise<UserMe>;
+    },
+
+    removeAvatar: (): Promise<UserMe> =>
+      this.request('DELETE', '/users/me/avatar'),
   };
 }

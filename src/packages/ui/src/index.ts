@@ -11,6 +11,7 @@ export { BudgetImpactBanner } from './BudgetImpactBanner';
 export { StatCard } from './StatCard';
 export { CategoryEditCard } from './CategoryEditCard';
 export { AvatarChip } from './AvatarChip';
+export { UserAvatar, getCloudinaryAvatarUrl } from './UserAvatar';
 export { BottomNav } from './BottomNav';
 export { DesktopSidebar } from './DesktopSidebar';
 export { AppShell } from './AppShell';
