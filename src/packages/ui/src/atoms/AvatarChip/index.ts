@@ -1,0 +1,1 @@
+export { AvatarChip } from './AvatarChip';

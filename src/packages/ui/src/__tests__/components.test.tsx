@@ -1,16 +1,16 @@
 import { describe, it, expect } from 'vitest';
 
-import { PrimaryButton } from '../PrimaryButton';
-import { FAB } from '../FAB';
-import { CategoryChip } from '../CategoryChip';
-import { FilterChip } from '../FilterChip';
-import { ExpenseRow } from '../ExpenseRow';
-import { DayGroupHeader } from '../DayGroupHeader';
-import { AmountInput } from '../AmountInput';
-import { BudgetImpactBanner } from '../BudgetImpactBanner';
-import { StatCard } from '../StatCard';
-import { CategoryEditCard } from '../CategoryEditCard';
-import { AvatarChip } from '../AvatarChip';
+import { PrimaryButton } from '../atoms/PrimaryButton/PrimaryButton';
+import { FAB } from '../atoms/FAB/FAB';
+import { CategoryChip } from '../atoms/CategoryChip/CategoryChip';
+import { FilterChip } from '../atoms/FilterChip/FilterChip';
+import { ExpenseRow } from '../molecules/ExpenseRow/ExpenseRow';
+import { DayGroupHeader } from '../molecules/DayGroupHeader/DayGroupHeader';
+import { AmountInput } from '../molecules/AmountInput/AmountInput';
+import { BudgetImpactBanner } from '../molecules/BudgetImpactBanner/BudgetImpactBanner';
+import { StatCard } from '../molecules/StatCard/StatCard';
+import { CategoryEditCard } from '../organisms/CategoryEditCard/CategoryEditCard';
+import { AvatarChip } from '../atoms/AvatarChip/AvatarChip';
 
 // ---------------------------------------------------------------------------
 // All components render without errors (importable & callable)

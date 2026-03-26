@@ -1,0 +1,1 @@
+export { CategoryDetailCard } from './CategoryDetailCard';

@@ -8,12 +8,12 @@ import { describe, it, expect } from 'vitest';
  */
 
 // Import all interactive components to ensure they're valid
-import { PrimaryButton } from '../PrimaryButton';
-import { FAB } from '../FAB';
-import { CategoryChip } from '../CategoryChip';
-import { FilterChip } from '../FilterChip';
-import { CategoryEditCard } from '../CategoryEditCard';
-import { BudgetImpactBanner } from '../BudgetImpactBanner';
+import { PrimaryButton } from '../atoms/PrimaryButton/PrimaryButton';
+import { FAB } from '../atoms/FAB/FAB';
+import { CategoryChip } from '../atoms/CategoryChip/CategoryChip';
+import { FilterChip } from '../atoms/FilterChip/FilterChip';
+import { CategoryEditCard } from '../organisms/CategoryEditCard/CategoryEditCard';
+import { BudgetImpactBanner } from '../molecules/BudgetImpactBanner/BudgetImpactBanner';
 
 describe('Accessibility: interactive components have roles and labels', () => {
   it('PrimaryButton accepts aria-label via label prop', () => {

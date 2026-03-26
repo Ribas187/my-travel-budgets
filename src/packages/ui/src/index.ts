@@ -1,29 +1,45 @@
-export { config, tokens } from './tamagui.config';
-export { Heading, Body, Caption, Label } from './Typography';
-export { PrimaryButton } from './PrimaryButton';
-export { FAB } from './FAB';
-export { CategoryChip } from './CategoryChip';
-export { FilterChip } from './FilterChip';
-export { ExpenseRow } from './ExpenseRow';
-export { DayGroupHeader } from './DayGroupHeader';
-export { AmountInput } from './AmountInput';
-export { BudgetImpactBanner } from './BudgetImpactBanner';
-export { StatCard } from './StatCard';
-export { CategoryEditCard } from './CategoryEditCard';
-export { AvatarChip } from './AvatarChip';
-export { UserAvatar, getCloudinaryAvatarUrl } from './UserAvatar';
-export { BottomNav } from './BottomNav';
-export { DesktopSidebar } from './DesktopSidebar';
-export { AppShell } from './AppShell';
-export { BudgetRing } from './BudgetRing';
-export { CategoryProgressRow } from './CategoryProgressRow';
-export { CategoryDetailCard } from './CategoryDetailCard';
-export { InsightCard } from './InsightCard';
-export { getBudgetStatusColor, getBudgetStatus } from './budgetStatus';
-export { NavigationSheet } from './NavigationSheet';
-export type { NavigationSheetProps, NavigationSheetItem } from './NavigationSheet';
-export { BackHeader } from './BackHeader';
-export { DatePickerInput } from './DatePickerInput';
-export type { DatePickerInputProps } from './DatePickerInput';
-export { ColorPicker } from './ColorPicker';
-export { EmojiPicker } from './EmojiPicker';
+// Quarks (tokens & utilities)
+export { config, tokens, getBudgetStatusColor, getBudgetStatus } from './quarks';
+
+// Atoms
+export {
+  Heading,
+  Body,
+  Caption,
+  Label,
+  PrimaryButton,
+  FAB,
+  FilterChip,
+  CategoryChip,
+  AvatarChip,
+  UserAvatar,
+  getCloudinaryAvatarUrl,
+  BudgetRing,
+} from './atoms';
+
+// Molecules
+export {
+  AmountInput,
+  DatePickerInput,
+  ColorPicker,
+  EmojiPicker,
+  ExpenseRow,
+  DayGroupHeader,
+  StatCard,
+  CategoryProgressRow,
+  InsightCard,
+  BudgetImpactBanner,
+  BackHeader,
+} from './molecules';
+export type { DatePickerInputProps } from './molecules';
+
+// Organisms
+export {
+  CategoryDetailCard,
+  CategoryEditCard,
+  AppShell,
+  DesktopSidebar,
+  BottomNav,
+  NavigationSheet,
+} from './organisms';
+export type { NavigationSheetProps, NavigationSheetItem } from './organisms';
