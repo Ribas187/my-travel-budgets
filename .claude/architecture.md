@@ -12,6 +12,7 @@ src/
     ├── ui/             → Shared Tamagui components (Atomic Design)
     ├── core/           → Shared types, Zod schemas, constants, i18n
     ├── api-client/     → Typed API client for web & mobile
+    ├── features/       → Shared feature containers (cross-platform)
     ├── eslint-config/  → Shared ESLint configuration
     └── typescript-config/ → Shared TypeScript configuration
 ```
@@ -42,7 +43,8 @@ Package names: `@repo/ui`, `@repo/core`, `@repo/api-client`, `@repo/eslint-confi
 | API endpoint type / client method    | `packages/api-client/src/`             |
 | NestJS module / controller / service | `apps/api/src/modules/{domain}/`       |
 | Repository interface + impl          | `apps/api/src/modules/{domain}/repository/` |
-| Web feature (page, form, dialog)     | `apps/web/src/features/{domain}/`      |
+| Shared feature container (page, form) | `packages/features/src/{domain}/`     |
+| Web-only feature (e.g. profile)      | `apps/web/src/features/{domain}/`      |
 | Shared React Query hook              | `packages/api-client/src/hooks/{domain}/` |
 | Mobile-only screen                   | `apps/mobile/`                         |
 | Translation strings                  | `packages/core/src/i18n/{locale}.json` |
