@@ -1,6 +1,5 @@
 import { describe, it, expect } from 'vitest';
 import type { DashboardData, Expense } from '@repo/api-client';
-
 import { computeTripInsights } from '@repo/core';
 
 const mockOptions = {

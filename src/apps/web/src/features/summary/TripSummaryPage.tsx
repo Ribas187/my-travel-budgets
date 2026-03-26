@@ -1,5 +1,4 @@
 import { TripSummaryView } from '@repo/ui';
-
 import { useDashboard, useTravelExpenses } from '@repo/api-client';
 
 import { useTravelContext } from '@/contexts/TravelContext';

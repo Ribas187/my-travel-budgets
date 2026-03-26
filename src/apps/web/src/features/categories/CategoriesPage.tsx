@@ -5,6 +5,7 @@ import type { CategoryFormState } from '@repo/ui';
 import { DEFAULT_CATEGORY_EMOJI, DEFAULT_CATEGORY_COLOR } from '@repo/core';
 import type { Category, CreateCategoryInput, UpdateCategoryInput, TravelDetail } from '@repo/api-client';
 import { useCreateCategory, useUpdateCategory, useDeleteCategory, useTravelExpenses } from '@repo/api-client';
+
 import { showToast } from '@/lib/toast';
 
 const DEFAULT_FORM: CategoryFormState = {

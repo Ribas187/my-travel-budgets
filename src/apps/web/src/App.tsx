@@ -4,7 +4,6 @@ import { QueryClientProvider } from '@tanstack/react-query';
 import { I18nextProvider } from 'react-i18next';
 import { RouterProvider, createRouter } from '@tanstack/react-router';
 import { config } from '@repo/ui';
-
 import { ApiClientProvider } from '@repo/api-client';
 
 import { queryClient } from './queryClient';

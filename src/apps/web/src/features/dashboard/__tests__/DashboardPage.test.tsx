@@ -1,5 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import React from 'react';
+import { useDashboard, useTravelExpenses } from '@repo/api-client';
 
 import { DashboardPage } from '../DashboardPage';
 
@@ -132,7 +133,6 @@ const mockExpenses = [
 ];
 
 // Import the mocked modules to control return values
-import { useDashboard, useTravelExpenses } from '@repo/api-client';
 
 const mockedUseDashboard = vi.mocked(useDashboard);
 const mockedUseTravelExpenses = vi.mocked(useTravelExpenses);

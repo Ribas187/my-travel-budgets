@@ -1,6 +1,7 @@
-import { describe, it, expect, vi } from 'vitest';
 import { readFileSync } from 'fs';
 import { resolve } from 'path';
+
+import { describe, it, expect, vi } from 'vitest';
 
 const viewPath = resolve(__dirname, '../../../../packages/ui/src/templates/ProfileView/ProfileView.tsx');
 const containerPath = resolve(__dirname, '../features/profile/ProfilePage.tsx');

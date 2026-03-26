@@ -1,6 +1,7 @@
-import { describe, it, expect, vi } from 'vitest';
 import { readFileSync } from 'fs';
 import { resolve } from 'path';
+
+import { describe, it, expect, vi } from 'vitest';
 
 vi.mock('react-i18next', () => ({
   useTranslation: () => ({

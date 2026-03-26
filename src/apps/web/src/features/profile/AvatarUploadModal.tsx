@@ -3,10 +3,11 @@ import Cropper from 'react-easy-crop';
 import { useTranslation } from 'react-i18next';
 import { styled, XStack, YStack, Text, View, Spinner } from 'tamagui';
 import { PrimaryButton } from '@repo/ui';
-
 import { useUploadAvatar } from '@repo/api-client';
-import { showToast } from '@/lib/toast';
+
 import { getCroppedImg } from './getCroppedImg';
+
+import { showToast } from '@/lib/toast';
 
 const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5 MB
 const ACCEPTED_TYPES = ['image/jpeg', 'image/png', 'image/webp'];

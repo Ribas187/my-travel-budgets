@@ -2,12 +2,12 @@ import { useState, useCallback } from 'react';
 import { useNavigate, useRouter } from '@tanstack/react-router';
 import { useTranslation } from 'react-i18next';
 import { ProfileView } from '@repo/ui';
-
 import { useUserMe, useUpdateUser, useRemoveAvatar } from '@repo/api-client';
+
+import { AvatarUploadModal } from './AvatarUploadModal';
 
 import { useAuth } from '@/providers/AuthProvider';
 import { showToast } from '@/lib/toast';
-import { AvatarUploadModal } from './AvatarUploadModal';
 
 export function ProfilePage() {
   const { t, i18n } = useTranslation();
