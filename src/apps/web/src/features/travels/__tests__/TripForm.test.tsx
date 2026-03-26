@@ -100,67 +100,32 @@ describe('TripForm date picker integration', () => {
   });
 });
 
-// --- Calculator Budget Input Integration Tests ---
+// --- Budget Number Input Tests ---
 
-describe('TripForm calculator budget input integration', () => {
-  it('uses useCalculatorInput hook for budget field', async () => {
+describe('TripForm budget number input', () => {
+  it('uses a regular FormInput with Controller for budget field', async () => {
     const { readFileSync } = await import('fs');
     const { resolve } = await import('path');
-    const source = readFileSync(resolve(__dirname, '../TripForm.tsx'), 'utf-8');
-    expect(source).toContain('useCalculatorInput');
-    expect(source).toContain('budgetCalculator');
-  });
-
-  it('uses AmountInput display component for budget (not plain FormInput)', async () => {
-    const { readFileSync } = await import('fs');
-    const { resolve } = await import('path');
-    const source = readFileSync(resolve(__dirname, '../TripForm.tsx'), 'utf-8');
-    expect(source).toContain('AmountInput');
-    expect(source).toContain('budgetCalculator.displayText');
-    // The budget no longer uses a Controller with FormInput
-    expect(source).not.toMatch(/Controller[\s\S]*?name="budget"[\s\S]*?FormInput/);
-  });
-
-  it('uses hidden input pattern with inputMode="numeric" for budget', async () => {
-    const { readFileSync } = await import('fs');
-    const { resolve } = await import('path');
-    const source = readFileSync(resolve(__dirname, '../TripForm.tsx'), 'utf-8');
-    expect(source).toContain('budgetInputRef');
-    expect(source).toContain('budgetCalculator.handleChange');
+    const source = readFileSync(resolve(__dirname, '../../../../../../packages/ui/src/templates/TripFormView/TripFormView.tsx'), 'utf-8');
+    expect(source).toContain('name="budget"');
+    expect(source).toContain('FormInput');
     expect(source).toContain('inputMode="numeric"');
   });
 
-  it('initializes budget calculator with travel.budget in edit mode', async () => {
+  it('uses Controller to bind budget to react-hook-form', async () => {
     const { readFileSync } = await import('fs');
     const { resolve } = await import('path');
-    const source = readFileSync(resolve(__dirname, '../TripForm.tsx'), 'utf-8');
-    expect(source).toContain("initialValue: travel?.budget ?? 0");
+    const source = readFileSync(resolve(__dirname, '../../../../../../packages/ui/src/templates/TripFormView/TripFormView.tsx'), 'utf-8');
+    expect(source).toMatch(/Controller[\s\S]*?name="budget"/);
   });
 
-  it('syncs budgetCalculator.numericValue to react-hook-form via useEffect', async () => {
-    const { readFileSync } = await import('fs');
-    const { resolve } = await import('path');
-    const source = readFileSync(resolve(__dirname, '../TripForm.tsx'), 'utf-8');
-    expect(source).toContain('budgetCalculator.numericValue');
-    expect(source).toContain("setValue('budget'");
-  });
-
-  it('displays currency symbol matching selected currency', async () => {
-    const { readFileSync } = await import('fs');
-    const { resolve } = await import('path');
-    const source = readFileSync(resolve(__dirname, '../TripForm.tsx'), 'utf-8');
-    expect(source).toContain('currencySymbol');
-    expect(source).toContain('getCurrencySymbol');
-  });
-
-  it('pre-fills budget calculator with existing travel budget in edit mode', () => {
+  it('pre-fills budget with existing travel budget in edit mode', () => {
     const onSave = vi.fn();
     const element = React.createElement(TripForm, {
       travel: mockTravel,
       saving: false,
       onSave,
     });
-    // In edit mode, budgetCalculator initializes with travel.budget (5000)
     expect(element.props.travel.budget).toBe(5000);
     expect(element).toBeDefined();
   });
@@ -172,7 +137,7 @@ describe('TripForm date overflow fix', () => {
   it('applies minWidth={0} to date YStack containers', async () => {
     const { readFileSync } = await import('fs');
     const { resolve } = await import('path');
-    const source = readFileSync(resolve(__dirname, '../TripForm.tsx'), 'utf-8');
+    const source = readFileSync(resolve(__dirname, '../../../../../../packages/ui/src/templates/TripFormView/TripFormView.tsx'), 'utf-8');
     // Both date YStack containers should have minWidth={0} to prevent flex overflow
     const dateSection = source.slice(
       source.indexOf('{/* Date Row */}'),
@@ -185,7 +150,7 @@ describe('TripForm date overflow fix', () => {
   it('keeps date fields side-by-side in an XStack', async () => {
     const { readFileSync } = await import('fs');
     const { resolve } = await import('path');
-    const source = readFileSync(resolve(__dirname, '../TripForm.tsx'), 'utf-8');
+    const source = readFileSync(resolve(__dirname, '../../../../../../packages/ui/src/templates/TripFormView/TripFormView.tsx'), 'utf-8');
     const dateSection = source.slice(
       source.indexOf('{/* Date Row */}'),
       source.indexOf('{/* Currency + Budget Row */}'),

@@ -245,7 +245,7 @@ describe('AddExpenseModal amount input', () => {
   it('does NOT use document.querySelector for amount input focus', async () => {
     const { readFileSync } = await import('fs');
     const { resolve } = await import('path');
-    const source = readFileSync(resolve(__dirname, '../AddExpenseModal.tsx'), 'utf-8');
+    const source = readFileSync(resolve(__dirname, '../../../../../../packages/ui/src/organisms/AddExpenseModal/AddExpenseModal.tsx'), 'utf-8');
     // The querySelector approach was replaced with useRef
     expect(source).not.toContain("document.querySelector");
     expect(source).toContain('amountInputRef');
@@ -255,7 +255,7 @@ describe('AddExpenseModal amount input', () => {
   it('uses ref to focus the hidden amount input on press', async () => {
     const { readFileSync } = await import('fs');
     const { resolve } = await import('path');
-    const source = readFileSync(resolve(__dirname, '../AddExpenseModal.tsx'), 'utf-8');
+    const source = readFileSync(resolve(__dirname, '../../../../../../packages/ui/src/organisms/AddExpenseModal/AddExpenseModal.tsx'), 'utf-8');
     // Verify ref-based focus pattern
     expect(source).toContain('amountInputRef.current?.focus()');
   });
@@ -276,7 +276,7 @@ describe('AddExpenseModal calculator input integration', () => {
   it('uses useCalculatorInput hook instead of manual handleAmountChange', async () => {
     const { readFileSync } = await import('fs');
     const { resolve } = await import('path');
-    const source = readFileSync(resolve(__dirname, '../AddExpenseModal.tsx'), 'utf-8');
+    const source = readFileSync(resolve(__dirname, '../../../../../../packages/ui/src/organisms/AddExpenseModal/AddExpenseModal.tsx'), 'utf-8');
     expect(source).toContain('useCalculatorInput');
     expect(source).not.toContain('handleAmountChange');
     expect(source).not.toContain("setAmountText");
@@ -285,7 +285,7 @@ describe('AddExpenseModal calculator input integration', () => {
   it('wires calculatorInput.displayText to AmountInput value', async () => {
     const { readFileSync } = await import('fs');
     const { resolve } = await import('path');
-    const source = readFileSync(resolve(__dirname, '../AddExpenseModal.tsx'), 'utf-8');
+    const source = readFileSync(resolve(__dirname, '../../../../../../packages/ui/src/organisms/AddExpenseModal/AddExpenseModal.tsx'), 'utf-8');
     expect(source).toContain('calculatorInput.displayText');
     expect(source).toContain('value={calculatorInput.displayText}');
   });
@@ -293,14 +293,14 @@ describe('AddExpenseModal calculator input integration', () => {
   it('wires calculatorInput.handleChange to hidden input onChangeText', async () => {
     const { readFileSync } = await import('fs');
     const { resolve } = await import('path');
-    const source = readFileSync(resolve(__dirname, '../AddExpenseModal.tsx'), 'utf-8');
+    const source = readFileSync(resolve(__dirname, '../../../../../../packages/ui/src/organisms/AddExpenseModal/AddExpenseModal.tsx'), 'utf-8');
     expect(source).toContain('onChangeText={calculatorInput.handleChange}');
   });
 
   it('uses inputMode="numeric" for digits-only keyboard on mobile', async () => {
     const { readFileSync } = await import('fs');
     const { resolve } = await import('path');
-    const source = readFileSync(resolve(__dirname, '../AddExpenseModal.tsx'), 'utf-8');
+    const source = readFileSync(resolve(__dirname, '../../../../../../packages/ui/src/organisms/AddExpenseModal/AddExpenseModal.tsx'), 'utf-8');
     expect(source).toContain('inputMode="numeric"');
     expect(source).not.toContain('keyboardType="decimal-pad"');
   });
@@ -308,7 +308,7 @@ describe('AddExpenseModal calculator input integration', () => {
   it('syncs numericValue to react-hook-form via useEffect', async () => {
     const { readFileSync } = await import('fs');
     const { resolve } = await import('path');
-    const source = readFileSync(resolve(__dirname, '../AddExpenseModal.tsx'), 'utf-8');
+    const source = readFileSync(resolve(__dirname, '../../../../../../packages/ui/src/organisms/AddExpenseModal/AddExpenseModal.tsx'), 'utf-8');
     expect(source).toContain('calculatorInput.numericValue');
     expect(source).toContain("setValue('amount'");
   });
@@ -316,14 +316,14 @@ describe('AddExpenseModal calculator input integration', () => {
   it('initializes calculator with expense amount in edit mode', async () => {
     const { readFileSync } = await import('fs');
     const { resolve } = await import('path');
-    const source = readFileSync(resolve(__dirname, '../AddExpenseModal.tsx'), 'utf-8');
+    const source = readFileSync(resolve(__dirname, '../../../../../../packages/ui/src/organisms/AddExpenseModal/AddExpenseModal.tsx'), 'utf-8');
     expect(source).toContain("initialValue: expense?.amount ?? 0");
   });
 
   it('calls calculatorInput.reset in modal close/reset handlers', async () => {
     const { readFileSync } = await import('fs');
     const { resolve } = await import('path');
-    const source = readFileSync(resolve(__dirname, '../AddExpenseModal.tsx'), 'utf-8');
+    const source = readFileSync(resolve(__dirname, '../../../../../../packages/ui/src/organisms/AddExpenseModal/AddExpenseModal.tsx'), 'utf-8');
     // Should find multiple calls to calculatorInput.reset
     const resetCount = (source.match(/calculatorInput\.reset/g) || []).length;
     expect(resetCount).toBeGreaterThanOrEqual(4);

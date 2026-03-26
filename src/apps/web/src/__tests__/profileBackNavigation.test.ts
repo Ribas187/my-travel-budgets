@@ -1,41 +1,34 @@
 import { describe, it, expect, vi } from 'vitest';
+import { readFileSync } from 'fs';
+import { resolve } from 'path';
+
+const viewPath = resolve(__dirname, '../../../../packages/ui/src/templates/ProfileView/ProfileView.tsx');
+const containerPath = resolve(__dirname, '../features/profile/ProfilePage.tsx');
 
 describe('Profile Page — BackHeader + My Travels Navigation', () => {
   describe('BackHeader on ProfilePage', () => {
-    it('ProfilePage imports and renders BackHeader', async () => {
-      const source = await import(
-        '@/features/profile/ProfilePage?raw'
-      );
-      const code = (source as { default: string }).default;
+    it('ProfilePage imports and renders BackHeader', () => {
+      const code = readFileSync(viewPath, 'utf-8');
 
       expect(code).toContain('BackHeader');
-      expect(code).toContain("Heading, Body, PrimaryButton, BackHeader");
-      expect(code).toContain("from '@repo/ui'");
+      expect(code).toContain("Heading, Body, PrimaryButton");
+      expect(code).toContain('BackHeader');
     });
 
-    it('BackHeader receives profile title via i18n', async () => {
-      const source = await import(
-        '@/features/profile/ProfilePage?raw'
-      );
-      const code = (source as { default: string }).default;
+    it('BackHeader receives profile title via i18n', () => {
+      const code = readFileSync(viewPath, 'utf-8');
 
       expect(code).toContain("title={t('profile.title')}");
     });
 
-    it('BackHeader receives onBack handler', async () => {
-      const source = await import(
-        '@/features/profile/ProfilePage?raw'
-      );
-      const code = (source as { default: string }).default;
+    it('BackHeader receives onBack handler', () => {
+      const code = readFileSync(viewPath, 'utf-8');
 
-      expect(code).toMatch(/onBack=\{handleBack\}/);
+      expect(code).toMatch(/onBack=\{onBack\}/);
     });
 
-    it('BackHeader has accessibility label using i18n key', async () => {
-      const source = await import(
-        '@/features/profile/ProfilePage?raw'
-      );
-      const code = (source as { default: string }).default;
+    it('BackHeader has accessibility label using i18n key', () => {
+      const code = readFileSync(viewPath, 'utf-8');
 
       expect(code).toContain("t('profile.backToApp')");
       expect(code).toContain('accessibilityLabel');
@@ -78,11 +71,8 @@ describe('Profile Page — BackHeader + My Travels Navigation', () => {
       expect(navigateMock).toHaveBeenCalledWith({ to: '/travels' });
     });
 
-    it('ProfilePage source uses router.history.back()', async () => {
-      const source = await import(
-        '@/features/profile/ProfilePage?raw'
-      );
-      const code = (source as { default: string }).default;
+    it('ProfilePage source uses router.history.back()', () => {
+      const code = readFileSync(containerPath, 'utf-8');
 
       expect(code).toContain('router.history.back()');
       expect(code).toContain("navigate({ to: '/travels' })");
@@ -91,20 +81,14 @@ describe('Profile Page — BackHeader + My Travels Navigation', () => {
   });
 
   describe('My Travels navigation row', () => {
-    it('ProfilePage renders My Travels row with test ID', async () => {
-      const source = await import(
-        '@/features/profile/ProfilePage?raw'
-      );
-      const code = (source as { default: string }).default;
+    it('ProfilePage renders My Travels row with test ID', () => {
+      const code = readFileSync(viewPath, 'utf-8');
 
       expect(code).toContain('my-travels-row');
     });
 
-    it('My Travels row uses i18n key for label', async () => {
-      const source = await import(
-        '@/features/profile/ProfilePage?raw'
-      );
-      const code = (source as { default: string }).default;
+    it('My Travels row uses i18n key for label', () => {
+      const code = readFileSync(viewPath, 'utf-8');
 
       expect(code).toContain("t('profile.myTravels')");
     });
@@ -120,25 +104,20 @@ describe('Profile Page — BackHeader + My Travels Navigation', () => {
       expect(navigateMock).toHaveBeenCalledWith({ to: '/travels' });
     });
 
-    it('My Travels row has Map icon and ChevronRight', async () => {
-      const source = await import(
-        '@/features/profile/ProfilePage?raw'
-      );
-      const code = (source as { default: string }).default;
+    it('My Travels row has Map icon and ChevronRight', () => {
+      const viewCode = readFileSync(viewPath, 'utf-8');
+      const navRowCode = readFileSync(resolve(__dirname, '../../../../packages/ui/src/atoms/NavigationRowLink/NavigationRowLink.tsx'), 'utf-8');
 
-      expect(code).toContain('Map');
-      expect(code).toContain('ChevronRight');
-      expect(code).toMatch(/import\s*\{[^}]*Map[^}]*\}\s*from\s*'lucide-react'/);
+      expect(viewCode).toContain('Map');
+      expect(navRowCode).toContain('ChevronRight');
+      expect(viewCode).toMatch(/import\s*\{[^}]*Map[^}]*\}\s*from\s*'lucide-react'/);
     });
 
-    it('My Travels row is keyboard accessible with role="button"', async () => {
-      const source = await import(
-        '@/features/profile/ProfilePage?raw'
-      );
-      const code = (source as { default: string }).default;
+    it('My Travels row is keyboard accessible with role="button"', () => {
+      const navRowCode = readFileSync(resolve(__dirname, '../../../../packages/ui/src/atoms/NavigationRowLink/NavigationRowLink.tsx'), 'utf-8');
 
-      expect(code).toMatch(/NavigationRow[\s\S]*?role="button"/);
-      expect(code).toMatch(/NavigationRow[\s\S]*?tabIndex=\{0\}/);
+      expect(navRowCode).toMatch(/NavigationRowLink[\s\S]*?role="button"/);
+      expect(navRowCode).toMatch(/tabIndex=\{0\}/);
     });
   });
 

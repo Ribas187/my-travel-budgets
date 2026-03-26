@@ -238,10 +238,10 @@ describe('Category Management', () => {
   });
 
   describe('Delete confirmation dialog', () => {
-    it('exports DeleteCategoryDialog component', async () => {
-      const mod = await import('../features/categories/DeleteCategoryDialog');
-      expect(mod.DeleteCategoryDialog).toBeDefined();
-      expect(typeof mod.DeleteCategoryDialog).toBe('function');
+    it('exports DeleteConfirmDialog from shared UI', async () => {
+      const mod = await import('@repo/ui');
+      expect(mod.DeleteConfirmDialog).toBeDefined();
+      expect(typeof mod.DeleteConfirmDialog).toBe('function');
     });
 
     it('delete confirmation shows category name and expense count via i18n', async () => {

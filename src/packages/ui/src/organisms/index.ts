@@ -5,3 +5,8 @@ export { DesktopSidebar } from './DesktopSidebar';
 export { BottomNav } from './BottomNav';
 export { NavigationSheet } from './NavigationSheet';
 export type { NavigationSheetProps, NavigationSheetItem } from './NavigationSheet';
+export { BudgetSummaryCard } from './BudgetSummaryCard';
+export { DashboardHeader } from './DashboardHeader';
+export { InviteMemberForm } from './InviteMemberForm';
+export { AddExpenseModal } from './AddExpenseModal';
+export type { AddExpenseFormValues } from './AddExpenseModal';

@@ -255,10 +255,11 @@ describe('Add/Edit Trip Form', () => {
   });
 
   describe('Delete confirmation dialog', () => {
-    it('exports DeleteTripDialog component', async () => {
-      const mod = await import('../features/travels/DeleteTripDialog');
-      expect(mod.DeleteTripDialog).toBeDefined();
-      expect(typeof mod.DeleteTripDialog).toBe('function');
+    it('TripFormView uses DeleteConfirmDialog for delete confirmation', async () => {
+      const { readFileSync } = await import('fs');
+      const { resolve } = await import('path');
+      const source = readFileSync(resolve(__dirname, '../../../../packages/ui/src/templates/TripFormView/TripFormView.tsx'), 'utf-8');
+      expect(source).toContain('DeleteConfirmDialog');
     });
 
     it('delete confirmation message includes trip name and expense count', async () => {
@@ -457,7 +458,7 @@ describe('Add/Edit Trip Form', () => {
 
   describe('InviteMemberForm component', () => {
     it('exports InviteMemberForm', async () => {
-      const mod = await import('../features/travels/InviteMemberForm');
+      const mod = await import('@repo/ui');
       expect(mod.InviteMemberForm).toBeDefined();
       expect(typeof mod.InviteMemberForm).toBe('function');
     });

@@ -1,12 +1,32 @@
-import type { DashboardData, Expense } from '@repo/api-client';
-import type { ReactNode } from 'react';
-
 export interface TripInsight {
   type: 'topSpender' | 'biggestCategory' | 'biggestDay';
   title: string;
   description: string;
   icon: string;
   iconBackground: string;
+}
+
+interface MemberSpendingData {
+  totalSpent: number;
+  displayName: string;
+}
+
+interface CategorySpendingData {
+  totalSpent: number;
+  name: string;
+  icon: string;
+  color: string;
+}
+
+interface DashboardLike {
+  memberSpending: MemberSpendingData[];
+  categorySpending: CategorySpendingData[];
+  overall: { totalSpent: number };
+}
+
+interface ExpenseLike {
+  date: string;
+  amount: number;
 }
 
 interface InsightOptions {
@@ -16,8 +36,8 @@ interface InsightOptions {
 }
 
 export function computeTripInsights(
-  dashboard: DashboardData,
-  expenses: Expense[],
+  dashboard: DashboardLike,
+  expenses: ExpenseLike[],
   options: InsightOptions,
 ): TripInsight[] {
   const { formatAmount, formatDate, t } = options;

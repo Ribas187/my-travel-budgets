@@ -8,3 +8,4 @@ export * from './constants/category-emojis';
 export * from './constants/category-colors';
 export * from './types/index';
 export * from './i18n/index';
+export * from './utils/index';

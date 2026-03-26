@@ -10,10 +10,16 @@
     "test": "vitest run"
   },
   "dependencies": {
+    "@hookform/resolvers": "^5.0.0",
+    "@repo/api-client": "workspace:^",
     "@repo/core": "workspace:^",
     "@tamagui/config": "^1.141.5",
+    "i18next": "^25.1.0",
     "lucide-react": "^1.6.0",
-    "tamagui": "^1.141.5"
+    "react-hook-form": "^7.56.0",
+    "react-i18next": "^15.5.0",
+    "tamagui": "^1.141.5",
+    "zod": "^3.24.0"
   },
   "devDependencies": {
     "@repo/eslint-config": "workspace:*",

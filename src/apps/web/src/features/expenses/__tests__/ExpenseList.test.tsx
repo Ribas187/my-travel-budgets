@@ -14,7 +14,7 @@ vi.mock('@/hooks/useTravelExpenses', () => ({
 }));
 
 // Read the source file for style assertions
-const sourcePath = resolve(__dirname, '../ExpenseList.tsx');
+const sourcePath = resolve(__dirname, '../../../../../../packages/ui/src/templates/ExpenseListView/ExpenseListView.tsx');
 const source = readFileSync(sourcePath, 'utf-8');
 
 describe('ExpenseList search input height', () => {

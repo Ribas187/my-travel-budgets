@@ -1,0 +1,1 @@
+export { TripFormView } from './TripFormView';

@@ -1,4 +1,6 @@
 import { describe, it, expect, vi } from 'vitest';
+import { readFileSync } from 'fs';
+import { resolve } from 'path';
 import React from 'react';
 import type { DashboardData, CategorySpending } from '@repo/api-client';
 
@@ -36,9 +38,8 @@ const mockDashboard: DashboardData = {
 
 describe('Categories Navigation — Task 5', () => {
   describe('BudgetBreakdownPage "Manage" action visibility on all breakpoints', () => {
-    it('BudgetBreakdownPage renders SectionHeader with action unconditionally (no isDesktop check)', async () => {
-      const source = await import('@/features/budget/BudgetBreakdownPage?raw');
-      const code = (source as { default: string }).default;
+    it('BudgetBreakdownPage renders SectionHeader with action unconditionally (no isDesktop check)', () => {
+      const code = readFileSync(resolve(__dirname, '../../../../packages/ui/src/templates/BudgetBreakdownView/BudgetBreakdownView.tsx'), 'utf-8');
 
       // The action should NOT be conditionally rendered with isDesktop
       expect(code).not.toMatch(/action=\{isDesktop/);
@@ -69,14 +70,13 @@ describe('Categories Navigation — Task 5', () => {
       expect(element.props.children.props.role).toBe('button');
     });
 
-    it('"Manage" action is visible on mobile (no isDesktop guard)', async () => {
+    it('"Manage" action is visible on mobile (no isDesktop guard)', () => {
       // Verify the component source does not guard the onAction handler with isDesktop
-      const source = await import('@/features/budget/BudgetBreakdownPage?raw');
-      const code = (source as { default: string }).default;
+      const code = readFileSync(resolve(__dirname, '../../../../packages/ui/src/templates/BudgetBreakdownView/BudgetBreakdownView.tsx'), 'utf-8');
 
       expect(code).not.toMatch(/onAction=\{isDesktop/);
       // The onAction should be passed unconditionally
-      expect(code).toMatch(/onAction=\{handleNavigateToCategories\}/);
+      expect(code).toMatch(/onAction=\{onManageCategories\}/);
     });
   });
 
@@ -101,13 +101,16 @@ describe('Categories Navigation — Task 5', () => {
       });
     });
 
-    it('navigation handler is wired to SectionHeader onAction', async () => {
-      const source = await import('@/features/budget/BudgetBreakdownPage?raw');
-      const code = (source as { default: string }).default;
+    it('navigation handler is wired to SectionHeader onAction', () => {
+      // The thin container wires navigation to the view's onManageCategories callback
+      const containerCode = readFileSync(resolve(__dirname, '../features/budget/BudgetBreakdownPage.tsx'), 'utf-8');
+      const viewCode = readFileSync(resolve(__dirname, '../../../../packages/ui/src/templates/BudgetBreakdownView/BudgetBreakdownView.tsx'), 'utf-8');
 
-      // Verify handleNavigateToCategories exists and is wired
-      expect(code).toContain('handleNavigateToCategories');
-      expect(code).toMatch(/navigate\(\{.*to:.*categories/s);
+      // Verify the container passes a navigation callback to the view
+      expect(containerCode).toContain('onManageCategories');
+      expect(containerCode).toMatch(/navigate\(\{.*to:.*categories/s);
+      // Verify the view wires onManageCategories to SectionHeader onAction
+      expect(viewCode).toContain('onAction={onManageCategories}');
     });
   });
 
