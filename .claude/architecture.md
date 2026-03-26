@@ -3,17 +3,22 @@
 ## Monorepo Structure
 
 ```
-apps/web/        → React + Vite + Tamagui (mobile-first responsive)
-apps/mobile/     → Expo + Tamagui
-apps/api/        → NestJS + Prisma + PostgreSQL
-packages/ui/     → Shared Tamagui components
-packages/core/   → Shared types, Zod schemas, constants, i18n
-packages/api-client/ → Typed API client for web & mobile
+src/
+├── apps/
+│   ├── web/        → React + Vite + Tamagui (mobile-first responsive)
+│   ├── mobile/     → Expo + Tamagui
+│   └── api/        → NestJS + Prisma + PostgreSQL
+└── packages/
+    ├── ui/             → Shared Tamagui components (Atomic Design)
+    ├── core/           → Shared types, Zod schemas, constants, i18n
+    ├── api-client/     → Typed API client for web & mobile
+    ├── eslint-config/  → Shared ESLint configuration
+    └── typescript-config/ → Shared TypeScript configuration
 ```
 
-## Rules
+Package names: `@repo/ui`, `@repo/core`, `@repo/api-client`, `@repo/eslint-config`, `@repo/typescript-config`
 
-### Package Boundaries
+## Package Boundaries
 
 - Zod schemas in `packages/core` are the **single source of truth** for validation — reuse them in both frontend and backend
 - Shared UI components go in `packages/ui`, not duplicated across apps
@@ -33,24 +38,101 @@ packages/api-client/ → Typed API client for web & mobile
 | What                                 | Where                                  |
 | ------------------------------------ | -------------------------------------- |
 | Zod schema / shared type             | `packages/core/src/`                   |
-| Reusable UI component                | `packages/ui/src/`                     |
+| Reusable UI component                | `packages/ui/src/{level}/`             |
 | API endpoint type / client method    | `packages/api-client/src/`             |
-| NestJS module / controller / service | `apps/api/src/`                        |
-| Web-only screen or page              | `apps/web/src/`                        |
-| Mobile-only screen                   | `apps/mobile/src/`                     |
+| NestJS module / controller / service | `apps/api/src/modules/{domain}/`       |
+| Repository interface + impl          | `apps/api/src/modules/{domain}/repository/` |
+| Web feature (page, form, dialog)     | `apps/web/src/features/{domain}/`      |
+| Web React Query hook                 | `apps/web/src/hooks/`                  |
+| Mobile-only screen                   | `apps/mobile/`                         |
 | Translation strings                  | `packages/core/src/i18n/{locale}.json` |
+| Shared guards / decorators / filters | `apps/api/src/modules/common/`         |
 
-### NestJS Backend Patterns
+## UI — Atomic Design (`packages/ui`)
 
-- One module per domain: `auth`, `users`, `travels`, `members`, `categories`, `expenses`, `dashboard`
-- Controllers handle HTTP, services handle business logic, keep them separated
-- Use Prisma for all database access — no raw SQL unless strictly necessary
-- All travel-scoped endpoints must verify membership via a guard before granting access
+Components follow the Atomic Design hierarchy with barrel exports at each level:
 
-### Frontend Patterns
+```
+packages/ui/src/
+├── quarks/       → Design tokens, theme config, color utilities
+├── atoms/        → Base components (Typography, Button, FAB, Avatar, etc.)
+├── molecules/    → Combinations of atoms (AmountInput, ExpenseRow, StatCard, etc.)
+├── organisms/    → Complex feature components (AppShell, Sidebar, BottomNav, etc.)
+└── index.ts      → Main barrel re-exporting all levels
+```
 
+- Each component lives in its own directory: `ComponentName/ComponentName.tsx` + `index.ts`
+- Each level has a barrel `index.ts` exporting all its components
+- New components go at the appropriate level based on complexity
+
+## NestJS Backend Patterns
+
+### Module Structure
+
+One module per domain: `auth`, `users`, `travels`, `members`, `categories`, `expenses`, `dashboard`, `cloudinary`
+
+Each module follows this layout:
+
+```
+modules/{domain}/
+├── dto/                              → Data Transfer Objects (class-validator)
+├── repository/
+│   ├── {domain}.repository.interface.ts  → Abstract contract
+│   └── {domain}.repository.prisma.ts     → Prisma implementation
+├── {domain}.controller.ts            → HTTP layer
+├── {domain}.service.ts               → Business logic (depends on repository interface)
+└── {domain}.module.ts                → Wires DI: binds interface token to implementation
+```
+
+### Repository Pattern
+
+- Define an interface per domain (e.g., `ITravelRepository`)
+- Implement with Prisma (e.g., `TravelPrismaRepository`)
+- Register via Symbol-based DI tokens in `modules/common/database/repository.tokens.ts`
+- Services inject the interface token, never the concrete class
+
+### Guards & Authorization
+
+Three-layer guard chain applied to protected endpoints:
+
+1. **JwtAuthGuard** — authenticates the JWT bearer token (Passport)
+2. **TravelMemberGuard** — verifies the user is a member of the travel (attaches `request.travelMember`)
+3. **PolicyGuard** — evaluates domain-specific policies via `@CheckPolicy(PolicyClass)` decorator
+
+Custom decorators: `@CurrentUser()`, `@CurrentTravelMember()`, `@CheckPolicy()`
+
+### Cross-cutting Concerns (`modules/common/`)
+
+| Directory       | Purpose                                           |
+| --------------- | ------------------------------------------------- |
+| `auth/`         | Guards, decorators, JWT strategy, policy interface |
+| `database/`     | Repository DI tokens (Symbols)                    |
+| `exceptions/`   | Domain exception hierarchy (`DomainException` base, `EntityNotFoundError`, `ConflictError`, `ForbiddenError`, `BusinessValidationError`, `UnauthorizedError`) |
+| `filters/`      | `AllExceptionsFilter` — maps domain exceptions to HTTP responses |
+| `interceptors/` | `DecimalSerializationInterceptor` — Prisma Decimal → number |
+| `email/`        | Email service                                     |
+| `types/`        | Pagination and shared types                       |
+
+## Frontend Patterns (Web)
+
+### Feature-based Organization
+
+```
+apps/web/src/
+├── features/{domain}/    → Page components, forms, dialogs per domain
+├── hooks/                → React Query mutations & queries (one hook per operation)
+├── contexts/             → React Context for shared UI state (TravelContext)
+├── providers/            → Context providers (AuthProvider)
+├── routes/               → TanStack Router file-based routing
+├── lib/                  → Utilities (toast, etc.)
+└── utils/                → Pure helper functions
+```
+
+- **Server state:** React Query (TanStack Query) with `queryKeys` from `@repo/api-client`
+- **Client state:** React Context (`TravelContext`, `AuthProvider`)
+- **Routing:** TanStack Router with file-based routes; protected routes under `_authenticated/`
 - Mobile-first responsive design on web
-- Use Tamagui components from `packages/ui` — avoid raw HTML/RN primitives for styled elements
+- Use Tamagui components from `@repo/ui` — avoid raw HTML/RN primitives for styled elements
 - All user-facing text via i18n translation keys, never hardcoded
 - Date/number formatting must respect the user's locale (`Intl.DateTimeFormat`, `Intl.NumberFormat`)
 - Currency display uses the travel's ISO 4217 currency code + user locale

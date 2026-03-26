@@ -25,9 +25,9 @@ pnpm typecheck        # Type-check all packages
 
 ## Guidelines
 
-- [Architecture & Monorepo](.claude/architecture.md)
-- [Code Conventions](.claude/code-conventions.md)
-- [Testing](.claude/testing.md)
+- [Architecture & Monorepo](.claude/architecture.md) — monorepo structure, repository pattern, atomic design, guards
+- [Code Conventions](.claude/code-conventions.md) — naming, imports, error handling
+- [Testing](.claude/testing.md) — strategy per layer, co-located tests
 
 ## Implementation Rules
 
