@@ -43,7 +43,7 @@ Package names: `@repo/ui`, `@repo/core`, `@repo/api-client`, `@repo/eslint-confi
 | NestJS module / controller / service | `apps/api/src/modules/{domain}/`       |
 | Repository interface + impl          | `apps/api/src/modules/{domain}/repository/` |
 | Web feature (page, form, dialog)     | `apps/web/src/features/{domain}/`      |
-| Web React Query hook                 | `apps/web/src/hooks/`                  |
+| Shared React Query hook              | `packages/api-client/src/hooks/{domain}/` |
 | Mobile-only screen                   | `apps/mobile/`                         |
 | Translation strings                  | `packages/core/src/i18n/{locale}.json` |
 | Shared guards / decorators / filters | `apps/api/src/modules/common/`         |
