@@ -30,3 +30,12 @@ export type {
   Currency,
   MemberRole,
 } from './types';
+
+// Provider for ApiClient injection
+export { ApiClientProvider, useApiClient } from './provider';
+
+// Shared QueryClient configuration
+export { defaultQueryOptions, createDefaultQueryClient } from './queryConfig';
+
+// Shared React Query hooks
+export * from './hooks';
