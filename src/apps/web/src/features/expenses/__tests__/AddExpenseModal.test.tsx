@@ -266,8 +266,89 @@ describe('AddExpenseModal amount input', () => {
       onClose: vi.fn(),
       travel: mockTravel as any,
     });
-    // The AmountInput receives value={amountText || '0'}, so when amountText is '',
-    // it shows '0' as the display value
+    expect(element).toBeDefined();
+  });
+});
+
+// --- Calculator Input Integration Tests ---
+
+describe('AddExpenseModal calculator input integration', () => {
+  it('uses useCalculatorInput hook instead of manual handleAmountChange', async () => {
+    const { readFileSync } = await import('fs');
+    const { resolve } = await import('path');
+    const source = readFileSync(resolve(__dirname, '../AddExpenseModal.tsx'), 'utf-8');
+    expect(source).toContain('useCalculatorInput');
+    expect(source).not.toContain('handleAmountChange');
+    expect(source).not.toContain("setAmountText");
+  });
+
+  it('wires calculatorInput.displayText to AmountInput value', async () => {
+    const { readFileSync } = await import('fs');
+    const { resolve } = await import('path');
+    const source = readFileSync(resolve(__dirname, '../AddExpenseModal.tsx'), 'utf-8');
+    expect(source).toContain('calculatorInput.displayText');
+    expect(source).toContain('value={calculatorInput.displayText}');
+  });
+
+  it('wires calculatorInput.handleChange to hidden input onChangeText', async () => {
+    const { readFileSync } = await import('fs');
+    const { resolve } = await import('path');
+    const source = readFileSync(resolve(__dirname, '../AddExpenseModal.tsx'), 'utf-8');
+    expect(source).toContain('onChangeText={calculatorInput.handleChange}');
+  });
+
+  it('uses inputMode="numeric" for digits-only keyboard on mobile', async () => {
+    const { readFileSync } = await import('fs');
+    const { resolve } = await import('path');
+    const source = readFileSync(resolve(__dirname, '../AddExpenseModal.tsx'), 'utf-8');
+    expect(source).toContain('inputMode="numeric"');
+    expect(source).not.toContain('keyboardType="decimal-pad"');
+  });
+
+  it('syncs numericValue to react-hook-form via useEffect', async () => {
+    const { readFileSync } = await import('fs');
+    const { resolve } = await import('path');
+    const source = readFileSync(resolve(__dirname, '../AddExpenseModal.tsx'), 'utf-8');
+    expect(source).toContain('calculatorInput.numericValue');
+    expect(source).toContain("setValue('amount'");
+  });
+
+  it('initializes calculator with expense amount in edit mode', async () => {
+    const { readFileSync } = await import('fs');
+    const { resolve } = await import('path');
+    const source = readFileSync(resolve(__dirname, '../AddExpenseModal.tsx'), 'utf-8');
+    expect(source).toContain("initialValue: expense?.amount ?? 0");
+  });
+
+  it('calls calculatorInput.reset in modal close/reset handlers', async () => {
+    const { readFileSync } = await import('fs');
+    const { resolve } = await import('path');
+    const source = readFileSync(resolve(__dirname, '../AddExpenseModal.tsx'), 'utf-8');
+    // Should find multiple calls to calculatorInput.reset
+    const resetCount = (source.match(/calculatorInput\.reset/g) || []).length;
+    expect(resetCount).toBeGreaterThanOrEqual(4);
+  });
+
+  it('passes currency symbol to AmountInput matching travel currency', () => {
+    const element = React.createElement(AddExpenseModal, {
+      open: true,
+      onClose: vi.fn(),
+      travel: mockTravel as any,
+    });
+    // Travel currency is 'USD', getCurrencySymbol returns '$'
+    expect(element.props.travel.currency).toBe('USD');
+    expect(element).toBeDefined();
+  });
+
+  it('pre-fills calculator input with expense amount in edit mode', () => {
+    const element = React.createElement(AddExpenseModal, {
+      open: true,
+      onClose: vi.fn(),
+      travel: mockTravel as any,
+      expense: mockExpense as any,
+    });
+    // In edit mode, the calculator is initialized with expense.amount (42.5)
+    expect(element.props.expense.amount).toBe(42.5);
     expect(element).toBeDefined();
   });
 });

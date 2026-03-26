@@ -13,6 +13,7 @@ import {
   Body,
   Heading,
   DatePickerInput,
+  useCalculatorInput,
 } from '@repo/ui';
 import { createExpenseSchema } from '@repo/core';
 import type { TravelDetail, Expense } from '@repo/api-client';
@@ -253,9 +254,11 @@ export function AddExpenseModal({ open, onClose, travel, expense }: AddExpenseMo
   const createExpense = useCreateExpense(travel.id);
   const updateExpense = useUpdateExpense(travel.id);
   const deleteExpense = useDeleteExpense(travel.id);
-  const [amountText, setAmountText] = useState('');
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
   const amountInputRef = useRef<HTMLInputElement>(null);
+  const calculatorInput = useCalculatorInput({
+    initialValue: expense?.amount ?? 0,
+  });
 
   const {
     control,
@@ -286,7 +289,7 @@ export function AddExpenseModal({ open, onClose, travel, expense }: AddExpenseMo
         description: expense.description,
         date: expense.date,
       });
-      setAmountText(expense.amount.toString());
+      calculatorInput.reset(expense.amount);
     } else {
       reset({
         categoryId: '',
@@ -295,29 +298,20 @@ export function AddExpenseModal({ open, onClose, travel, expense }: AddExpenseMo
         description: '',
         date: new Date().toISOString().split('T')[0]!,
       });
-      setAmountText('');
+      calculatorInput.reset(0);
     }
     setShowDeleteDialog(false);
   }, [expense, reset, travel.members]);
+
+  // Sync calculator numericValue to react-hook-form
+  useEffect(() => {
+    setValue('amount', calculatorInput.numericValue, { shouldValidate: true });
+  }, [calculatorInput.numericValue, setValue]);
 
   const watchedCategoryId = watch('categoryId');
   const watchedAmount = watch('amount');
 
   const budgetImpact = useBudgetImpact(travel.id, watchedCategoryId, watchedAmount);
-
-  const handleAmountChange = useCallback(
-    (text: string) => {
-      // Allow only digits and one decimal point
-      const cleaned = text.replace(/[^0-9.]/g, '');
-      // Prevent multiple decimal points
-      const parts = cleaned.split('.');
-      const sanitized = parts.length > 2 ? `${parts[0]}.${parts.slice(1).join('')}` : cleaned;
-      setAmountText(sanitized);
-      const numValue = parseFloat(sanitized);
-      setValue('amount', isNaN(numValue) ? 0 : numValue, { shouldValidate: true });
-    },
-    [setValue],
-  );
 
   const onSubmit = useCallback(
     (data: AddExpenseFormValues) => {
@@ -328,7 +322,7 @@ export function AddExpenseModal({ open, onClose, travel, expense }: AddExpenseMo
             onSuccess: () => {
               showToast(t('expense.updated'));
               reset();
-              setAmountText('');
+              calculatorInput.reset(0);
               onClose();
             },
           },
@@ -338,7 +332,7 @@ export function AddExpenseModal({ open, onClose, travel, expense }: AddExpenseMo
           onSuccess: () => {
             showToast(t('expense.saved'));
             reset();
-            setAmountText('');
+            calculatorInput.reset(0);
             onClose();
           },
         });
@@ -354,7 +348,7 @@ export function AddExpenseModal({ open, onClose, travel, expense }: AddExpenseMo
         showToast(t('expense.deleted'));
         setShowDeleteDialog(false);
         reset();
-        setAmountText('');
+        calculatorInput.reset(0);
         onClose();
       },
     });
@@ -365,7 +359,7 @@ export function AddExpenseModal({ open, onClose, travel, expense }: AddExpenseMo
   const handleClose = useCallback(() => {
     if (!isPending) {
       reset();
-      setAmountText('');
+      calculatorInput.reset(0);
       setShowDeleteDialog(false);
       onClose();
     }
@@ -422,17 +416,17 @@ export function AddExpenseModal({ open, onClose, travel, expense }: AddExpenseMo
         }}
       >
         <AmountInput
-          value={amountText || '0'}
+          value={calculatorInput.displayText}
           currencySymbol={currencySymbol}
           hint={t('expense.amount')}
         />
         <Input
           ref={amountInputRef}
           testID="amount-input"
-          value={amountText}
-          onChangeText={handleAmountChange}
-          keyboardType="decimal-pad"
-          placeholder="0.00"
+          value={calculatorInput.rawDigits}
+          onChangeText={calculatorInput.handleChange}
+          inputMode="numeric"
+          placeholder="0"
           fontFamily="$body"
           fontSize={1}
           textAlign="center"

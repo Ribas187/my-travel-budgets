@@ -88,3 +88,42 @@ describe('DatePickerInput scroll-into-view on focus', () => {
     expect(source).toContain("behavior: 'smooth'");
   });
 });
+
+describe('DatePickerInput responsive overflow fix', () => {
+  it('has min-width: 0 to prevent flex child overflow', async () => {
+    const { readFileSync } = await import('fs');
+    const { resolve } = await import('path');
+    const source = readFileSync(resolve(__dirname, './DatePickerInput.tsx'), 'utf-8');
+    expect(source).toContain('minWidth: 0');
+  });
+
+  it('has max-width: 100% to constrain within parent', async () => {
+    const { readFileSync } = await import('fs');
+    const { resolve } = await import('path');
+    const source = readFileSync(resolve(__dirname, './DatePickerInput.tsx'), 'utf-8');
+    expect(source).toContain("maxWidth: '100%'");
+  });
+
+  it('has overflow: hidden to prevent content bleed', async () => {
+    const { readFileSync } = await import('fs');
+    const { resolve } = await import('path');
+    const source = readFileSync(resolve(__dirname, './DatePickerInput.tsx'), 'utf-8');
+    expect(source).toContain("overflow: 'hidden'");
+  });
+
+  it('has Safari pseudo-element normalization for date input', async () => {
+    const { readFileSync } = await import('fs');
+    const { resolve } = await import('path');
+    const source = readFileSync(resolve(__dirname, './DatePickerInput.tsx'), 'utf-8');
+    expect(source).toContain('::-webkit-datetime-edit');
+    expect(source).toContain('::-webkit-datetime-edit-fields-wrapper');
+    expect(source).toContain('padding: 0');
+  });
+
+  it('preserves min-height of 48px for tap target', async () => {
+    const { readFileSync } = await import('fs');
+    const { resolve } = await import('path');
+    const source = readFileSync(resolve(__dirname, './DatePickerInput.tsx'), 'utf-8');
+    expect(source).toContain('minHeight: 48');
+  });
+});

@@ -100,6 +100,101 @@ describe('TripForm date picker integration', () => {
   });
 });
 
+// --- Calculator Budget Input Integration Tests ---
+
+describe('TripForm calculator budget input integration', () => {
+  it('uses useCalculatorInput hook for budget field', async () => {
+    const { readFileSync } = await import('fs');
+    const { resolve } = await import('path');
+    const source = readFileSync(resolve(__dirname, '../TripForm.tsx'), 'utf-8');
+    expect(source).toContain('useCalculatorInput');
+    expect(source).toContain('budgetCalculator');
+  });
+
+  it('uses AmountInput display component for budget (not plain FormInput)', async () => {
+    const { readFileSync } = await import('fs');
+    const { resolve } = await import('path');
+    const source = readFileSync(resolve(__dirname, '../TripForm.tsx'), 'utf-8');
+    expect(source).toContain('AmountInput');
+    expect(source).toContain('budgetCalculator.displayText');
+    // The budget no longer uses a Controller with FormInput
+    expect(source).not.toMatch(/Controller[\s\S]*?name="budget"[\s\S]*?FormInput/);
+  });
+
+  it('uses hidden input pattern with inputMode="numeric" for budget', async () => {
+    const { readFileSync } = await import('fs');
+    const { resolve } = await import('path');
+    const source = readFileSync(resolve(__dirname, '../TripForm.tsx'), 'utf-8');
+    expect(source).toContain('budgetInputRef');
+    expect(source).toContain('budgetCalculator.handleChange');
+    expect(source).toContain('inputMode="numeric"');
+  });
+
+  it('initializes budget calculator with travel.budget in edit mode', async () => {
+    const { readFileSync } = await import('fs');
+    const { resolve } = await import('path');
+    const source = readFileSync(resolve(__dirname, '../TripForm.tsx'), 'utf-8');
+    expect(source).toContain("initialValue: travel?.budget ?? 0");
+  });
+
+  it('syncs budgetCalculator.numericValue to react-hook-form via useEffect', async () => {
+    const { readFileSync } = await import('fs');
+    const { resolve } = await import('path');
+    const source = readFileSync(resolve(__dirname, '../TripForm.tsx'), 'utf-8');
+    expect(source).toContain('budgetCalculator.numericValue');
+    expect(source).toContain("setValue('budget'");
+  });
+
+  it('displays currency symbol matching selected currency', async () => {
+    const { readFileSync } = await import('fs');
+    const { resolve } = await import('path');
+    const source = readFileSync(resolve(__dirname, '../TripForm.tsx'), 'utf-8');
+    expect(source).toContain('currencySymbol');
+    expect(source).toContain('getCurrencySymbol');
+  });
+
+  it('pre-fills budget calculator with existing travel budget in edit mode', () => {
+    const onSave = vi.fn();
+    const element = React.createElement(TripForm, {
+      travel: mockTravel,
+      saving: false,
+      onSave,
+    });
+    // In edit mode, budgetCalculator initializes with travel.budget (5000)
+    expect(element.props.travel.budget).toBe(5000);
+    expect(element).toBeDefined();
+  });
+});
+
+// --- Date Overflow Fix Tests ---
+
+describe('TripForm date overflow fix', () => {
+  it('applies minWidth={0} to date YStack containers', async () => {
+    const { readFileSync } = await import('fs');
+    const { resolve } = await import('path');
+    const source = readFileSync(resolve(__dirname, '../TripForm.tsx'), 'utf-8');
+    // Both date YStack containers should have minWidth={0} to prevent flex overflow
+    const dateSection = source.slice(
+      source.indexOf('{/* Date Row */}'),
+      source.indexOf('{/* Currency + Budget Row */}'),
+    );
+    const minWidthCount = (dateSection.match(/minWidth=\{0\}/g) || []).length;
+    expect(minWidthCount).toBe(2);
+  });
+
+  it('keeps date fields side-by-side in an XStack', async () => {
+    const { readFileSync } = await import('fs');
+    const { resolve } = await import('path');
+    const source = readFileSync(resolve(__dirname, '../TripForm.tsx'), 'utf-8');
+    const dateSection = source.slice(
+      source.indexOf('{/* Date Row */}'),
+      source.indexOf('{/* Currency + Budget Row */}'),
+    );
+    expect(dateSection).toContain('<XStack');
+    expect(dateSection).toContain('flex={1}');
+  });
+});
+
 describe('TripForm loading state', () => {
   it('passes saving=true to disable submit button and show spinner', () => {
     const onSave = vi.fn();

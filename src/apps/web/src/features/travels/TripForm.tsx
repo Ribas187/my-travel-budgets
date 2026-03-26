@@ -1,9 +1,9 @@
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useEffect, useRef } from 'react';
 import { useForm, Controller } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useTranslation } from 'react-i18next';
 import { styled, XStack, YStack, Text, View, Input, Select } from 'tamagui';
-import { AvatarChip, PrimaryButton, Heading, Body, Label, DatePickerInput } from '@repo/ui';
+import { AvatarChip, PrimaryButton, Heading, Body, Label, DatePickerInput, AmountInput, useCalculatorInput } from '@repo/ui';
 import { createTravelSchema } from '@repo/core';
 import { SUPPORTED_CURRENCIES } from '@repo/core';
 import type { TravelDetail, TravelMember } from '@repo/api-client';
@@ -114,6 +114,11 @@ function getMemberInitial(member: TravelMember): string {
   return name.charAt(0).toUpperCase();
 }
 
+function getCurrencySymbol(currencyCode: string): string {
+  const currency = SUPPORTED_CURRENCIES.find((c) => c.code === currencyCode);
+  return currency?.symbol ?? currencyCode;
+}
+
 function formatDateForInput(iso: string): string {
   return iso.includes('T') ? iso.split('T')[0] : iso;
 }
@@ -152,6 +157,10 @@ export function TripForm({
   const [showInviteForm, setShowInviteForm] = useState(false);
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
   const [showCurrencyDropdown, setShowCurrencyDropdown] = useState(false);
+  const budgetInputRef = useRef<HTMLInputElement>(null);
+  const budgetCalculator = useCalculatorInput({
+    initialValue: travel?.budget ?? 0,
+  });
 
   const addMember = useAddMember(travel?.id ?? '');
   const removeMember = useRemoveMember(travel?.id ?? '');
@@ -169,6 +178,12 @@ export function TripForm({
   });
 
   const watchedCurrency = watch('currency');
+  const currencySymbol = getCurrencySymbol(watchedCurrency);
+
+  // Sync budget calculator numericValue to react-hook-form
+  useEffect(() => {
+    setValue('budget', budgetCalculator.numericValue, { shouldValidate: true });
+  }, [budgetCalculator.numericValue, setValue]);
 
   const onSubmit = useCallback(
     (data: CreateTravelInput) => {
@@ -284,7 +299,7 @@ export function TripForm({
 
       {/* Date Row */}
       <XStack gap="$md">
-        <YStack gap="$sm" flex={1}>
+        <YStack gap="$sm" flex={1} minWidth={0}>
           <SectionLabel>{t('travel.startDate')}</SectionLabel>
           <Controller
             control={control}
@@ -300,7 +315,7 @@ export function TripForm({
             )}
           />
         </YStack>
-        <YStack gap="$sm" flex={1}>
+        <YStack gap="$sm" flex={1} minWidth={0}>
           <SectionLabel>{t('travel.endDate')}</SectionLabel>
           <Controller
             control={control}
@@ -377,25 +392,45 @@ export function TripForm({
         </YStack>
         <YStack gap="$sm" flex={1}>
           <SectionLabel>{t('travel.totalBudget')}</SectionLabel>
-          <Controller
-            control={control}
-            name="budget"
-            render={({ field: { onChange, value } }) => (
-              <FormInput
-                testID="trip-budget-input"
-                value={value ? String(value) : ''}
-                onChangeText={(text: string) => {
-                  const cleaned = text.replace(/[^0-9.]/g, '');
-                  const num = parseFloat(cleaned);
-                  onChange(isNaN(num) ? 0 : num);
-                }}
-                placeholder="0.00"
-                placeholderTextColor="$textTertiary"
-                keyboardType="decimal-pad"
-                aria-label={t('travel.totalBudget')}
-              />
-            )}
-          />
+          <YStack
+            alignItems="center"
+            gap="$sm"
+            position="relative"
+            cursor="text"
+            onPress={() => {
+              budgetInputRef.current?.focus();
+            }}
+            testID="trip-budget-container"
+          >
+            <AmountInput
+              value={budgetCalculator.displayText}
+              currencySymbol={currencySymbol}
+              hint={t('travel.totalBudget')}
+            />
+            <Input
+              ref={budgetInputRef}
+              testID="trip-budget-input"
+              value={budgetCalculator.rawDigits}
+              onChangeText={budgetCalculator.handleChange}
+              inputMode="numeric"
+              placeholder="0"
+              fontFamily="$body"
+              fontSize={1}
+              textAlign="center"
+              borderWidth={0}
+              backgroundColor="transparent"
+              color="transparent"
+              position="absolute"
+              top={0}
+              left={0}
+              width="100%"
+              height="100%"
+              opacity={0.01}
+              zIndex={1}
+              tabIndex={0}
+              aria-label={t('travel.totalBudget')}
+            />
+          </YStack>
           {errors.budget && (
             <ErrorText testID="trip-budget-error">{errors.budget.message}</ErrorText>
           )}

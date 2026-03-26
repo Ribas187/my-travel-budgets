@@ -25,6 +25,19 @@ const LabelText = styled(Text, {
   marginBottom: '$xs',
 });
 
+const dateInputCss = `
+.date-picker-input::-webkit-datetime-edit,
+.date-picker-input::-webkit-datetime-edit-fields-wrapper {
+  padding: 0;
+}
+.date-picker-input::-webkit-datetime-edit-text,
+.date-picker-input::-webkit-datetime-edit-month-field,
+.date-picker-input::-webkit-datetime-edit-day-field,
+.date-picker-input::-webkit-datetime-edit-year-field {
+  padding: 0;
+}
+`;
+
 export function DatePickerInput({
   value,
   onChange,
@@ -48,8 +61,10 @@ export function DatePickerInput({
 
   return (
     <YStack testID={testID}>
+      <style dangerouslySetInnerHTML={{ __html: dateInputCss }} />
       {label && <LabelText>{label}</LabelText>}
       <input
+        className="date-picker-input"
         ref={inputRef}
         type="date"
         value={value}
@@ -71,7 +86,10 @@ export function DatePickerInput({
           minHeight: 48,
           outline: 'none',
           width: '100%',
+          maxWidth: '100%',
+          minWidth: 0,
           boxSizing: 'border-box',
+          overflow: 'hidden',
           cursor: disabled ? 'not-allowed' : 'pointer',
           opacity: disabled ? 0.5 : 1,
         }}
