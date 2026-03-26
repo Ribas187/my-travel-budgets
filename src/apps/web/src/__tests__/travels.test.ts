@@ -55,7 +55,7 @@ describe('My Travels List', () => {
 
   describe('useTravels hook', () => {
     it('exports useTravels hook', async () => {
-      const mod = await import('../hooks/useTravels');
+      const mod = await import('@repo/api-client');
       expect(mod.useTravels).toBeDefined();
       expect(typeof mod.useTravels).toBe('function');
     });

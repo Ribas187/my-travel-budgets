@@ -2,9 +2,7 @@ import { useState, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { TripFormView } from '@repo/ui';
 import type { TravelDetail, CreateTravelInput } from '@repo/api-client';
-
-import { useAddMember } from '@/hooks/useAddMember';
-import { useRemoveMember } from '@/hooks/useRemoveMember';
+import { useAddMember, useRemoveMember } from '@repo/api-client';
 import { showToast } from '@/lib/toast';
 
 interface TripFormProps {

@@ -16,21 +16,16 @@ vi.mock('react-i18next', () => ({
   }),
 }));
 
-vi.mock('@/hooks/useCreateExpense', () => ({
-  useCreateExpense: () => ({ mutate: vi.fn(), isPending: false }),
-}));
-
-vi.mock('@/hooks/useUpdateExpense', () => ({
-  useUpdateExpense: () => ({ mutate: vi.fn(), isPending: false }),
-}));
-
-vi.mock('@/hooks/useDeleteExpense', () => ({
-  useDeleteExpense: () => ({ mutate: vi.fn(), isPending: false }),
-}));
-
-vi.mock('@/hooks/useBudgetImpact', () => ({
-  useBudgetImpact: () => ({ level: 'none', percentageAfter: 0, categoryName: '' }),
-}));
+vi.mock('@repo/api-client', async (importOriginal) => {
+  const actual = await importOriginal<typeof import('@repo/api-client')>();
+  return {
+    ...actual,
+    useCreateExpense: () => ({ mutate: vi.fn(), isPending: false }),
+    useUpdateExpense: () => ({ mutate: vi.fn(), isPending: false }),
+    useDeleteExpense: () => ({ mutate: vi.fn(), isPending: false }),
+    useBudgetImpact: () => ({ level: 'none', percentageAfter: 0, categoryName: '' }),
+  };
+});
 
 vi.mock('@/lib/toast', () => ({
   showToast: vi.fn(),

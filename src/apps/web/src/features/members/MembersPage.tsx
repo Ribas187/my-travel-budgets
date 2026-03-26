@@ -2,11 +2,9 @@ import { useState, useMemo, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { MembersView } from '@repo/ui';
 import type { TravelMember, MemberSpending } from '@repo/api-client';
+import { useDashboard, useAddMember, useRemoveMember } from '@repo/api-client';
 
 import { useTravelContext } from '@/contexts/TravelContext';
-import { useDashboard } from '@/hooks/useDashboard';
-import { useAddMember } from '@/hooks/useAddMember';
-import { useRemoveMember } from '@/hooks/useRemoveMember';
 import { showToast } from '@/lib/toast';
 
 export function MembersPage() {

@@ -3,12 +3,7 @@ import { useNavigate } from '@tanstack/react-router';
 import { ExpenseListView, AddExpenseModal } from '@repo/ui';
 import type { AddExpenseFormValues } from '@repo/ui';
 import type { TravelDetail, Expense, ExpenseFilters } from '@repo/api-client';
-
-import { useTravelExpenses } from '@/hooks/useTravelExpenses';
-import { useCreateExpense } from '@/hooks/useCreateExpense';
-import { useUpdateExpense } from '@/hooks/useUpdateExpense';
-import { useDeleteExpense } from '@/hooks/useDeleteExpense';
-import { useBudgetImpact } from '@/hooks/useBudgetImpact';
+import { useTravelExpenses, useCreateExpense, useUpdateExpense, useDeleteExpense, useBudgetImpact } from '@repo/api-client';
 import { showToast } from '@/lib/toast';
 import { useTranslation } from 'react-i18next';
 

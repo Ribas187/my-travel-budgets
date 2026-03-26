@@ -215,7 +215,7 @@ describe('Expense List with Filters', () => {
 
   describe('useTravelExpenses hook', () => {
     it('exports useTravelExpenses hook', async () => {
-      const mod = await import('../hooks/useTravelExpenses');
+      const mod = await import('@repo/api-client');
       expect(mod.useTravelExpenses).toBeDefined();
       expect(typeof mod.useTravelExpenses).toBe('function');
     });

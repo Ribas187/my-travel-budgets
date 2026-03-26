@@ -4,11 +4,7 @@ import { useNavigate } from '@tanstack/react-router';
 import { AddExpenseModal as AddExpenseModalUI } from '@repo/ui';
 import type { AddExpenseFormValues } from '@repo/ui';
 import type { TravelDetail, Expense } from '@repo/api-client';
-
-import { useCreateExpense } from '@/hooks/useCreateExpense';
-import { useUpdateExpense } from '@/hooks/useUpdateExpense';
-import { useDeleteExpense } from '@/hooks/useDeleteExpense';
-import { useBudgetImpact } from '@/hooks/useBudgetImpact';
+import { useCreateExpense, useUpdateExpense, useDeleteExpense, useBudgetImpact } from '@repo/api-client';
 import { showToast } from '@/lib/toast';
 
 interface AddExpenseModalProps {

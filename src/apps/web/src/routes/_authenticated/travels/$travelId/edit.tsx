@@ -4,10 +4,7 @@ import { useTranslation } from 'react-i18next';
 import { styled, XStack, YStack, Text } from 'tamagui';
 import { Heading } from '@repo/ui';
 import type { CreateTravelInput } from '@repo/api-client';
-
-import { useUpdateTravel } from '@/hooks/useUpdateTravel';
-import { useDeleteTravel } from '@/hooks/useDeleteTravel';
-import { useTravelExpenses } from '@/hooks/useTravelExpenses';
+import { useUpdateTravel, useDeleteTravel, useTravelExpenses } from '@repo/api-client';
 import { useTravelContext } from '@/contexts/TravelContext';
 import { showToast } from '@/lib/toast';
 import { TripForm } from '@/features/travels/TripForm';

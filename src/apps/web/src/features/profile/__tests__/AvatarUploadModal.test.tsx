@@ -10,13 +10,17 @@ vi.mock('react-i18next', () => ({
   }),
 }));
 
-vi.mock('@/hooks/useUploadAvatar', () => ({
-  useUploadAvatar: () => ({
-    mutateAsync: vi.fn(),
-    isPending: false,
-    reset: vi.fn(),
-  }),
-}));
+vi.mock('@repo/api-client', async (importOriginal) => {
+  const actual = await importOriginal<typeof import('@repo/api-client')>();
+  return {
+    ...actual,
+    useUploadAvatar: () => ({
+      mutateAsync: vi.fn(),
+      isPending: false,
+      reset: vi.fn(),
+    }),
+  };
+});
 
 vi.mock('@/lib/toast', () => ({
   showToast: vi.fn(),

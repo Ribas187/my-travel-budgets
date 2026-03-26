@@ -134,7 +134,7 @@ describe('Quick Add Expense', () => {
 
   describe('useCreateExpense hook', () => {
     it('exports useCreateExpense hook', async () => {
-      const mod = await import('../hooks/useCreateExpense');
+      const mod = await import('@repo/api-client');
       expect(mod.useCreateExpense).toBeDefined();
       expect(typeof mod.useCreateExpense).toBe('function');
     });
@@ -162,7 +162,7 @@ describe('Quick Add Expense', () => {
 
   describe('useBudgetImpact hook', () => {
     it('exports useBudgetImpact hook', async () => {
-      const mod = await import('../hooks/useBudgetImpact');
+      const mod = await import('@repo/api-client');
       expect(mod.useBudgetImpact).toBeDefined();
       expect(typeof mod.useBudgetImpact).toBe('function');
     });
@@ -479,7 +479,7 @@ describe('Quick Add Expense', () => {
 
   describe('Travel detail hook', () => {
     it('exports useTravelDetail hook', async () => {
-      const mod = await import('../hooks/useTravelDetail');
+      const mod = await import('@repo/api-client');
       expect(mod.useTravelDetail).toBeDefined();
       expect(typeof mod.useTravelDetail).toBe('function');
     });

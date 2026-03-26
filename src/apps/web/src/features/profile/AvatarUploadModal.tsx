@@ -4,7 +4,7 @@ import { useTranslation } from 'react-i18next';
 import { styled, XStack, YStack, Text, View, Spinner } from 'tamagui';
 import { PrimaryButton } from '@repo/ui';
 
-import { useUploadAvatar } from '@/hooks/useUploadAvatar';
+import { useUploadAvatar } from '@repo/api-client';
 import { showToast } from '@/lib/toast';
 import { getCroppedImg } from './getCroppedImg';
 

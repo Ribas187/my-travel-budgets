@@ -96,7 +96,7 @@ describe('Add/Edit Trip Form', () => {
 
   describe('useCreateTravel hook', () => {
     it('exports useCreateTravel hook', async () => {
-      const mod = await import('../hooks/useCreateTravel');
+      const mod = await import('@repo/api-client');
       expect(mod.useCreateTravel).toBeDefined();
       expect(typeof mod.useCreateTravel).toBe('function');
     });
@@ -117,7 +117,7 @@ describe('Add/Edit Trip Form', () => {
 
   describe('useUpdateTravel hook', () => {
     it('exports useUpdateTravel hook', async () => {
-      const mod = await import('../hooks/useUpdateTravel');
+      const mod = await import('@repo/api-client');
       expect(mod.useUpdateTravel).toBeDefined();
       expect(typeof mod.useUpdateTravel).toBe('function');
     });
@@ -139,7 +139,7 @@ describe('Add/Edit Trip Form', () => {
 
   describe('useDeleteTravel hook', () => {
     it('exports useDeleteTravel hook', async () => {
-      const mod = await import('../hooks/useDeleteTravel');
+      const mod = await import('@repo/api-client');
       expect(mod.useDeleteTravel).toBeDefined();
       expect(typeof mod.useDeleteTravel).toBe('function');
     });
@@ -286,13 +286,13 @@ describe('Add/Edit Trip Form', () => {
 
   describe('Member management hooks', () => {
     it('exports useAddMember hook', async () => {
-      const mod = await import('../hooks/useAddMember');
+      const mod = await import('@repo/api-client');
       expect(mod.useAddMember).toBeDefined();
       expect(typeof mod.useAddMember).toBe('function');
     });
 
     it('exports useRemoveMember hook', async () => {
-      const mod = await import('../hooks/useRemoveMember');
+      const mod = await import('@repo/api-client');
       expect(mod.useRemoveMember).toBeDefined();
       expect(typeof mod.useRemoveMember).toBe('function');
     });

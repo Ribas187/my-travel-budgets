@@ -4,11 +4,7 @@ import { CategoriesView } from '@repo/ui';
 import type { CategoryFormState } from '@repo/ui';
 import { DEFAULT_CATEGORY_EMOJI, DEFAULT_CATEGORY_COLOR } from '@repo/core';
 import type { Category, CreateCategoryInput, UpdateCategoryInput, TravelDetail } from '@repo/api-client';
-
-import { useCreateCategory } from '@/hooks/useCreateCategory';
-import { useUpdateCategory } from '@/hooks/useUpdateCategory';
-import { useDeleteCategory } from '@/hooks/useDeleteCategory';
-import { useTravelExpenses } from '@/hooks/useTravelExpenses';
+import { useCreateCategory, useUpdateCategory, useDeleteCategory, useTravelExpenses } from '@repo/api-client';
 import { showToast } from '@/lib/toast';
 
 const DEFAULT_FORM: CategoryFormState = {

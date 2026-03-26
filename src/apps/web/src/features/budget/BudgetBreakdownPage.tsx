@@ -2,10 +2,9 @@ import { useMemo } from 'react';
 import { useNavigate } from '@tanstack/react-router';
 import { BudgetBreakdownView } from '@repo/ui';
 import type { Expense } from '@repo/api-client';
+import { useDashboard, useTravelExpenses } from '@repo/api-client';
 
 import { useTravelContext } from '@/contexts/TravelContext';
-import { useDashboard } from '@/hooks/useDashboard';
-import { useTravelExpenses } from '@/hooks/useTravelExpenses';
 
 function getExpenseCountByCategory(expenses: Expense[]): Record<string, number> {
   const counts: Record<string, number> = {};

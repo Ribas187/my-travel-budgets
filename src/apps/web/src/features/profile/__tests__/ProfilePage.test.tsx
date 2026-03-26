@@ -8,17 +8,15 @@ vi.mock('@/providers/AuthProvider', () => ({
   useAuth: () => ({ logout: vi.fn(), token: 'mock-token' }),
 }));
 
-vi.mock('@/hooks/useUpdateUser', () => ({
-  useUpdateUser: () => ({ mutate: vi.fn(), isPending: false }),
-}));
-
-vi.mock('@/hooks/useUploadAvatar', () => ({
-  useUploadAvatar: () => ({ mutateAsync: vi.fn(), isPending: false, reset: vi.fn() }),
-}));
-
-vi.mock('@/hooks/useRemoveAvatar', () => ({
-  useRemoveAvatar: () => ({ mutate: vi.fn(), isPending: false }),
-}));
+vi.mock('@repo/api-client', async (importOriginal) => {
+  const actual = await importOriginal<typeof import('@repo/api-client')>();
+  return {
+    ...actual,
+    useUpdateUser: () => ({ mutate: vi.fn(), isPending: false }),
+    useUploadAvatar: () => ({ mutateAsync: vi.fn(), isPending: false, reset: vi.fn() }),
+    useRemoveAvatar: () => ({ mutate: vi.fn(), isPending: false }),
+  };
+});
 
 vi.mock('@/lib/toast', () => ({
   showToast: vi.fn(),
@@ -78,9 +76,13 @@ describe('ProfilePage avatar fallback', () => {
   });
 
   it('renders User icon when user name is empty', () => {
-    vi.doMock('@/hooks/useUserMe', () => ({
-      useUserMe: () => ({ data: mockUserWithoutName }),
-    }));
+    vi.doMock('@repo/api-client', async (importOriginal) => {
+      const actual = await importOriginal<typeof import('@repo/api-client')>();
+      return {
+        ...actual,
+        useUserMe: () => ({ data: mockUserWithoutName }),
+      };
+    });
 
     const hasName = !!mockUserWithoutName.name;
     expect(hasName).toBe(false);
@@ -89,9 +91,13 @@ describe('ProfilePage avatar fallback', () => {
   });
 
   it('renders initial letter when user name is present', () => {
-    vi.doMock('@/hooks/useUserMe', () => ({
-      useUserMe: () => ({ data: mockUserWithName }),
-    }));
+    vi.doMock('@repo/api-client', async (importOriginal) => {
+      const actual = await importOriginal<typeof import('@repo/api-client')>();
+      return {
+        ...actual,
+        useUserMe: () => ({ data: mockUserWithName }),
+      };
+    });
 
     const hasName = !!mockUserWithName.name;
     expect(hasName).toBe(true);

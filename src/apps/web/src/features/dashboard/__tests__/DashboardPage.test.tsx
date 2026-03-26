@@ -18,11 +18,8 @@ vi.mock('@/contexts/TravelContext', () => ({
   }),
 }));
 
-vi.mock('@/hooks/useDashboard', () => ({
+vi.mock('@repo/api-client', () => ({
   useDashboard: vi.fn(),
-}));
-
-vi.mock('@/hooks/useTravelExpenses', () => ({
   useTravelExpenses: vi.fn(),
 }));
 
@@ -135,8 +132,7 @@ const mockExpenses = [
 ];
 
 // Import the mocked modules to control return values
-import { useDashboard } from '@/hooks/useDashboard';
-import { useTravelExpenses } from '@/hooks/useTravelExpenses';
+import { useDashboard, useTravelExpenses } from '@repo/api-client';
 
 const mockedUseDashboard = vi.mocked(useDashboard);
 const mockedUseTravelExpenses = vi.mocked(useTravelExpenses);

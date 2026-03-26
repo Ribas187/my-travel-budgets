@@ -12,7 +12,7 @@ const mockUser: UserMe = {
 
 describe('useUserMe', () => {
   it('is defined as a function', async () => {
-    const { useUserMe } = await import('@/hooks/useUserMe');
+    const { useUserMe } = await import('@repo/api-client');
     expect(useUserMe).toBeDefined();
     expect(typeof useUserMe).toBe('function');
   });
@@ -25,7 +25,7 @@ describe('useUserMe', () => {
 
 describe('useUpdateUser', () => {
   it('is defined as a function', async () => {
-    const { useUpdateUser } = await import('@/hooks/useUpdateUser');
+    const { useUpdateUser } = await import('@repo/api-client');
     expect(useUpdateUser).toBeDefined();
     expect(typeof useUpdateUser).toBe('function');
   });

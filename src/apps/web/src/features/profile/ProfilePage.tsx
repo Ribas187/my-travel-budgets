@@ -3,10 +3,9 @@ import { useNavigate, useRouter } from '@tanstack/react-router';
 import { useTranslation } from 'react-i18next';
 import { ProfileView } from '@repo/ui';
 
+import { useUserMe, useUpdateUser, useRemoveAvatar } from '@repo/api-client';
+
 import { useAuth } from '@/providers/AuthProvider';
-import { useUserMe } from '@/hooks/useUserMe';
-import { useUpdateUser } from '@/hooks/useUpdateUser';
-import { useRemoveAvatar } from '@/hooks/useRemoveAvatar';
 import { showToast } from '@/lib/toast';
 import { AvatarUploadModal } from './AvatarUploadModal';
 

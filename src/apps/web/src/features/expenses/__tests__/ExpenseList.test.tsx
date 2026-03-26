@@ -9,9 +9,13 @@ vi.mock('react-i18next', () => ({
   }),
 }));
 
-vi.mock('@/hooks/useTravelExpenses', () => ({
-  useTravelExpenses: () => ({ data: [], isLoading: false }),
-}));
+vi.mock('@repo/api-client', async (importOriginal) => {
+  const actual = await importOriginal<typeof import('@repo/api-client')>();
+  return {
+    ...actual,
+    useTravelExpenses: () => ({ data: [], isLoading: false }),
+  };
+});
 
 // Read the source file for style assertions
 const sourcePath = resolve(__dirname, '../../../../../../packages/ui/src/templates/ExpenseListView/ExpenseListView.tsx');

@@ -59,13 +59,13 @@ const mockTravel: TravelDetail = {
 
 describe('useUpdateExpense', () => {
   it('is defined as a function', async () => {
-    const { useUpdateExpense } = await import('@/hooks/useUpdateExpense');
+    const { useUpdateExpense } = await import('@repo/api-client');
     expect(useUpdateExpense).toBeDefined();
     expect(typeof useUpdateExpense).toBe('function');
   });
 
   it('accepts travelId argument', async () => {
-    const { useUpdateExpense } = await import('@/hooks/useUpdateExpense');
+    const { useUpdateExpense } = await import('@repo/api-client');
     expect(useUpdateExpense.length).toBe(1);
   });
 
@@ -85,13 +85,13 @@ describe('useUpdateExpense', () => {
 
 describe('useDeleteExpense', () => {
   it('is defined as a function', async () => {
-    const { useDeleteExpense } = await import('@/hooks/useDeleteExpense');
+    const { useDeleteExpense } = await import('@repo/api-client');
     expect(useDeleteExpense).toBeDefined();
     expect(typeof useDeleteExpense).toBe('function');
   });
 
   it('accepts travelId argument', async () => {
-    const { useDeleteExpense } = await import('@/hooks/useDeleteExpense');
+    const { useDeleteExpense } = await import('@repo/api-client');
     expect(useDeleteExpense.length).toBe(1);
   });
 

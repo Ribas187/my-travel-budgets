@@ -1,8 +1,8 @@
 import { TripSummaryView } from '@repo/ui';
 
+import { useDashboard, useTravelExpenses } from '@repo/api-client';
+
 import { useTravelContext } from '@/contexts/TravelContext';
-import { useDashboard } from '@/hooks/useDashboard';
-import { useTravelExpenses } from '@/hooks/useTravelExpenses';
 
 export function TripSummaryPage() {
   const { travel } = useTravelContext();

@@ -132,7 +132,7 @@ describe('TravelsPage — star toggle', () => {
 
 describe('useSetMainTravel hook', () => {
   it('is defined as a function', async () => {
-    const { useSetMainTravel } = await import('../hooks/useSetMainTravel');
+    const { useSetMainTravel } = await import('@repo/api-client');
     expect(useSetMainTravel).toBeDefined();
     expect(typeof useSetMainTravel).toBe('function');
   });

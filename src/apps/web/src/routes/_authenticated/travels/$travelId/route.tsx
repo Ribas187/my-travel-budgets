@@ -5,8 +5,7 @@ import { YStack, Spinner, Text, View, useMedia } from 'tamagui';
 import { AppShell, BottomNav, DesktopSidebar, FAB, Body, PrimaryButton, NavigationSheet } from '@repo/ui';
 import type { NavigationSheetItem } from '@repo/ui';
 
-import { useTravelDetail } from '@/hooks/useTravelDetail';
-import { useUserMe } from '@/hooks/useUserMe';
+import { useTravelDetail, useUserMe } from '@repo/api-client';
 import { useAuth } from '@/providers/AuthProvider';
 import { AddExpenseModal } from '@/features/expenses/AddExpenseModal';
 import { TravelProvider } from '@/contexts/TravelContext';

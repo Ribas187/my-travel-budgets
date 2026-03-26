@@ -163,7 +163,7 @@ describe('Category Management', () => {
 
   describe('useCreateCategory hook', () => {
     it('exports useCreateCategory hook', async () => {
-      const mod = await import('../hooks/useCreateCategory');
+      const mod = await import('@repo/api-client');
       expect(mod.useCreateCategory).toBeDefined();
       expect(typeof mod.useCreateCategory).toBe('function');
     });
@@ -189,7 +189,7 @@ describe('Category Management', () => {
 
   describe('useUpdateCategory hook', () => {
     it('exports useUpdateCategory hook', async () => {
-      const mod = await import('../hooks/useUpdateCategory');
+      const mod = await import('@repo/api-client');
       expect(mod.useUpdateCategory).toBeDefined();
       expect(typeof mod.useUpdateCategory).toBe('function');
     });
@@ -214,7 +214,7 @@ describe('Category Management', () => {
 
   describe('useDeleteCategory hook', () => {
     it('exports useDeleteCategory hook', async () => {
-      const mod = await import('../hooks/useDeleteCategory');
+      const mod = await import('@repo/api-client');
       expect(mod.useDeleteCategory).toBeDefined();
       expect(typeof mod.useDeleteCategory).toBe('function');
     });

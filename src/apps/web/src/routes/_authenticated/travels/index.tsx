@@ -6,10 +6,7 @@ import { z } from 'zod';
 import { styled, XStack, YStack, Text, Spinner } from 'tamagui';
 import { Heading, Body, PrimaryButton } from '@repo/ui';
 import type { Travel } from '@repo/api-client';
-
-import { useTravels } from '@/hooks/useTravels';
-import { useUserMe } from '@/hooks/useUserMe';
-import { useSetMainTravel } from '@/hooks/useSetMainTravel';
+import { useTravels, useUserMe, useSetMainTravel } from '@repo/api-client';
 
 const travelsSearchSchema = z.object({
   from: z.string().optional(),
