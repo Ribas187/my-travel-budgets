@@ -1,24 +1,21 @@
-import { InternalServerErrorException, NotFoundException } from '@nestjs/common';
+import { InternalServerErrorException } from '@nestjs/common';
 import type { TestingModule } from '@nestjs/testing';
 import { Test } from '@nestjs/testing';
 
 import { UsersService } from './users.service';
 
-import { PrismaService } from '@/modules/prisma/prisma.service';
+import { USER_REPOSITORY } from '@/modules/common/database';
+import { EntityNotFoundError } from '@/modules/common/exceptions';
 import { CloudinaryService } from '@/modules/cloudinary/cloudinary.service';
 
-const mockUserFindUnique = jest.fn();
-const mockUserUpdate = jest.fn();
-const mockTravelMemberFindFirst = jest.fn();
+const mockFindById = jest.fn();
+const mockUpdate = jest.fn();
+const mockIsMemberOfTravel = jest.fn();
 
-const prismaServiceMock = {
-  user: {
-    findUnique: mockUserFindUnique,
-    update: mockUserUpdate,
-  },
-  travelMember: {
-    findFirst: mockTravelMemberFindFirst,
-  },
+const userRepositoryMock = {
+  findById: mockFindById,
+  update: mockUpdate,
+  isMemberOfTravel: mockIsMemberOfTravel,
 };
 
 const mockCloudinaryUpload = jest.fn();
@@ -38,7 +35,7 @@ describe('UsersService', () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         UsersService,
-        { provide: PrismaService, useValue: prismaServiceMock },
+        { provide: USER_REPOSITORY, useValue: userRepositoryMock },
         { provide: CloudinaryService, useValue: cloudinaryServiceMock },
       ],
     }).compile();
@@ -57,13 +54,11 @@ describe('UsersService', () => {
         createdAt: new Date('2024-01-01'),
         updatedAt: new Date('2024-01-02'),
       };
-      mockUserFindUnique.mockResolvedValue(user);
+      mockFindById.mockResolvedValue(user);
 
       const result = await service.getMe('user-1');
 
-      expect(mockUserFindUnique).toHaveBeenCalledWith({
-        where: { id: 'user-1' },
-      });
+      expect(mockFindById).toHaveBeenCalledWith('user-1');
       expect(result).toEqual({
         id: 'user-1',
         email: 'user@test.com',
@@ -85,17 +80,17 @@ describe('UsersService', () => {
         createdAt: new Date('2024-01-01'),
         updatedAt: new Date('2024-01-02'),
       };
-      mockUserFindUnique.mockResolvedValue(user);
+      mockFindById.mockResolvedValue(user);
 
       const result = await service.getMe('user-1');
 
       expect(result.mainTravelId).toBe('travel-123');
     });
 
-    it('throws NotFoundException for non-existent userId', async () => {
-      mockUserFindUnique.mockResolvedValue(null);
+    it('throws EntityNotFoundError for non-existent userId', async () => {
+      mockFindById.mockResolvedValue(null);
 
-      await expect(service.getMe('non-existent')).rejects.toThrow(NotFoundException);
+      await expect(service.getMe('non-existent')).rejects.toThrow(EntityNotFoundError);
     });
   });
 
@@ -112,14 +107,11 @@ describe('UsersService', () => {
 
     it('updates name only', async () => {
       const updated = { ...baseUser, name: 'New Name', updatedAt: new Date() };
-      mockUserUpdate.mockResolvedValue(updated);
+      mockUpdate.mockResolvedValue(updated);
 
       const result = await service.updateMe('user-1', { name: 'New Name' });
 
-      expect(mockUserUpdate).toHaveBeenCalledWith({
-        where: { id: 'user-1' },
-        data: { name: 'New Name' },
-      });
+      expect(mockUpdate).toHaveBeenCalledWith('user-1', { name: 'New Name' });
       expect(result.name).toBe('New Name');
     });
 
@@ -129,15 +121,14 @@ describe('UsersService', () => {
         avatarUrl: 'https://cdn.example.com/avatar.png',
         updatedAt: new Date(),
       };
-      mockUserUpdate.mockResolvedValue(updated);
+      mockUpdate.mockResolvedValue(updated);
 
       const result = await service.updateMe('user-1', {
         avatarUrl: 'https://cdn.example.com/avatar.png',
       });
 
-      expect(mockUserUpdate).toHaveBeenCalledWith({
-        where: { id: 'user-1' },
-        data: { avatarUrl: 'https://cdn.example.com/avatar.png' },
+      expect(mockUpdate).toHaveBeenCalledWith('user-1', {
+        avatarUrl: 'https://cdn.example.com/avatar.png',
       });
       expect(result.avatarUrl).toBe('https://cdn.example.com/avatar.png');
     });
@@ -149,33 +140,30 @@ describe('UsersService', () => {
         avatarUrl: 'https://cdn.example.com/new.png',
         updatedAt: new Date(),
       };
-      mockUserUpdate.mockResolvedValue(updated);
+      mockUpdate.mockResolvedValue(updated);
 
       const result = await service.updateMe('user-1', {
         name: 'New Name',
         avatarUrl: 'https://cdn.example.com/new.png',
       });
 
-      expect(mockUserUpdate).toHaveBeenCalledWith({
-        where: { id: 'user-1' },
-        data: { name: 'New Name', avatarUrl: 'https://cdn.example.com/new.png' },
+      expect(mockUpdate).toHaveBeenCalledWith('user-1', {
+        name: 'New Name',
+        avatarUrl: 'https://cdn.example.com/new.png',
       });
       expect(result.name).toBe('New Name');
       expect(result.avatarUrl).toBe('https://cdn.example.com/new.png');
     });
 
     it('does not update email even if provided in input', async () => {
-      mockUserUpdate.mockResolvedValue(baseUser);
+      mockUpdate.mockResolvedValue(baseUser);
 
       await service.updateMe('user-1', {
         name: 'New Name',
         email: 'hacker@evil.com' as unknown as string,
       } as { name?: string; avatarUrl?: string });
 
-      expect(mockUserUpdate).toHaveBeenCalledWith({
-        where: { id: 'user-1' },
-        data: { name: 'New Name' },
-      });
+      expect(mockUpdate).toHaveBeenCalledWith('user-1', { name: 'New Name' });
     });
   });
 
@@ -191,36 +179,21 @@ describe('UsersService', () => {
     };
 
     it('sets mainTravelId when user is a member of the travel', async () => {
-      mockTravelMemberFindFirst.mockResolvedValue({
-        id: 'member-1',
-        travelId: 'travel-1',
-        userId: 'user-1',
-        role: 'owner',
-      });
+      mockIsMemberOfTravel.mockResolvedValue(true);
       const updated = { ...baseUser, mainTravelId: 'travel-1' };
-      mockUserUpdate.mockResolvedValue(updated);
+      mockUpdate.mockResolvedValue(updated);
 
       const result = await service.setMainTravel('user-1', { travelId: 'travel-1' });
 
-      expect(mockTravelMemberFindFirst).toHaveBeenCalledWith({
-        where: { travelId: 'travel-1', userId: 'user-1' },
-      });
-      expect(mockUserUpdate).toHaveBeenCalledWith({
-        where: { id: 'user-1' },
-        data: { mainTravelId: 'travel-1' },
-      });
+      expect(mockIsMemberOfTravel).toHaveBeenCalledWith('user-1', 'travel-1');
+      expect(mockUpdate).toHaveBeenCalledWith('user-1', { mainTravelId: 'travel-1' });
       expect(result.mainTravelId).toBe('travel-1');
     });
 
     it('changes mainTravelId to a different travel', async () => {
-      mockTravelMemberFindFirst.mockResolvedValue({
-        id: 'member-1',
-        travelId: 'travel-2',
-        userId: 'user-1',
-        role: 'member',
-      });
+      mockIsMemberOfTravel.mockResolvedValue(true);
       const updated = { ...baseUser, mainTravelId: 'travel-2' };
-      mockUserUpdate.mockResolvedValue(updated);
+      mockUpdate.mockResolvedValue(updated);
 
       const result = await service.setMainTravel('user-1', { travelId: 'travel-2' });
 
@@ -229,26 +202,23 @@ describe('UsersService', () => {
 
     it('clears mainTravelId when travelId is null', async () => {
       const updated = { ...baseUser, mainTravelId: null };
-      mockUserUpdate.mockResolvedValue(updated);
+      mockUpdate.mockResolvedValue(updated);
 
       const result = await service.setMainTravel('user-1', { travelId: null });
 
-      expect(mockTravelMemberFindFirst).not.toHaveBeenCalled();
-      expect(mockUserUpdate).toHaveBeenCalledWith({
-        where: { id: 'user-1' },
-        data: { mainTravelId: null },
-      });
+      expect(mockIsMemberOfTravel).not.toHaveBeenCalled();
+      expect(mockUpdate).toHaveBeenCalledWith('user-1', { mainTravelId: null });
       expect(result.mainTravelId).toBeNull();
     });
 
-    it('throws NotFoundException when travel does not exist or user is not a member', async () => {
-      mockTravelMemberFindFirst.mockResolvedValue(null);
+    it('throws EntityNotFoundError when travel does not exist or user is not a member', async () => {
+      mockIsMemberOfTravel.mockResolvedValue(false);
 
       await expect(
         service.setMainTravel('user-1', { travelId: 'non-existent-travel' }),
-      ).rejects.toThrow(NotFoundException);
+      ).rejects.toThrow(EntityNotFoundError);
 
-      expect(mockUserUpdate).not.toHaveBeenCalled();
+      expect(mockUpdate).not.toHaveBeenCalled();
     });
   });
 
@@ -270,7 +240,7 @@ describe('UsersService', () => {
     } as Express.Multer.File;
 
     it('uploads avatar and stores the URL', async () => {
-      mockUserFindUnique.mockResolvedValue({ ...baseUser });
+      mockFindById.mockResolvedValue({ ...baseUser });
       mockCloudinaryUpload.mockResolvedValue({
         secure_url: 'https://res.cloudinary.com/test/avatars/user-1.jpg',
         public_id: 'avatars/user-1',
@@ -279,14 +249,13 @@ describe('UsersService', () => {
         ...baseUser,
         avatarUrl: 'https://res.cloudinary.com/test/avatars/user-1.jpg',
       };
-      mockUserUpdate.mockResolvedValue(updated);
+      mockUpdate.mockResolvedValue(updated);
 
       const result = await service.uploadAvatar('user-1', mockFile);
 
       expect(mockCloudinaryUpload).toHaveBeenCalledWith(mockFile.buffer, 'user-1', 'avatars');
-      expect(mockUserUpdate).toHaveBeenCalledWith({
-        where: { id: 'user-1' },
-        data: { avatarUrl: 'https://res.cloudinary.com/test/avatars/user-1.jpg' },
+      expect(mockUpdate).toHaveBeenCalledWith('user-1', {
+        avatarUrl: 'https://res.cloudinary.com/test/avatars/user-1.jpg',
       });
       expect(result.avatarUrl).toBe('https://res.cloudinary.com/test/avatars/user-1.jpg');
     });
@@ -296,13 +265,13 @@ describe('UsersService', () => {
         ...baseUser,
         avatarUrl: 'https://res.cloudinary.com/test/avatars/user-1-old.jpg',
       };
-      mockUserFindUnique.mockResolvedValue(userWithAvatar);
+      mockFindById.mockResolvedValue(userWithAvatar);
       mockCloudinaryDestroy.mockResolvedValue(undefined);
       mockCloudinaryUpload.mockResolvedValue({
         secure_url: 'https://res.cloudinary.com/test/avatars/user-1.jpg',
         public_id: 'avatars/user-1',
       });
-      mockUserUpdate.mockResolvedValue({
+      mockUpdate.mockResolvedValue({
         ...baseUser,
         avatarUrl: 'https://res.cloudinary.com/test/avatars/user-1.jpg',
       });
@@ -318,13 +287,13 @@ describe('UsersService', () => {
         ...baseUser,
         avatarUrl: 'https://res.cloudinary.com/test/avatars/user-1-old.jpg',
       };
-      mockUserFindUnique.mockResolvedValue(userWithAvatar);
+      mockFindById.mockResolvedValue(userWithAvatar);
       mockCloudinaryDestroy.mockRejectedValue(new Error('Destroy failed'));
       mockCloudinaryUpload.mockResolvedValue({
         secure_url: 'https://res.cloudinary.com/test/avatars/user-1.jpg',
         public_id: 'avatars/user-1',
       });
-      mockUserUpdate.mockResolvedValue({
+      mockUpdate.mockResolvedValue({
         ...baseUser,
         avatarUrl: 'https://res.cloudinary.com/test/avatars/user-1.jpg',
       });
@@ -335,7 +304,7 @@ describe('UsersService', () => {
     });
 
     it('throws InternalServerErrorException when upload fails', async () => {
-      mockUserFindUnique.mockResolvedValue({ ...baseUser });
+      mockFindById.mockResolvedValue({ ...baseUser });
       mockCloudinaryUpload.mockRejectedValue(new Error('Cloudinary down'));
 
       await expect(service.uploadAvatar('user-1', mockFile)).rejects.toThrow(
@@ -343,21 +312,21 @@ describe('UsersService', () => {
       );
     });
 
-    it('throws NotFoundException for non-existent user', async () => {
-      mockUserFindUnique.mockResolvedValue(null);
+    it('throws EntityNotFoundError for non-existent user', async () => {
+      mockFindById.mockResolvedValue(null);
 
       await expect(service.uploadAvatar('non-existent', mockFile)).rejects.toThrow(
-        NotFoundException,
+        EntityNotFoundError,
       );
     });
 
     it('does not call destroy when user has no existing avatar', async () => {
-      mockUserFindUnique.mockResolvedValue({ ...baseUser, avatarUrl: null });
+      mockFindById.mockResolvedValue({ ...baseUser, avatarUrl: null });
       mockCloudinaryUpload.mockResolvedValue({
         secure_url: 'https://res.cloudinary.com/test/avatars/user-1.jpg',
         public_id: 'avatars/user-1',
       });
-      mockUserUpdate.mockResolvedValue({
+      mockUpdate.mockResolvedValue({
         ...baseUser,
         avatarUrl: 'https://res.cloudinary.com/test/avatars/user-1.jpg',
       });
@@ -380,24 +349,21 @@ describe('UsersService', () => {
     };
 
     it('deletes avatar from Cloudinary and sets avatarUrl to null', async () => {
-      mockUserFindUnique.mockResolvedValue({ ...baseUser });
+      mockFindById.mockResolvedValue({ ...baseUser });
       mockCloudinaryDestroy.mockResolvedValue(undefined);
-      mockUserUpdate.mockResolvedValue({ ...baseUser, avatarUrl: null });
+      mockUpdate.mockResolvedValue({ ...baseUser, avatarUrl: null });
 
       const result = await service.removeAvatar('user-1');
 
       expect(mockCloudinaryDestroy).toHaveBeenCalledWith('avatars/user-1');
-      expect(mockUserUpdate).toHaveBeenCalledWith({
-        where: { id: 'user-1' },
-        data: { avatarUrl: null },
-      });
+      expect(mockUpdate).toHaveBeenCalledWith('user-1', { avatarUrl: null });
       expect(result.avatarUrl).toBeNull();
     });
 
     it('sets avatarUrl to null even when destroy fails', async () => {
-      mockUserFindUnique.mockResolvedValue({ ...baseUser });
+      mockFindById.mockResolvedValue({ ...baseUser });
       mockCloudinaryDestroy.mockRejectedValue(new Error('Destroy failed'));
-      mockUserUpdate.mockResolvedValue({ ...baseUser, avatarUrl: null });
+      mockUpdate.mockResolvedValue({ ...baseUser, avatarUrl: null });
 
       const result = await service.removeAvatar('user-1');
 
@@ -405,18 +371,18 @@ describe('UsersService', () => {
     });
 
     it('skips destroy when user has no avatar', async () => {
-      mockUserFindUnique.mockResolvedValue({ ...baseUser, avatarUrl: null });
-      mockUserUpdate.mockResolvedValue({ ...baseUser, avatarUrl: null });
+      mockFindById.mockResolvedValue({ ...baseUser, avatarUrl: null });
+      mockUpdate.mockResolvedValue({ ...baseUser, avatarUrl: null });
 
       await service.removeAvatar('user-1');
 
       expect(mockCloudinaryDestroy).not.toHaveBeenCalled();
     });
 
-    it('throws NotFoundException for non-existent user', async () => {
-      mockUserFindUnique.mockResolvedValue(null);
+    it('throws EntityNotFoundError for non-existent user', async () => {
+      mockFindById.mockResolvedValue(null);
 
-      await expect(service.removeAvatar('non-existent')).rejects.toThrow(NotFoundException);
+      await expect(service.removeAvatar('non-existent')).rejects.toThrow(EntityNotFoundError);
     });
   });
 });

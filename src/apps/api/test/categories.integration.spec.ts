@@ -7,6 +7,8 @@ import { validateEnv } from '@/config/env.validation';
 import { PrismaModule } from '@/modules/prisma/prisma.module';
 import { PrismaService } from '@/modules/prisma/prisma.service';
 import { CategoriesService } from '@/modules/categories/categories.service';
+import { PrismaCategoryRepository } from '@/modules/categories/repository/category.repository.prisma';
+import { CATEGORY_REPOSITORY } from '@/modules/common/database';
 
 describe('Categories integration tests', () => {
   let moduleRef: TestingModule;
@@ -40,7 +42,10 @@ describe('Categories integration tests', () => {
         }),
         PrismaModule,
       ],
-      providers: [CategoriesService],
+      providers: [
+        CategoriesService,
+        { provide: CATEGORY_REPOSITORY, useClass: PrismaCategoryRepository },
+      ],
     }).compile();
 
     await moduleRef.init();
@@ -118,7 +123,7 @@ describe('Categories integration tests', () => {
       expect(category.budgetLimit?.toString()).toBe('1000');
     });
 
-    it('throws ConflictException for duplicate category name within same travel (409)', async () => {
+    it('throws ConflictError for duplicate category name within same travel (409)', async () => {
       const owner = await createUser('owner@test.com');
       const travel = await createTravelWithOwner(owner.id);
 
@@ -195,7 +200,7 @@ describe('Categories integration tests', () => {
       expect(updated.color).toBe('#00FF00');
     });
 
-    it('throws ConflictException when updating to a duplicate name', async () => {
+    it('throws ConflictError when updating to a duplicate name', async () => {
       const owner = await createUser('owner@test.com');
       const travel = await createTravelWithOwner(owner.id);
 
@@ -215,7 +220,7 @@ describe('Categories integration tests', () => {
       );
     });
 
-    it('throws NotFoundException for non-existent category', async () => {
+    it('throws EntityNotFoundError for non-existent category', async () => {
       const owner = await createUser('owner@test.com');
       const travel = await createTravelWithOwner(owner.id);
 
@@ -244,7 +249,7 @@ describe('Categories integration tests', () => {
       expect(found).toBeNull();
     });
 
-    it('throws ConflictException when category has expenses (409)', async () => {
+    it('throws ConflictError when category has expenses (409)', async () => {
       const owner = await createUser('owner@test.com');
       const travel = await createTravelWithOwner(owner.id);
       const ownerMember = await prisma.travelMember.findFirst({
@@ -307,7 +312,7 @@ describe('Categories integration tests', () => {
       expect(found).toBeNull();
     });
 
-    it('throws NotFoundException for non-existent category', async () => {
+    it('throws EntityNotFoundError for non-existent category', async () => {
       const owner = await createUser('owner@test.com');
       const travel = await createTravelWithOwner(owner.id);
 

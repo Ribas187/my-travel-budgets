@@ -1,84 +1,72 @@
-import { ConflictException, Injectable, NotFoundException } from '@nestjs/common';
+import { Inject, Injectable } from '@nestjs/common';
 
 import type { CreateCategoryDto } from './dto/create-category.dto';
 import type { UpdateCategoryDto } from './dto/update-category.dto';
+import type { ICategoryRepository } from './repository/category.repository.interface';
 
-import { PrismaService } from '@/modules/prisma/prisma.service';
+import { CATEGORY_REPOSITORY } from '@/modules/common/database';
+import { ConflictError, EntityNotFoundError } from '@/modules/common/exceptions';
 
 @Injectable()
 export class CategoriesService {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(
+    @Inject(CATEGORY_REPOSITORY)
+    private readonly categoryRepository: ICategoryRepository,
+  ) {}
 
   async create(travelId: string, dto: CreateCategoryDto) {
-    const existing = await this.prisma.category.findFirst({
-      where: { travelId, name: dto.name },
-    });
+    const existing = await this.categoryRepository.findByTravelAndName(travelId, dto.name);
 
     if (existing) {
-      throw new ConflictException('A category with this name already exists in this travel');
+      throw new ConflictError('A category with this name already exists in this travel');
     }
 
-    return this.prisma.category.create({
-      data: {
-        travelId,
-        name: dto.name,
-        icon: dto.icon,
-        color: dto.color,
-        budgetLimit: dto.budgetLimit ?? null,
-      },
+    return this.categoryRepository.create({
+      travelId,
+      name: dto.name,
+      icon: dto.icon,
+      color: dto.color,
+      budgetLimit: dto.budgetLimit ?? null,
     });
   }
 
   async update(travelId: string, catId: string, dto: UpdateCategoryDto) {
-    const category = await this.prisma.category.findFirst({
-      where: { id: catId, travelId },
-    });
+    const category = await this.categoryRepository.findByIdAndTravel(catId, travelId);
 
     if (!category) {
-      throw new NotFoundException('Category not found');
+      throw new EntityNotFoundError('Category');
     }
 
     if (dto.name && dto.name !== category.name) {
-      const existing = await this.prisma.category.findFirst({
-        where: { travelId, name: dto.name },
-      });
+      const existing = await this.categoryRepository.findByTravelAndName(travelId, dto.name);
       if (existing) {
-        throw new ConflictException('A category with this name already exists in this travel');
+        throw new ConflictError('A category with this name already exists in this travel');
       }
     }
 
-    return this.prisma.category.update({
-      where: { id: catId },
-      data: {
-        ...(dto.name !== undefined && { name: dto.name }),
-        ...(dto.icon !== undefined && { icon: dto.icon }),
-        ...(dto.color !== undefined && { color: dto.color }),
-        ...('budgetLimit' in dto && { budgetLimit: dto.budgetLimit ?? null }),
-      },
+    return this.categoryRepository.update(catId, {
+      ...(dto.name !== undefined && { name: dto.name }),
+      ...(dto.icon !== undefined && { icon: dto.icon }),
+      ...(dto.color !== undefined && { color: dto.color }),
+      ...('budgetLimit' in dto && { budgetLimit: dto.budgetLimit ?? null }),
     });
   }
 
   async remove(travelId: string, catId: string) {
-    const category = await this.prisma.category.findFirst({
-      where: { id: catId, travelId },
-    });
+    const category = await this.categoryRepository.findByIdAndTravel(catId, travelId);
 
     if (!category) {
-      throw new NotFoundException('Category not found');
+      throw new EntityNotFoundError('Category');
     }
 
-    const expenseCount = await this.prisma.expense.count({
-      where: { categoryId: catId },
-    });
+    const expenseCount = await this.categoryRepository.countExpensesByCategory(catId);
 
     if (expenseCount > 0) {
-      throw new ConflictException(
+      throw new ConflictError(
         'Cannot delete this category because it has associated expenses. Please reassign or delete the expenses first.',
       );
     }
 
-    await this.prisma.category.delete({
-      where: { id: catId },
-    });
+    await this.categoryRepository.delete(catId);
   }
 }

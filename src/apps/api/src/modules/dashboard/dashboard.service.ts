@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Inject, Injectable } from '@nestjs/common';
 
 import type {
   DashboardResponse,
@@ -6,48 +6,37 @@ import type {
   CategorySpendingItem,
 } from './dashboard.types';
 import { computeAlertStatus } from './dashboard.types';
+import type { IDashboardRepository } from './repository/dashboard.repository.interface';
 
-import { PrismaService } from '@/modules/prisma/prisma.service';
+import { DASHBOARD_REPOSITORY } from '@/modules/common/database';
+import { EntityNotFoundError } from '@/modules/common/exceptions';
 
 @Injectable()
 export class DashboardService {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(
+    @Inject(DASHBOARD_REPOSITORY)
+    private readonly dashboardRepository: IDashboardRepository,
+  ) {}
 
   async getDashboard(travelId: string): Promise<DashboardResponse> {
     const [travelData, memberSums, categorySums] = await Promise.all([
-      this.prisma.travel.findUnique({
-        where: { id: travelId },
-        include: {
-          members: { include: { user: true } },
-          categories: true,
-        },
-      }),
-      this.prisma.expense.groupBy({
-        by: ['memberId'],
-        where: { travelId },
-        _sum: { amount: true },
-      }),
-      this.prisma.expense.groupBy({
-        by: ['categoryId'],
-        where: { travelId },
-        _sum: { amount: true },
-      }),
+      this.dashboardRepository.getTravelWithMembersAndCategories(travelId),
+      this.dashboardRepository.getSpendingByMember(travelId),
+      this.dashboardRepository.getSpendingByCategory(travelId),
     ]);
 
     if (!travelData) {
-      throw new NotFoundException('Travel not found');
+      throw new EntityNotFoundError('Travel');
     }
 
     const memberSpendingMap = new Map<string, number>();
     for (const entry of memberSums) {
-      if (entry.memberId) {
-        memberSpendingMap.set(entry.memberId, Number(entry._sum.amount ?? 0));
-      }
+      memberSpendingMap.set(entry.memberId, entry.totalSpent);
     }
 
     const categorySpendingMap = new Map<string, number>();
     for (const entry of categorySums) {
-      categorySpendingMap.set(entry.categoryId, Number(entry._sum.amount ?? 0));
+      categorySpendingMap.set(entry.categoryId, entry.totalSpent);
     }
 
     const memberSpending: MemberSpendingItem[] = travelData.members.map((member) => ({
@@ -58,27 +47,25 @@ export class DashboardService {
 
     const categorySpending: CategorySpendingItem[] = travelData.categories.map((category) => {
       const totalSpent = categorySpendingMap.get(category.id) ?? 0;
-      const budgetLimit = category.budgetLimit ? Number(category.budgetLimit) : null;
       return {
         categoryId: category.id,
         name: category.name,
         icon: category.icon,
         color: category.color,
         totalSpent,
-        budgetLimit,
-        status: computeAlertStatus(totalSpent, budgetLimit),
+        budgetLimit: category.budgetLimit,
+        status: computeAlertStatus(totalSpent, category.budgetLimit),
       };
     });
 
     const totalSpent = categorySpending.reduce((sum, cat) => sum + cat.totalSpent, 0);
-    const budget = Number(travelData.budget);
 
     return {
       currency: travelData.currency,
       overall: {
-        budget,
+        budget: travelData.budget,
         totalSpent,
-        status: computeAlertStatus(totalSpent, budget),
+        status: computeAlertStatus(totalSpent, travelData.budget),
       },
       memberSpending,
       categorySpending,

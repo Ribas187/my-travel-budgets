@@ -1,91 +1,48 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Inject, Injectable } from '@nestjs/common';
 
 import type { CreateTravelDto } from './dto/create-travel.dto';
 import type { UpdateTravelDto } from './dto/update-travel.dto';
+import type { ITravelRepository } from './repository/travel.repository.interface';
 
-import { PrismaService } from '@/modules/prisma/prisma.service';
+import { TRAVEL_REPOSITORY } from '@/modules/common/database';
+import { EntityNotFoundError } from '@/modules/common/exceptions';
 
 @Injectable()
 export class TravelsService {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(
+    @Inject(TRAVEL_REPOSITORY)
+    private readonly travelRepository: ITravelRepository,
+  ) {}
 
   async createTravel(userId: string, dto: CreateTravelDto) {
-    return this.prisma.$transaction(async (tx) => {
-      const travel = await tx.travel.create({
-        data: {
-          name: dto.name,
-          description: dto.description,
-          imageUrl: dto.imageUrl,
-          currency: dto.currency,
-          budget: dto.budget,
-          startDate: new Date(dto.startDate),
-          endDate: new Date(dto.endDate),
-          createdById: userId,
-        },
-      });
-
-      await tx.travelMember.create({
-        data: {
-          travelId: travel.id,
-          userId,
-          role: 'owner',
-        },
-      });
-
-      return travel;
-    });
+    return this.travelRepository.createWithOwner(userId, dto);
   }
 
   async findAllByUser(userId: string) {
-    return this.prisma.travel.findMany({
-      where: {
-        members: {
-          some: { userId },
-        },
-      },
-      orderBy: { startDate: 'desc' },
-    });
+    return this.travelRepository.findAllByUser(userId);
   }
 
   async findOne(travelId: string) {
-    const travel = await this.prisma.travel.findUnique({
-      where: { id: travelId },
-      include: {
-        members: {
-          include: {
-            user: {
-              select: { id: true, email: true, name: true, avatarUrl: true },
-            },
-          },
-        },
-        categories: {
-          orderBy: { createdAt: 'asc' },
-        },
-      },
-    });
+    const travel = await this.travelRepository.findOneWithDetails(travelId);
 
     if (!travel) {
-      throw new NotFoundException('Travel not found');
+      throw new EntityNotFoundError('Travel');
     }
 
-    const result = await this.prisma.expense.aggregate({
-      where: { travelId },
-      _sum: { amount: true },
-    });
-
-    const totalSpent = result._sum.amount?.toNumber() ?? 0;
+    const totalSpent = await this.travelRepository.getTotalSpent(travelId);
+    const budget = Number(travel.budget);
 
     return {
       ...travel,
-      budget: travel.budget.toNumber(),
+      budget,
       categories: travel.categories.map((c) => ({
         ...c,
-        budgetLimit: c.budgetLimit?.toNumber() ?? null,
+        budgetLimit: c.budgetLimit != null ? Number(c.budgetLimit) : null,
       })),
       summary: {
         totalSpent,
-        budget: travel.budget.toNumber(),
-        remaining: travel.budget.toNumber() - totalSpent,
+        budget,
+        remaining: budget - totalSpent,
       },
     };
   }
@@ -99,15 +56,10 @@ export class TravelsService {
     if (dto.startDate !== undefined) data.startDate = new Date(dto.startDate);
     if (dto.endDate !== undefined) data.endDate = new Date(dto.endDate);
 
-    return this.prisma.travel.update({
-      where: { id: travelId },
-      data,
-    });
+    return this.travelRepository.update(travelId, data);
   }
 
   async remove(travelId: string) {
-    await this.prisma.travel.delete({
-      where: { id: travelId },
-    });
+    await this.travelRepository.remove(travelId);
   }
 }

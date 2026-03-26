@@ -1,10 +1,12 @@
-import { Injectable, InternalServerErrorException, Logger, NotFoundException } from '@nestjs/common';
+import { Inject, Injectable, InternalServerErrorException, Logger } from '@nestjs/common';
 
 import type { UserMeDto } from './dto/user-me.dto';
 import type { UpdateMeDto } from './dto/update-me.dto';
 import type { SetMainTravelDto } from './dto/set-main-travel.dto';
+import type { IUserRepository } from './repository/user.repository.interface';
 
-import { PrismaService } from '@/modules/prisma/prisma.service';
+import { USER_REPOSITORY } from '@/modules/common/database';
+import { EntityNotFoundError } from '@/modules/common/exceptions';
 import { CloudinaryService } from '@/modules/cloudinary/cloudinary.service';
 
 const AVATAR_FOLDER = 'avatars';
@@ -14,7 +16,8 @@ export class UsersService {
   private readonly logger = new Logger(UsersService.name);
 
   constructor(
-    private readonly prisma: PrismaService,
+    @Inject(USER_REPOSITORY)
+    private readonly userRepository: IUserRepository,
     private readonly cloudinary: CloudinaryService,
   ) {}
 
@@ -39,12 +42,10 @@ export class UsersService {
   }
 
   async getMe(userId: string): Promise<UserMeDto> {
-    const user = await this.prisma.user.findUnique({
-      where: { id: userId },
-    });
+    const user = await this.userRepository.findById(userId);
 
     if (!user) {
-      throw new NotFoundException('User not found');
+      throw new EntityNotFoundError('User');
     }
 
     return this.toUserMeDto(user);
@@ -55,40 +56,29 @@ export class UsersService {
     if (input.name !== undefined) data.name = input.name;
     if (input.avatarUrl !== undefined) data.avatarUrl = input.avatarUrl;
 
-    const user = await this.prisma.user.update({
-      where: { id: userId },
-      data,
-    });
+    const user = await this.userRepository.update(userId, data);
 
     return this.toUserMeDto(user);
   }
 
   async setMainTravel(userId: string, dto: SetMainTravelDto): Promise<UserMeDto> {
     if (dto.travelId !== null) {
-      const membership = await this.prisma.travelMember.findFirst({
-        where: {
-          travelId: dto.travelId,
-          userId,
-        },
-      });
+      const isMember = await this.userRepository.isMemberOfTravel(userId, dto.travelId);
 
-      if (!membership) {
-        throw new NotFoundException('Travel not found');
+      if (!isMember) {
+        throw new EntityNotFoundError('Travel');
       }
     }
 
-    const user = await this.prisma.user.update({
-      where: { id: userId },
-      data: { mainTravelId: dto.travelId },
-    });
+    const user = await this.userRepository.update(userId, { mainTravelId: dto.travelId });
 
     return this.toUserMeDto(user);
   }
 
   async uploadAvatar(userId: string, file: Express.Multer.File): Promise<UserMeDto> {
-    const currentUser = await this.prisma.user.findUnique({ where: { id: userId } });
+    const currentUser = await this.userRepository.findById(userId);
     if (!currentUser) {
-      throw new NotFoundException('User not found');
+      throw new EntityNotFoundError('User');
     }
 
     // Delete previous avatar from Cloudinary if exists
@@ -107,9 +97,8 @@ export class UsersService {
       throw new InternalServerErrorException('Failed to upload avatar');
     }
 
-    const user = await this.prisma.user.update({
-      where: { id: userId },
-      data: { avatarUrl: uploadResult.secure_url },
+    const user = await this.userRepository.update(userId, {
+      avatarUrl: uploadResult.secure_url,
     });
 
     this.logger.log(`Avatar uploaded for user ${userId}: ${uploadResult.public_id}`);
@@ -117,9 +106,9 @@ export class UsersService {
   }
 
   async removeAvatar(userId: string): Promise<UserMeDto> {
-    const currentUser = await this.prisma.user.findUnique({ where: { id: userId } });
+    const currentUser = await this.userRepository.findById(userId);
     if (!currentUser) {
-      throw new NotFoundException('User not found');
+      throw new EntityNotFoundError('User');
     }
 
     if (currentUser.avatarUrl) {
@@ -130,10 +119,7 @@ export class UsersService {
       }
     }
 
-    const user = await this.prisma.user.update({
-      where: { id: userId },
-      data: { avatarUrl: null },
-    });
+    const user = await this.userRepository.update(userId, { avatarUrl: null });
 
     this.logger.log(`Avatar removed for user ${userId}`);
     return this.toUserMeDto(user);

@@ -1,5 +1,4 @@
 import { config as loadEnv } from 'dotenv';
-import { ForbiddenException, BadRequestException } from '@nestjs/common';
 import type { TestingModule } from '@nestjs/testing';
 import { Test } from '@nestjs/testing';
 import { ConfigModule } from '@nestjs/config';
@@ -8,6 +7,9 @@ import { validateEnv } from '@/config/env.validation';
 import { PrismaModule } from '@/modules/prisma/prisma.module';
 import { PrismaService } from '@/modules/prisma/prisma.service';
 import { ExpensesService } from '@/modules/expenses/expenses.service';
+import { PrismaExpenseRepository } from '@/modules/expenses/repository/expense.repository.prisma';
+import { EXPENSE_REPOSITORY } from '@/modules/common/database';
+import { BusinessValidationError, ForbiddenError } from '@/modules/common/exceptions';
 
 describe('Expenses integration tests', () => {
   let moduleRef: TestingModule;
@@ -41,7 +43,10 @@ describe('Expenses integration tests', () => {
         }),
         PrismaModule,
       ],
-      providers: [ExpensesService],
+      providers: [
+        ExpensesService,
+        { provide: EXPENSE_REPOSITORY, useClass: PrismaExpenseRepository },
+      ],
     }).compile();
 
     await moduleRef.init();
@@ -115,11 +120,11 @@ describe('Expenses integration tests', () => {
       expect(expense.memberId).toBe(ownerMember.id);
       expect(expense.travelId).toBe(travel.id);
       expect(expense.categoryId).toBe(category.id);
-      expect(expense.amount).toBe(50);
+      expect(Number(expense.amount)).toBe(50);
       expect(expense.description).toBe('Lunch');
     });
 
-    it('throws BadRequestException when categoryId does not belong to travel (400)', async () => {
+    it('throws BusinessValidationError when categoryId does not belong to travel', async () => {
       const owner = await createUser('owner@test.com');
       const { travel, ownerMember } = await createTravelWithOwner(owner.id);
 
@@ -135,7 +140,7 @@ describe('Expenses integration tests', () => {
           description: 'Lunch',
           date: '2026-06-02',
         }),
-      ).rejects.toThrow(BadRequestException);
+      ).rejects.toThrow(BusinessValidationError);
     });
   });
 
@@ -313,7 +318,7 @@ describe('Expenses integration tests', () => {
       });
 
       expect(updated.description).toBe('Updated Lunch');
-      expect(updated.amount).toBe(60);
+      expect(Number(updated.amount)).toBe(60);
     });
 
     it("allows the owner to update another member's expense (owner override)", async () => {
@@ -337,7 +342,7 @@ describe('Expenses integration tests', () => {
       expect(updated.description).toBe('Owner corrected');
     });
 
-    it("throws ForbiddenException when non-owner tries to update another member's expense (403)", async () => {
+    it("throws ForbiddenError when non-owner tries to update another member's expense", async () => {
       const ownerUser = await createUser('owner@test.com');
       const { travel } = await createTravelWithOwner(ownerUser.id);
       const memberUser1 = await createUser('member1@test.com');
@@ -355,10 +360,10 @@ describe('Expenses integration tests', () => {
 
       await expect(
         expensesService.update(expense.id, member2, { description: 'Unauthorized edit' }),
-      ).rejects.toThrow(ForbiddenException);
+      ).rejects.toThrow(ForbiddenError);
     });
 
-    it('throws BadRequestException when updating with invalid categoryId (400)', async () => {
+    it('throws BusinessValidationError when updating with invalid categoryId', async () => {
       const owner = await createUser('owner@test.com');
       const { travel, ownerMember } = await createTravelWithOwner(owner.id);
       const category = await createCategory(travel.id);
@@ -374,7 +379,7 @@ describe('Expenses integration tests', () => {
         expensesService.update(expense.id, ownerMember, {
           categoryId: '00000000-0000-0000-0000-000000000000',
         }),
-      ).rejects.toThrow(BadRequestException);
+      ).rejects.toThrow(BusinessValidationError);
     });
   });
 
@@ -417,7 +422,7 @@ describe('Expenses integration tests', () => {
       expect(found).toBeNull();
     });
 
-    it("throws ForbiddenException when non-owner tries to delete another member's expense (403)", async () => {
+    it("throws ForbiddenError when non-owner tries to delete another member's expense", async () => {
       const ownerUser = await createUser('owner@test.com');
       const { travel } = await createTravelWithOwner(ownerUser.id);
       const memberUser1 = await createUser('member1@test.com');
@@ -433,7 +438,7 @@ describe('Expenses integration tests', () => {
         date: '2026-06-02',
       });
 
-      await expect(expensesService.remove(expense.id, member2)).rejects.toThrow(ForbiddenException);
+      await expect(expensesService.remove(expense.id, member2)).rejects.toThrow(ForbiddenError);
     });
   });
 });

@@ -7,6 +7,8 @@ import { validateEnv } from '@/config/env.validation';
 import { PrismaModule } from '@/modules/prisma/prisma.module';
 import { PrismaService } from '@/modules/prisma/prisma.service';
 import { TravelsService } from '@/modules/travels/travels.service';
+import { PrismaTravelRepository } from '@/modules/travels/repository/travel.repository.prisma';
+import { TRAVEL_REPOSITORY } from '@/modules/common/database';
 
 describe('Travels integration tests', () => {
   let moduleRef: TestingModule;
@@ -40,7 +42,10 @@ describe('Travels integration tests', () => {
         }),
         PrismaModule,
       ],
-      providers: [TravelsService],
+      providers: [
+        TravelsService,
+        { provide: TRAVEL_REPOSITORY, useClass: PrismaTravelRepository },
+      ],
     }).compile();
 
     await moduleRef.init();
@@ -227,7 +232,7 @@ describe('Travels integration tests', () => {
       expect(result.summary.remaining).toBeCloseTo(2648.75, 2);
     });
 
-    it('throws NotFoundException for non-existent travel', async () => {
+    it('throws EntityNotFoundError for non-existent travel', async () => {
       await expect(travelsService.findOne('00000000-0000-0000-0000-000000000000')).rejects.toThrow(
         'Travel not found',
       );

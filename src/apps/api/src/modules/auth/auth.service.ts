@@ -1,11 +1,14 @@
 import { randomBytes } from 'node:crypto';
 
-import { Injectable, Logger, UnauthorizedException } from '@nestjs/common';
+import { Inject, Injectable, Logger } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 
+import type { IAuthRepository } from './repository/auth.repository.interface';
+
 import type { JwtSessionPayload } from '@/modules/common/auth';
+import { AUTH_REPOSITORY } from '@/modules/common/database';
 import { EmailService } from '@/modules/common/email/email.service';
-import { PrismaService } from '@/modules/prisma/prisma.service';
+import { UnauthorizedError } from '@/modules/common/exceptions';
 
 export type { JwtSessionPayload } from '@/modules/common/auth';
 
@@ -14,7 +17,8 @@ export class AuthService {
   private readonly logger = new Logger(AuthService.name);
 
   constructor(
-    private readonly prisma: PrismaService,
+    @Inject(AUTH_REPOSITORY)
+    private readonly authRepository: IAuthRepository,
     private readonly email: EmailService,
     private readonly jwt: JwtService,
   ) {}
@@ -23,8 +27,10 @@ export class AuthService {
     const token = randomBytes(32).toString('hex');
     const expiresAt = new Date(Date.now() + 10 * 60 * 1000);
 
-    await this.prisma.magicLink.create({
-      data: { email: input.email, token, expiresAt },
+    await this.authRepository.createMagicLink({
+      email: input.email,
+      token,
+      expiresAt,
     });
 
     try {
@@ -35,40 +41,31 @@ export class AuthService {
   }
 
   async verifyMagicLink(input: { token: string }): Promise<{ accessToken: string }> {
-    const magicLink = await this.prisma.magicLink.findUnique({
-      where: { token: input.token },
-    });
+    const magicLink = await this.authRepository.findMagicLinkByToken(input.token);
 
     if (!magicLink) {
       this.logger.warn('Magic link not found');
-      throw new UnauthorizedException('Invalid token');
+      throw new UnauthorizedError('Invalid token');
     }
 
     if (magicLink.expiresAt < new Date()) {
       this.logger.warn('Magic link expired');
-      throw new UnauthorizedException('Token expired');
+      throw new UnauthorizedError('Token expired');
     }
 
     if (magicLink.usedAt !== null) {
       this.logger.warn('Magic link already used');
-      throw new UnauthorizedException('Token already used');
+      throw new UnauthorizedError('Token already used');
     }
 
-    const result = await this.prisma.magicLink.updateMany({
-      where: { token: input.token, usedAt: null },
-      data: { usedAt: new Date() },
-    });
+    const consumed = await this.authRepository.consumeMagicLink(input.token);
 
-    if (result.count === 0) {
+    if (!consumed) {
       this.logger.warn('Magic link consumed by concurrent request');
-      throw new UnauthorizedException('Token already used');
+      throw new UnauthorizedError('Token already used');
     }
 
-    const user = await this.prisma.user.upsert({
-      where: { email: magicLink.email },
-      create: { email: magicLink.email, name: '' },
-      update: {},
-    });
+    const user = await this.authRepository.upsertUserByEmail(magicLink.email);
 
     const payload: JwtSessionPayload = { sub: user.id, email: user.email };
     const accessToken = this.jwt.sign(payload);

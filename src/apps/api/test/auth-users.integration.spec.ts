@@ -9,8 +9,12 @@ import { validateEnv } from '@/config/env.validation';
 import { PrismaModule } from '@/modules/prisma/prisma.module';
 import { PrismaService } from '@/modules/prisma/prisma.service';
 import { AuthService } from '@/modules/auth/auth.service';
+import { PrismaAuthRepository } from '@/modules/auth/repository/auth.repository.prisma';
 import { UsersService } from '@/modules/users/users.service';
+import { PrismaUserRepository } from '@/modules/users/repository/user.repository.prisma';
+import { AUTH_REPOSITORY, USER_REPOSITORY } from '@/modules/common/database';
 import { EmailService } from '@/modules/common/email/email.service';
+import { CloudinaryService } from '@/modules/cloudinary/cloudinary.service';
 
 const mockSendMagicLink = jest.fn().mockResolvedValue(undefined);
 
@@ -58,7 +62,13 @@ describe('Auth & Users integration tests', () => {
       ],
       providers: [
         AuthService,
+        { provide: AUTH_REPOSITORY, useClass: PrismaAuthRepository },
         UsersService,
+        { provide: USER_REPOSITORY, useClass: PrismaUserRepository },
+        {
+          provide: CloudinaryService,
+          useValue: {},
+        },
         {
           provide: EmailService,
           useValue: { sendMagicLink: mockSendMagicLink },

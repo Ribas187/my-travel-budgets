@@ -9,6 +9,8 @@ import { validateEnv } from '@/config/env.validation';
 import { PrismaModule } from '@/modules/prisma/prisma.module';
 import { PrismaService } from '@/modules/prisma/prisma.service';
 import { AuthService } from '@/modules/auth/auth.service';
+import { PrismaAuthRepository } from '@/modules/auth/repository/auth.repository.prisma';
+import { AUTH_REPOSITORY } from '@/modules/common/database';
 import { EmailService } from '@/modules/common/email/email.service';
 
 const mockSendMagicLink = jest.fn().mockResolvedValue(undefined);
@@ -56,6 +58,7 @@ describe('Auth integration tests', () => {
       ],
       providers: [
         AuthService,
+        { provide: AUTH_REPOSITORY, useClass: PrismaAuthRepository },
         {
           provide: EmailService,
           useValue: { sendMagicLink: mockSendMagicLink },

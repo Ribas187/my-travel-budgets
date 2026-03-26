@@ -1,18 +1,21 @@
-import {
-  BadRequestException,
-  ConflictException,
-  Injectable,
-  NotFoundException,
-} from '@nestjs/common';
-import { Prisma } from '@prisma/client';
+import { Inject, Injectable } from '@nestjs/common';
 
 import type { AddMemberDto } from './dto/add-member.dto';
+import type { IMemberRepository } from './repository/member.repository.interface';
 
-import { PrismaService } from '@/modules/prisma/prisma.service';
+import { MEMBER_REPOSITORY } from '@/modules/common/database';
+import {
+  BusinessValidationError,
+  ConflictError,
+  EntityNotFoundError,
+} from '@/modules/common/exceptions';
 
 @Injectable()
 export class MembersService {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(
+    @Inject(MEMBER_REPOSITORY)
+    private readonly memberRepository: IMemberRepository,
+  ) {}
 
   async addMember(travelId: string, dto: AddMemberDto) {
     if (dto.email) {
@@ -23,55 +26,38 @@ export class MembersService {
   }
 
   async removeMember(travelId: string, memberId: string) {
-    const member = await this.prisma.travelMember.findFirst({
-      where: { id: memberId, travelId },
-    });
+    const member = await this.memberRepository.findByIdAndTravel(memberId, travelId);
 
     if (!member) {
-      throw new NotFoundException('Member not found');
+      throw new EntityNotFoundError('Member');
     }
 
     if (member.role === 'owner') {
-      throw new BadRequestException('Cannot remove the travel owner');
+      throw new BusinessValidationError('Cannot remove the travel owner');
     }
 
-    await this.prisma.travelMember.delete({
-      where: { id: memberId },
-    });
+    await this.memberRepository.delete(memberId);
   }
 
   private async addByEmail(travelId: string, email: string) {
-    const user = await this.prisma.user.findUnique({
-      where: { email },
-    });
+    const user = await this.memberRepository.findUserByEmail(email);
 
     if (!user) {
-      throw new NotFoundException('User not found. You can add them as a named guest instead.');
+      throw new EntityNotFoundError('User not found. You can add them as a named guest instead.');
     }
 
-    try {
-      return await this.prisma.travelMember.create({
-        data: {
-          travelId,
-          userId: user.id,
-          role: 'member',
-        },
-      });
-    } catch (error) {
-      if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === 'P2002') {
-        throw new ConflictException('User is already a member of this travel');
-      }
-      throw error;
-    }
+    return this.memberRepository.createMember({
+      travelId,
+      userId: user.id,
+      role: 'member',
+    });
   }
 
   private async addGuest(travelId: string, guestName: string) {
-    return this.prisma.travelMember.create({
-      data: {
-        travelId,
-        guestName,
-        role: 'member',
-      },
+    return this.memberRepository.createMember({
+      travelId,
+      guestName,
+      role: 'member',
     });
   }
 }

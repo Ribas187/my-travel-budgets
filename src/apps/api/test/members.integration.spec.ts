@@ -4,9 +4,11 @@ import { Test } from '@nestjs/testing';
 import { ConfigModule } from '@nestjs/config';
 
 import { validateEnv } from '@/config/env.validation';
+import { MEMBER_REPOSITORY } from '@/modules/common/database';
 import { PrismaModule } from '@/modules/prisma/prisma.module';
 import { PrismaService } from '@/modules/prisma/prisma.service';
 import { MembersService } from '@/modules/members/members.service';
+import { PrismaMemberRepository } from '@/modules/members/repository/member.repository.prisma';
 
 describe('Members integration tests', () => {
   let moduleRef: TestingModule;
@@ -40,7 +42,10 @@ describe('Members integration tests', () => {
         }),
         PrismaModule,
       ],
-      providers: [MembersService],
+      providers: [
+        MembersService,
+        { provide: MEMBER_REPOSITORY, useClass: PrismaMemberRepository },
+      ],
     }).compile();
 
     await moduleRef.init();
@@ -105,7 +110,7 @@ describe('Members integration tests', () => {
       expect(member.role).toBe('member');
     });
 
-    it('throws NotFoundException for unregistered email', async () => {
+    it('throws EntityNotFoundError for unregistered email', async () => {
       const owner = await createUser('owner@test.com');
       const travel = await createTravelWithOwner(owner.id);
 
@@ -129,7 +134,7 @@ describe('Members integration tests', () => {
       expect(member.role).toBe('member');
     });
 
-    it('throws ConflictException when adding duplicate member', async () => {
+    it('throws ConflictError when adding duplicate member', async () => {
       const owner = await createUser('owner@test.com');
       await createUser('member@test.com');
       const travel = await createTravelWithOwner(owner.id);
@@ -162,7 +167,7 @@ describe('Members integration tests', () => {
       expect(remaining[0].role).toBe('owner');
     });
 
-    it('throws BadRequestException when removing the owner', async () => {
+    it('throws BusinessValidationError when removing the owner', async () => {
       const owner = await createUser('owner@test.com');
       const travel = await createTravelWithOwner(owner.id);
 
@@ -175,7 +180,7 @@ describe('Members integration tests', () => {
       );
     });
 
-    it('throws NotFoundException for non-existent member', async () => {
+    it('throws EntityNotFoundError for non-existent member', async () => {
       const owner = await createUser('owner@test.com');
       const travel = await createTravelWithOwner(owner.id);
 

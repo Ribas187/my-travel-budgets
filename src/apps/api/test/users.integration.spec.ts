@@ -4,9 +4,17 @@ import { Test } from '@nestjs/testing';
 import { ConfigModule } from '@nestjs/config';
 
 import { validateEnv } from '@/config/env.validation';
+import { CloudinaryService } from '@/modules/cloudinary/cloudinary.service';
+import { USER_REPOSITORY } from '@/modules/common/database';
 import { PrismaModule } from '@/modules/prisma/prisma.module';
 import { PrismaService } from '@/modules/prisma/prisma.service';
 import { UsersService } from '@/modules/users/users.service';
+import { PrismaUserRepository } from '@/modules/users/repository/user.repository.prisma';
+
+const cloudinaryServiceMock = {
+  upload: jest.fn(),
+  destroy: jest.fn(),
+};
 
 describe('Users integration tests', () => {
   let moduleRef: TestingModule;
@@ -40,7 +48,11 @@ describe('Users integration tests', () => {
         }),
         PrismaModule,
       ],
-      providers: [UsersService],
+      providers: [
+        UsersService,
+        { provide: USER_REPOSITORY, useClass: PrismaUserRepository },
+        { provide: CloudinaryService, useValue: cloudinaryServiceMock },
+      ],
     }).compile();
 
     await moduleRef.init();

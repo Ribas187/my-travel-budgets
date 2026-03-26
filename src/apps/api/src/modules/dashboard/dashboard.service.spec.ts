@@ -1,23 +1,22 @@
 import { Test } from '@nestjs/testing';
-import { NotFoundException } from '@nestjs/common';
-import { Prisma } from '@prisma/client';
 
 import { DashboardService } from './dashboard.service';
+import type { IDashboardRepository } from './repository/dashboard.repository.interface';
 
-import { PrismaService } from '@/modules/prisma/prisma.service';
+import { DASHBOARD_REPOSITORY } from '@/modules/common/database';
+import { EntityNotFoundError } from '@/modules/common/exceptions';
 
-const Decimal = Prisma.Decimal;
-
-const mockPrisma = {
-  travel: { findUnique: jest.fn() },
-  expense: { groupBy: jest.fn() },
+const mockRepository: jest.Mocked<IDashboardRepository> = {
+  getTravelWithMembersAndCategories: jest.fn(),
+  getSpendingByMember: jest.fn(),
+  getSpendingByCategory: jest.fn(),
 };
 
 function makeTravelData(overrides: Record<string, unknown> = {}) {
   return {
     id: 'travel-1',
     currency: 'EUR',
-    budget: new Decimal('5000.00'),
+    budget: 5000,
     members: [
       {
         id: 'member-1',
@@ -38,7 +37,7 @@ function makeTravelData(overrides: Record<string, unknown> = {}) {
         name: 'Food',
         icon: '🍔',
         color: '#FF0000',
-        budgetLimit: new Decimal('1000.00'),
+        budgetLimit: 1000,
       },
       {
         id: 'cat-2',
@@ -57,7 +56,10 @@ describe('DashboardService', () => {
 
   beforeEach(async () => {
     const module = await Test.createTestingModule({
-      providers: [DashboardService, { provide: PrismaService, useValue: mockPrisma }],
+      providers: [
+        DashboardService,
+        { provide: DASHBOARD_REPOSITORY, useValue: mockRepository },
+      ],
     }).compile();
 
     service = module.get(DashboardService);
@@ -65,16 +67,15 @@ describe('DashboardService', () => {
   });
 
   it('returns correct member spending aggregation with multiple members', async () => {
-    mockPrisma.travel.findUnique.mockResolvedValue(makeTravelData());
-    mockPrisma.expense.groupBy
-      .mockResolvedValueOnce([
-        { memberId: 'member-1', _sum: { amount: new Decimal('300.00') } },
-        { memberId: 'member-2', _sum: { amount: new Decimal('200.00') } },
-      ])
-      .mockResolvedValueOnce([
-        { categoryId: 'cat-1', _sum: { amount: new Decimal('350.00') } },
-        { categoryId: 'cat-2', _sum: { amount: new Decimal('150.00') } },
-      ]);
+    mockRepository.getTravelWithMembersAndCategories.mockResolvedValue(makeTravelData());
+    mockRepository.getSpendingByMember.mockResolvedValue([
+      { memberId: 'member-1', totalSpent: 300 },
+      { memberId: 'member-2', totalSpent: 200 },
+    ]);
+    mockRepository.getSpendingByCategory.mockResolvedValue([
+      { categoryId: 'cat-1', totalSpent: 350 },
+      { categoryId: 'cat-2', totalSpent: 150 },
+    ]);
 
     const result = await service.getDashboard('travel-1');
 
@@ -85,10 +86,13 @@ describe('DashboardService', () => {
   });
 
   it('returns zero-amount entries for members with no expenses', async () => {
-    mockPrisma.travel.findUnique.mockResolvedValue(makeTravelData());
-    mockPrisma.expense.groupBy
-      .mockResolvedValueOnce([{ memberId: 'member-1', _sum: { amount: new Decimal('500.00') } }])
-      .mockResolvedValueOnce([{ categoryId: 'cat-1', _sum: { amount: new Decimal('500.00') } }]);
+    mockRepository.getTravelWithMembersAndCategories.mockResolvedValue(makeTravelData());
+    mockRepository.getSpendingByMember.mockResolvedValue([
+      { memberId: 'member-1', totalSpent: 500 },
+    ]);
+    mockRepository.getSpendingByCategory.mockResolvedValue([
+      { categoryId: 'cat-1', totalSpent: 500 },
+    ]);
 
     const result = await service.getDashboard('travel-1');
 
@@ -101,10 +105,11 @@ describe('DashboardService', () => {
   });
 
   it('returns correct category spending with budget limits', async () => {
-    mockPrisma.travel.findUnique.mockResolvedValue(makeTravelData());
-    mockPrisma.expense.groupBy.mockResolvedValueOnce([]).mockResolvedValueOnce([
-      { categoryId: 'cat-1', _sum: { amount: new Decimal('700.00') } },
-      { categoryId: 'cat-2', _sum: { amount: new Decimal('150.00') } },
+    mockRepository.getTravelWithMembersAndCategories.mockResolvedValue(makeTravelData());
+    mockRepository.getSpendingByMember.mockResolvedValue([]);
+    mockRepository.getSpendingByCategory.mockResolvedValue([
+      { categoryId: 'cat-1', totalSpent: 700 },
+      { categoryId: 'cat-2', totalSpent: 150 },
     ]);
 
     const result = await service.getDashboard('travel-1');
@@ -132,10 +137,11 @@ describe('DashboardService', () => {
   });
 
   it('computes ok status when spending < 80% of category limit', async () => {
-    mockPrisma.travel.findUnique.mockResolvedValue(makeTravelData());
-    mockPrisma.expense.groupBy
-      .mockResolvedValueOnce([])
-      .mockResolvedValueOnce([{ categoryId: 'cat-1', _sum: { amount: new Decimal('799.00') } }]);
+    mockRepository.getTravelWithMembersAndCategories.mockResolvedValue(makeTravelData());
+    mockRepository.getSpendingByMember.mockResolvedValue([]);
+    mockRepository.getSpendingByCategory.mockResolvedValue([
+      { categoryId: 'cat-1', totalSpent: 799 },
+    ]);
 
     const result = await service.getDashboard('travel-1');
 
@@ -144,10 +150,11 @@ describe('DashboardService', () => {
   });
 
   it('computes warning status when spending >= 80% and < 100% of category limit', async () => {
-    mockPrisma.travel.findUnique.mockResolvedValue(makeTravelData());
-    mockPrisma.expense.groupBy
-      .mockResolvedValueOnce([])
-      .mockResolvedValueOnce([{ categoryId: 'cat-1', _sum: { amount: new Decimal('800.00') } }]);
+    mockRepository.getTravelWithMembersAndCategories.mockResolvedValue(makeTravelData());
+    mockRepository.getSpendingByMember.mockResolvedValue([]);
+    mockRepository.getSpendingByCategory.mockResolvedValue([
+      { categoryId: 'cat-1', totalSpent: 800 },
+    ]);
 
     const result = await service.getDashboard('travel-1');
 
@@ -156,10 +163,11 @@ describe('DashboardService', () => {
   });
 
   it('computes exceeded status when spending >= 100% of category limit', async () => {
-    mockPrisma.travel.findUnique.mockResolvedValue(makeTravelData());
-    mockPrisma.expense.groupBy
-      .mockResolvedValueOnce([])
-      .mockResolvedValueOnce([{ categoryId: 'cat-1', _sum: { amount: new Decimal('1000.00') } }]);
+    mockRepository.getTravelWithMembersAndCategories.mockResolvedValue(makeTravelData());
+    mockRepository.getSpendingByMember.mockResolvedValue([]);
+    mockRepository.getSpendingByCategory.mockResolvedValue([
+      { categoryId: 'cat-1', totalSpent: 1000 },
+    ]);
 
     const result = await service.getDashboard('travel-1');
 
@@ -168,10 +176,11 @@ describe('DashboardService', () => {
   });
 
   it('returns ok for categories without a budget limit (null)', async () => {
-    mockPrisma.travel.findUnique.mockResolvedValue(makeTravelData());
-    mockPrisma.expense.groupBy
-      .mockResolvedValueOnce([])
-      .mockResolvedValueOnce([{ categoryId: 'cat-2', _sum: { amount: new Decimal('99999.00') } }]);
+    mockRepository.getTravelWithMembersAndCategories.mockResolvedValue(makeTravelData());
+    mockRepository.getSpendingByMember.mockResolvedValue([]);
+    mockRepository.getSpendingByCategory.mockResolvedValue([
+      { categoryId: 'cat-2', totalSpent: 99999 },
+    ]);
 
     const result = await service.getDashboard('travel-1');
 
@@ -180,10 +189,11 @@ describe('DashboardService', () => {
   });
 
   it('computes correct overall budget status', async () => {
-    mockPrisma.travel.findUnique.mockResolvedValue(makeTravelData());
-    mockPrisma.expense.groupBy.mockResolvedValueOnce([]).mockResolvedValueOnce([
-      { categoryId: 'cat-1', _sum: { amount: new Decimal('4000.00') } },
-      { categoryId: 'cat-2', _sum: { amount: new Decimal('500.00') } },
+    mockRepository.getTravelWithMembersAndCategories.mockResolvedValue(makeTravelData());
+    mockRepository.getSpendingByMember.mockResolvedValue([]);
+    mockRepository.getSpendingByCategory.mockResolvedValue([
+      { categoryId: 'cat-1', totalSpent: 4000 },
+      { categoryId: 'cat-2', totalSpent: 500 },
     ]);
 
     const result = await service.getDashboard('travel-1');
@@ -196,8 +206,9 @@ describe('DashboardService', () => {
   });
 
   it('handles travel with no expenses (all zeros)', async () => {
-    mockPrisma.travel.findUnique.mockResolvedValue(makeTravelData());
-    mockPrisma.expense.groupBy.mockResolvedValueOnce([]).mockResolvedValueOnce([]);
+    mockRepository.getTravelWithMembersAndCategories.mockResolvedValue(makeTravelData());
+    mockRepository.getSpendingByMember.mockResolvedValue([]);
+    mockRepository.getSpendingByCategory.mockResolvedValue([]);
 
     const result = await service.getDashboard('travel-1');
 
@@ -207,16 +218,18 @@ describe('DashboardService', () => {
     result.categorySpending.forEach((c) => expect(c.totalSpent).toBe(0));
   });
 
-  it('throws NotFoundException for non-existent travel', async () => {
-    mockPrisma.travel.findUnique.mockResolvedValue(null);
-    mockPrisma.expense.groupBy.mockResolvedValueOnce([]).mockResolvedValueOnce([]);
+  it('throws EntityNotFoundError for non-existent travel', async () => {
+    mockRepository.getTravelWithMembersAndCategories.mockResolvedValue(null);
+    mockRepository.getSpendingByMember.mockResolvedValue([]);
+    mockRepository.getSpendingByCategory.mockResolvedValue([]);
 
-    await expect(service.getDashboard('nonexistent')).rejects.toThrow(NotFoundException);
+    await expect(service.getDashboard('nonexistent')).rejects.toThrow(EntityNotFoundError);
   });
 
   it('uses correct display name (user name for registered, guestName for guests)', async () => {
-    mockPrisma.travel.findUnique.mockResolvedValue(makeTravelData());
-    mockPrisma.expense.groupBy.mockResolvedValueOnce([]).mockResolvedValueOnce([]);
+    mockRepository.getTravelWithMembersAndCategories.mockResolvedValue(makeTravelData());
+    mockRepository.getSpendingByMember.mockResolvedValue([]);
+    mockRepository.getSpendingByCategory.mockResolvedValue([]);
 
     const result = await service.getDashboard('travel-1');
 
@@ -225,8 +238,11 @@ describe('DashboardService', () => {
   });
 
   it('returns correct currency from the travel', async () => {
-    mockPrisma.travel.findUnique.mockResolvedValue(makeTravelData({ currency: 'USD' }));
-    mockPrisma.expense.groupBy.mockResolvedValueOnce([]).mockResolvedValueOnce([]);
+    mockRepository.getTravelWithMembersAndCategories.mockResolvedValue(
+      makeTravelData({ currency: 'USD' }),
+    );
+    mockRepository.getSpendingByMember.mockResolvedValue([]);
+    mockRepository.getSpendingByCategory.mockResolvedValue([]);
 
     const result = await service.getDashboard('travel-1');
 

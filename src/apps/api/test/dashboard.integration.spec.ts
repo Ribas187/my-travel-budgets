@@ -7,6 +7,8 @@ import { validateEnv } from '@/config/env.validation';
 import { PrismaModule } from '@/modules/prisma/prisma.module';
 import { PrismaService } from '@/modules/prisma/prisma.service';
 import { DashboardService } from '@/modules/dashboard/dashboard.service';
+import { PrismaDashboardRepository } from '@/modules/dashboard/repository/dashboard.repository.prisma';
+import { DASHBOARD_REPOSITORY } from '@/modules/common/database';
 
 describe('Dashboard integration tests', () => {
   let moduleRef: TestingModule;
@@ -40,7 +42,10 @@ describe('Dashboard integration tests', () => {
         }),
         PrismaModule,
       ],
-      providers: [DashboardService],
+      providers: [
+        DashboardService,
+        { provide: DASHBOARD_REPOSITORY, useClass: PrismaDashboardRepository },
+      ],
     }).compile();
 
     await moduleRef.init();

@@ -1,26 +1,25 @@
-import { BadRequestException, ConflictException, NotFoundException } from '@nestjs/common';
 import type { TestingModule } from '@nestjs/testing';
 import { Test } from '@nestjs/testing';
-import { Prisma } from '@prisma/client';
 
 import { MembersService } from './members.service';
 
-import { PrismaService } from '@/modules/prisma/prisma.service';
+import { MEMBER_REPOSITORY } from '@/modules/common/database';
+import {
+  BusinessValidationError,
+  ConflictError,
+  EntityNotFoundError,
+} from '@/modules/common/exceptions';
 
-const mockUserFindUnique = jest.fn();
-const mockTravelMemberCreate = jest.fn();
-const mockTravelMemberFindFirst = jest.fn();
-const mockTravelMemberDelete = jest.fn();
+const mockFindUserByEmail = jest.fn();
+const mockFindByIdAndTravel = jest.fn();
+const mockCreateMember = jest.fn();
+const mockDelete = jest.fn();
 
-const prismaServiceMock = {
-  user: {
-    findUnique: mockUserFindUnique,
-  },
-  travelMember: {
-    create: mockTravelMemberCreate,
-    findFirst: mockTravelMemberFindFirst,
-    delete: mockTravelMemberDelete,
-  },
+const memberRepositoryMock = {
+  findUserByEmail: mockFindUserByEmail,
+  findByIdAndTravel: mockFindByIdAndTravel,
+  createMember: mockCreateMember,
+  delete: mockDelete,
 };
 
 describe('MembersService', () => {
@@ -30,7 +29,10 @@ describe('MembersService', () => {
     jest.clearAllMocks();
 
     const module: TestingModule = await Test.createTestingModule({
-      providers: [MembersService, { provide: PrismaService, useValue: prismaServiceMock }],
+      providers: [
+        MembersService,
+        { provide: MEMBER_REPOSITORY, useValue: memberRepositoryMock },
+      ],
     }).compile();
 
     service = module.get<MembersService>(MembersService);
@@ -39,7 +41,7 @@ describe('MembersService', () => {
   describe('addMember', () => {
     it('adds a member by email when user is found', async () => {
       const user = { id: 'user-2', email: 'member@test.com', name: 'Member' };
-      mockUserFindUnique.mockResolvedValue(user);
+      mockFindUserByEmail.mockResolvedValue(user);
 
       const createdMember = {
         id: 'member-1',
@@ -47,30 +49,26 @@ describe('MembersService', () => {
         userId: 'user-2',
         role: 'member',
       };
-      mockTravelMemberCreate.mockResolvedValue(createdMember);
+      mockCreateMember.mockResolvedValue(createdMember);
 
       const result = await service.addMember('travel-1', {
         email: 'member@test.com',
       });
 
-      expect(mockUserFindUnique).toHaveBeenCalledWith({
-        where: { email: 'member@test.com' },
-      });
-      expect(mockTravelMemberCreate).toHaveBeenCalledWith({
-        data: {
-          travelId: 'travel-1',
-          userId: 'user-2',
-          role: 'member',
-        },
+      expect(mockFindUserByEmail).toHaveBeenCalledWith('member@test.com');
+      expect(mockCreateMember).toHaveBeenCalledWith({
+        travelId: 'travel-1',
+        userId: 'user-2',
+        role: 'member',
       });
       expect(result).toEqual(createdMember);
     });
 
-    it('throws NotFoundException when email does not match a registered user', async () => {
-      mockUserFindUnique.mockResolvedValue(null);
+    it('throws EntityNotFoundError when email does not match a registered user', async () => {
+      mockFindUserByEmail.mockResolvedValue(null);
 
       await expect(service.addMember('travel-1', { email: 'unknown@test.com' })).rejects.toThrow(
-        NotFoundException,
+        EntityNotFoundError,
       );
 
       await expect(service.addMember('travel-1', { email: 'unknown@test.com' })).rejects.toThrow(
@@ -78,18 +76,16 @@ describe('MembersService', () => {
       );
     });
 
-    it('throws ConflictException on duplicate member (P2002)', async () => {
+    it('throws ConflictError on duplicate member', async () => {
       const user = { id: 'user-2', email: 'member@test.com', name: 'Member' };
-      mockUserFindUnique.mockResolvedValue(user);
+      mockFindUserByEmail.mockResolvedValue(user);
 
-      const prismaError = new Prisma.PrismaClientKnownRequestError('Unique constraint violation', {
-        code: 'P2002',
-        clientVersion: '5.0.0',
-      });
-      mockTravelMemberCreate.mockRejectedValue(prismaError);
+      mockCreateMember.mockRejectedValue(
+        new ConflictError('User is already a member of this travel'),
+      );
 
       await expect(service.addMember('travel-1', { email: 'member@test.com' })).rejects.toThrow(
-        ConflictException,
+        ConflictError,
       );
     });
 
@@ -101,29 +97,27 @@ describe('MembersService', () => {
         userId: null,
         role: 'member',
       };
-      mockTravelMemberCreate.mockResolvedValue(createdMember);
+      mockCreateMember.mockResolvedValue(createdMember);
 
       const result = await service.addMember('travel-1', {
         guestName: 'John Doe',
       });
 
-      expect(mockTravelMemberCreate).toHaveBeenCalledWith({
-        data: {
-          travelId: 'travel-1',
-          guestName: 'John Doe',
-          role: 'member',
-        },
+      expect(mockCreateMember).toHaveBeenCalledWith({
+        travelId: 'travel-1',
+        guestName: 'John Doe',
+        role: 'member',
       });
       expect(result.userId).toBeNull();
       expect(result.guestName).toBe('John Doe');
     });
 
-    it('re-throws non-P2002 Prisma errors', async () => {
+    it('re-throws non-conflict errors', async () => {
       const user = { id: 'user-2', email: 'member@test.com', name: 'Member' };
-      mockUserFindUnique.mockResolvedValue(user);
+      mockFindUserByEmail.mockResolvedValue(user);
 
       const genericError = new Error('Database connection lost');
-      mockTravelMemberCreate.mockRejectedValue(genericError);
+      mockCreateMember.mockRejectedValue(genericError);
 
       await expect(service.addMember('travel-1', { email: 'member@test.com' })).rejects.toThrow(
         'Database connection lost',
@@ -133,34 +127,30 @@ describe('MembersService', () => {
 
   describe('removeMember', () => {
     it('removes a member successfully', async () => {
-      mockTravelMemberFindFirst.mockResolvedValue({
+      mockFindByIdAndTravel.mockResolvedValue({
         id: 'member-2',
         travelId: 'travel-1',
         userId: 'user-2',
         role: 'member',
       });
-      mockTravelMemberDelete.mockResolvedValue({});
+      mockDelete.mockResolvedValue(undefined);
 
       await service.removeMember('travel-1', 'member-2');
 
-      expect(mockTravelMemberFindFirst).toHaveBeenCalledWith({
-        where: { id: 'member-2', travelId: 'travel-1' },
-      });
-      expect(mockTravelMemberDelete).toHaveBeenCalledWith({
-        where: { id: 'member-2' },
-      });
+      expect(mockFindByIdAndTravel).toHaveBeenCalledWith('member-2', 'travel-1');
+      expect(mockDelete).toHaveBeenCalledWith('member-2');
     });
 
-    it('throws NotFoundException when member does not exist', async () => {
-      mockTravelMemberFindFirst.mockResolvedValue(null);
+    it('throws EntityNotFoundError when member does not exist', async () => {
+      mockFindByIdAndTravel.mockResolvedValue(null);
 
       await expect(service.removeMember('travel-1', 'non-existent')).rejects.toThrow(
-        NotFoundException,
+        EntityNotFoundError,
       );
     });
 
-    it('throws BadRequestException when trying to remove the owner', async () => {
-      mockTravelMemberFindFirst.mockResolvedValue({
+    it('throws BusinessValidationError when trying to remove the owner', async () => {
+      mockFindByIdAndTravel.mockResolvedValue({
         id: 'member-1',
         travelId: 'travel-1',
         userId: 'user-1',
@@ -168,7 +158,7 @@ describe('MembersService', () => {
       });
 
       await expect(service.removeMember('travel-1', 'member-1')).rejects.toThrow(
-        BadRequestException,
+        BusinessValidationError,
       );
 
       await expect(service.removeMember('travel-1', 'member-1')).rejects.toThrow(
