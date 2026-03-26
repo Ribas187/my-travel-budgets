@@ -105,15 +105,15 @@ test.describe('Create travel', () => {
     // Fill the trip form
     await page.locator('[data-testid="trip-name-input"]').fill('Summer in Europe');
     await page.locator('[data-testid="trip-destination-input"]').fill('Paris, Rome, Barcelona');
-    await page.locator('[data-testid="trip-start-date-input"]').fill('2026-06-01');
-    await page.locator('[data-testid="trip-end-date-input"]').fill('2026-06-15');
+    await page.locator('[data-testid="trip-start-date-input-input"]').fill('2026-06-01');
+    await page.locator('[data-testid="trip-end-date-input-input"]').fill('2026-06-15');
 
     // Select currency
     await page.locator('[data-testid="trip-currency-select"]').click();
     await page.locator('[data-testid="currency-option-EUR"]').click();
 
-    // Set budget
-    await page.locator('[data-testid="trip-budget-input"]').fill('3000');
+    // Set budget (calculator-style: type "300000" for $3000.00)
+    await page.locator('[data-testid="trip-budget-input"]').fill('300000');
 
     // Save
     await page.locator('[data-testid="save-trip-button"]').click();
@@ -182,13 +182,12 @@ test.describe('Add expense', () => {
     // Wait for modal to appear
     await page.waitForSelector('[data-testid="add-expense-modal"]');
 
-    // Fill amount: the input is a hidden overlay (opacity:0) positioned absolutely.
-    // On mobile it can be outside the viewport. Focus it programmatically and type.
+    // Fill amount: calculator-style input — type digits only (4250 → $42.50)
     await page.evaluate(() => {
       const input = document.querySelector('[data-testid="amount-input"]') as HTMLInputElement;
       input?.focus();
     });
-    await page.keyboard.type('42.50', { delay: 30 });
+    await page.keyboard.type('4250', { delay: 30 });
 
     // Fill description
     await page.evaluate(() => {

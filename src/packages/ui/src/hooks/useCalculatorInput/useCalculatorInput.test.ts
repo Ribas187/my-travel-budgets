@@ -173,6 +173,13 @@ describe('processInput', () => {
     const result = processInput('123', '123', '123', 9);
     expect(result).toEqual({ newRaw: '123', newPrevInput: '123' });
   });
+
+  it('full replacement: same length but different content', () => {
+    // Simulates Playwright fill() replacing "4250" with "5500"
+    const result = processInput('5500', '4250', '4250', 9);
+    expect(result!.newRaw).toBe('5500');
+    expect(result!.newPrevInput).toBe('5500');
+  });
 });
 
 describe('useCalculatorInput integration (pure function simulation)', () => {

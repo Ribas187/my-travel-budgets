@@ -204,12 +204,12 @@ test.describe('Expense date picker', () => {
     }
 
     // Fill in other required fields to make the form valid
-    // Amount
-    await page.locator('[data-testid="amount-input"]').fill('25.00');
+    // Amount: calculator-style input — type digits only (2500 → $25.00)
     await page.evaluate(() => {
       const input = document.querySelector('[data-testid="amount-input"]') as HTMLInputElement;
-      input?.dispatchEvent(new Event('input', { bubbles: true }));
+      input?.focus();
     });
+    await page.keyboard.type('2500', { delay: 30 });
 
     // Description
     await page.locator('[data-testid="description-input"]').fill('Test expense');

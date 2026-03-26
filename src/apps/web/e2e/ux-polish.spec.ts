@@ -175,7 +175,7 @@ test.describe('Double-click prevention', () => {
       const input = document.querySelector('[data-testid="amount-input"]') as HTMLInputElement;
       input?.focus();
     });
-    await page.keyboard.type('25.00', { delay: 30 });
+    await page.keyboard.type('2500', { delay: 30 });
 
     // Fill description
     await page.evaluate(() => {
@@ -236,15 +236,15 @@ test.describe('Amount input single-tap focus', () => {
       input?.focus();
     });
 
-    // Type an amount
-    await page.keyboard.type('12.50', { delay: 50 });
+    // Type an amount (calculator-style: 1250 → $12.50)
+    await page.keyboard.type('1250', { delay: 50 });
 
     // Verify the display shows the formatted amount
     await expect(amountDisplay.getByText('12')).toBeVisible();
     await expect(amountDisplay.getByText('.50')).toBeVisible();
 
-    // Verify the hidden input has the value
+    // Verify the hidden input has the raw digits
     const inputValue = await page.locator('[data-testid="amount-input"]').inputValue();
-    expect(inputValue).toBe('12.50');
+    expect(inputValue).toBe('1250');
   });
 });

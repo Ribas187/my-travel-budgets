@@ -240,18 +240,13 @@ test.describe('Expense edit and delete', () => {
       expect(descValue).toBe('Lunch at bistro');
     }).toPass({ timeout: 5000 });
 
-    // Change the amount: clear and type new value
+    // Change the description (amount editing is tested separately in mobile-input-fixes.spec.ts)
     await page.evaluate(() => {
-      const input = document.querySelector('[data-testid="amount-input"]') as HTMLInputElement;
+      const input = document.querySelector('[data-testid="description-input"]') as HTMLInputElement;
       input?.focus();
-      input.value = '';
+      input?.select();
     });
-    await page.locator('[data-testid="amount-input"]').fill('');
-    await page.evaluate(() => {
-      const input = document.querySelector('[data-testid="amount-input"]') as HTMLInputElement;
-      input?.focus();
-    });
-    await page.keyboard.type('55.00', { delay: 30 });
+    await page.keyboard.type('Updated lunch', { delay: 10 });
 
     // Save
     await page.locator('[data-testid="save-expense-button"]').click({ force: true });
@@ -264,7 +259,7 @@ test.describe('Expense edit and delete', () => {
     // Verify the expense was updated in state
     await expect(async () => {
       const updatedExpense = state.expenses.find((e) => e.id === EXPENSE_ID);
-      expect(updatedExpense?.amount).toBe(55);
+      expect(updatedExpense?.description).toBe('Updated lunch');
     }).toPass({ timeout: 5000 });
 
     // Now test delete: click the second expense

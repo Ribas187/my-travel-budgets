@@ -41,9 +41,18 @@ export function processInput(
   const onlyDigits = text.replace(/\D/g, '');
 
   let newRaw: string;
-  if (onlyDigits.length < prevInput.length) {
+  if (!onlyDigits && prevInput) {
+    // Full clear (e.g., fill('') or select-all + delete)
+    newRaw = '';
+  } else if (onlyDigits.length < prevInput.length) {
     // Backspace: remove rightmost digit
     newRaw = currentRaw.slice(0, -1);
+  } else if (onlyDigits === prevInput) {
+    // No change
+    return { newRaw: currentRaw, newPrevInput: onlyDigits };
+  } else if (onlyDigits.length === prevInput.length && onlyDigits !== prevInput) {
+    // Full replacement (e.g., Playwright fill or paste that replaces entire value)
+    newRaw = onlyDigits;
   } else {
     // Extract newly added digits
     const addedDigits = onlyDigits.slice(prevInput.length);
