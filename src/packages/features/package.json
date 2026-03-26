@@ -1,0 +1,35 @@
+{
+  "name": "@repo/features",
+  "version": "0.0.0",
+  "private": true,
+  "main": "./src/index.ts",
+  "types": "./src/index.ts",
+  "scripts": {
+    "lint": "eslint .",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run"
+  },
+  "peerDependencies": {
+    "react": "^18.0.0 || ^19.0.0",
+    "@tanstack/react-query": "^5.0.0",
+    "@repo/api-client": "workspace:*",
+    "@repo/ui": "workspace:*",
+    "@repo/core": "workspace:*",
+    "react-i18next": "^15.0.0"
+  },
+  "devDependencies": {
+    "@repo/api-client": "workspace:*",
+    "@repo/core": "workspace:*",
+    "@repo/eslint-config": "workspace:*",
+    "@repo/typescript-config": "workspace:*",
+    "@repo/ui": "workspace:*",
+    "@tanstack/react-query": "^5.75.0",
+    "@testing-library/react": "^16.0.0",
+    "jsdom": "^29.0.1",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0",
+    "react-i18next": "^15.0.0",
+    "typescript": "^5.7.0",
+    "vitest": "^3.0.0"
+  }
+}
