@@ -5,10 +5,9 @@ import { styled, XStack, YStack, Text } from 'tamagui';
 import { Heading } from '@repo/ui';
 import type { CreateTravelInput } from '@repo/api-client';
 import { useUpdateTravel, useDeleteTravel, useTravelExpenses } from '@repo/api-client';
+import { TripForm, useTravelContext } from '@repo/features';
 
-import { useTravelContext } from '@/contexts/TravelContext';
 import { showToast } from '@/lib/toast';
-import { TripForm } from '@/features/travels/TripForm';
 
 export const Route = createFileRoute('/_authenticated/travels/$travelId/edit')({
   component: EditTripPage,
@@ -78,6 +77,7 @@ function EditTripPage() {
         deleting={deleteTravel.isPending}
         onSave={handleSave}
         onDelete={handleDelete}
+        onSuccess={(msg) => showToast(msg)}
       />
     </YStack>
   );

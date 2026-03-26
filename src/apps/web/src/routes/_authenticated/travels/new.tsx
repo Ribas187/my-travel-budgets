@@ -5,9 +5,9 @@ import { styled, XStack, YStack, Text, View } from 'tamagui';
 import { Heading } from '@repo/ui';
 import type { CreateTravelInput } from '@repo/api-client';
 import { useCreateTravel } from '@repo/api-client';
+import { TripForm } from '@repo/features';
 
 import { showToast } from '@/lib/toast';
-import { TripForm } from '@/features/travels/TripForm';
 
 export const Route = createFileRoute('/_authenticated/travels/new')({
   component: NewTripPage,
@@ -55,7 +55,7 @@ function NewTripPage() {
         </CloseButton>
       </XStack>
 
-      <TripForm saving={createTravel.isPending} onSave={handleSave} />
+      <TripForm saving={createTravel.isPending} onSave={handleSave} onSuccess={(msg) => showToast(msg)} />
     </YStack>
   );
 }

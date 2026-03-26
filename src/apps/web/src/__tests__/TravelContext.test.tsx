@@ -2,7 +2,7 @@ import { describe, it, expect } from 'vitest';
 import React from 'react';
 import type { TravelDetail } from '@repo/api-client';
 
-import { TravelProvider, useTravelContext } from '@/contexts/TravelContext';
+import { TravelProvider, useTravelContext } from '@repo/features';
 
 const mockTravel: TravelDetail = {
   id: 'travel-1',

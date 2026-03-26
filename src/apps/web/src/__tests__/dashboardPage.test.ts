@@ -167,7 +167,7 @@ const mockExpenses = [
 
 describe('DashboardPage', () => {
   it('exports DashboardPage component', async () => {
-    const { DashboardPage } = await import('@/features/dashboard/DashboardPage');
+    const { DashboardPage } = await import('@repo/features');
     expect(DashboardPage).toBeDefined();
     expect(typeof DashboardPage).toBe('function');
   });

@@ -327,7 +327,7 @@ describe('Quick Add Expense', () => {
 
   describe('AddExpenseModal component', () => {
     it('exports AddExpenseModal', async () => {
-      const mod = await import('../features/expenses/AddExpenseModal');
+      const mod = await import('@repo/features');
       expect(mod.AddExpenseModal).toBeDefined();
       expect(typeof mod.AddExpenseModal).toBe('function');
     });

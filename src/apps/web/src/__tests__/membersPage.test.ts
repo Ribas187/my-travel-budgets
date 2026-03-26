@@ -72,7 +72,7 @@ const mockMemberSpending: MemberSpending[] = [
 
 describe('MembersPage', () => {
   it('exports MembersPage component', async () => {
-    const { MembersPage } = await import('@/features/members/MembersPage');
+    const { MembersPage } = await import('@repo/features');
     expect(MembersPage).toBeDefined();
     expect(typeof MembersPage).toBe('function');
   });

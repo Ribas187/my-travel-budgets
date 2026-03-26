@@ -7,8 +7,8 @@ import type { NavigationSheetItem } from '@repo/ui';
 import { useTravelDetail, useUserMe } from '@repo/api-client';
 
 import { useAuth } from '@/providers/AuthProvider';
-import { AddExpenseModal } from '@/features/expenses/AddExpenseModal';
-import { TravelProvider } from '@/contexts/TravelContext';
+import { AddExpenseModal, TravelProvider } from '@repo/features';
+import { showToast } from '@/lib/toast';
 
 export const Route = createFileRoute('/_authenticated/travels/$travelId')({
   component: TravelLayout,
@@ -224,7 +224,10 @@ function TravelLayout() {
       <AddExpenseModal
         open={addExpenseOpen}
         onClose={() => setAddExpenseOpen(false)}
-        travel={travel}
+        onSuccess={(msg) => showToast(msg)}
+        onNavigateToCategories={() =>
+          navigate({ to: '/travels/$travelId/categories', params: { travelId } })
+        }
       />
     </TravelProvider>
   );

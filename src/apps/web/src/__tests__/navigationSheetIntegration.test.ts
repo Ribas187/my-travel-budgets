@@ -134,7 +134,7 @@ describe('NavigationSheet integration with TravelLayout', () => {
   });
 
   it('TravelContext provides onOpenNavigationSheet callback', async () => {
-    const { TravelProvider } = await import('@/contexts/TravelContext');
+    const { TravelProvider } = await import('@repo/features');
     const handleOpenSheet = vi.fn();
 
     const element = React.createElement(TravelProvider, {

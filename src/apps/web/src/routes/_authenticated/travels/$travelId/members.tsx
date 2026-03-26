@@ -1,7 +1,17 @@
 import { createFileRoute } from '@tanstack/react-router';
+import { MembersPage } from '@repo/features';
 
-import { MembersPage } from '@/features/members/MembersPage';
+import { showToast } from '@/lib/toast';
 
 export const Route = createFileRoute('/_authenticated/travels/$travelId/members')({
-  component: MembersPage,
+  component: MembersRoute,
 });
+
+function MembersRoute() {
+  return (
+    <MembersPage
+      onSuccess={(msg) => showToast(msg)}
+      onError={(msg) => showToast(msg, 'error')}
+    />
+  );
+}

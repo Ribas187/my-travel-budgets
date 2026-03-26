@@ -112,7 +112,7 @@ const mockExpenses: Expense[] = [
 
 describe('BudgetBreakdownPage', () => {
   it('exports BudgetBreakdownPage component', async () => {
-    const { BudgetBreakdownPage } = await import('@/features/budget/BudgetBreakdownPage');
+    const { BudgetBreakdownPage } = await import('@repo/features');
     expect(BudgetBreakdownPage).toBeDefined();
     expect(typeof BudgetBreakdownPage).toBe('function');
   });

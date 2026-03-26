@@ -281,7 +281,7 @@ describe('Category Management', () => {
     });
 
     it('CategoriesPage component is exported', async () => {
-      const mod = await import('../features/categories/CategoriesPage');
+      const mod = await import('@repo/features');
       expect(mod.CategoriesPage).toBeDefined();
       expect(typeof mod.CategoriesPage).toBe('function');
     });

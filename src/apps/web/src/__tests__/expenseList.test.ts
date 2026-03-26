@@ -453,7 +453,7 @@ describe('Expense List with Filters', () => {
 
   describe('ExpenseList component', () => {
     it('exports ExpenseList component', async () => {
-      const mod = await import('../features/expenses/ExpenseList');
+      const mod = await import('@repo/features');
       expect(mod.ExpenseList).toBeDefined();
       expect(typeof mod.ExpenseList).toBe('function');
     });

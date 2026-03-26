@@ -432,7 +432,7 @@ describe('Responsive Layout', () => {
   });
 
   it('AddExpenseModal component is exported with responsive behavior', async () => {
-    const mod = await import('../features/expenses/AddExpenseModal');
+    const mod = await import('@repo/features');
     expect(mod.AddExpenseModal).toBeDefined();
     expect(typeof mod.AddExpenseModal).toBe('function');
   });
@@ -450,7 +450,7 @@ describe('Skeleton Loading States', () => {
   });
 
   it('ExpenseList has skeleton loading state', async () => {
-    const mod = await import('../features/expenses/ExpenseList');
+    const mod = await import('@repo/features');
     expect(mod.ExpenseList).toBeDefined();
   });
 

@@ -357,7 +357,7 @@ describe('Add/Edit Trip Form', () => {
     });
 
     it('TripForm component is exported', async () => {
-      const mod = await import('../features/travels/TripForm');
+      const mod = await import('@repo/features');
       expect(mod.TripForm).toBeDefined();
       expect(typeof mod.TripForm).toBe('function');
     });

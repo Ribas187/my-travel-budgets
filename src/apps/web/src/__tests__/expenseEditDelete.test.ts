@@ -108,7 +108,7 @@ describe('useDeleteExpense', () => {
 
 describe('AddExpenseModal — edit mode', () => {
   it('exports AddExpenseModal component', async () => {
-    const { AddExpenseModal } = await import('@/features/expenses/AddExpenseModal');
+    const { AddExpenseModal } = await import('@repo/features');
     expect(AddExpenseModal).toBeDefined();
     expect(typeof AddExpenseModal).toBe('function');
   });
@@ -223,7 +223,7 @@ describe('DeleteExpenseDialog', () => {
 
 describe('ExpenseList — tappable rows', () => {
   it('exports ExpenseList component', async () => {
-    const { ExpenseList } = await import('@/features/expenses/ExpenseList');
+    const { ExpenseList } = await import('@repo/features');
     expect(ExpenseList).toBeDefined();
     expect(typeof ExpenseList).toBe('function');
   });

@@ -93,7 +93,7 @@ const mockDashboard: DashboardData = {
 
 describe('TripSummaryPage', () => {
   it('exports TripSummaryPage component', async () => {
-    const { TripSummaryPage } = await import('@/features/summary/TripSummaryPage');
+    const { TripSummaryPage } = await import('@repo/features');
     expect(TripSummaryPage).toBeDefined();
     expect(typeof TripSummaryPage).toBe('function');
   });
