@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" fill="none">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="64" y2="64" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#C2410C"/>
+      <stop offset="100%" stop-color="#E8590C"/>
+    </linearGradient>
+  </defs>
+  <!-- Rounded square background -->
+  <rect width="64" height="64" rx="14" fill="url(#bg)"/>
+  <!-- Globe/compass circle -->
+  <circle cx="30" cy="34" r="16" stroke="white" stroke-width="2.2" stroke-opacity="0.85" fill="none"/>
+  <!-- Crosshair horizontal -->
+  <line x1="14" y1="34" x2="46" y2="34" stroke="white" stroke-width="1.3" stroke-opacity="0.4"/>
+  <!-- Crosshair vertical -->
+  <line x1="30" y1="18" x2="30" y2="50" stroke="white" stroke-width="1.3" stroke-opacity="0.4"/>
+  <!-- Dollar sign -->
+  <text x="30" y="41" text-anchor="middle" font-family="Fredoka, sans-serif" font-size="20" font-weight="700" fill="white">$</text>
+  <!-- Airplane -->
+  <text x="50" y="16" text-anchor="middle" font-size="12" fill="white" fill-opacity="0.9">&#9992;</text>
+</svg>
