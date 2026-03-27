@@ -15,6 +15,10 @@ export class UpdateExpenseDto {
   categoryId?: string;
 
   @IsOptional()
+  @IsUUID()
+  memberId?: string;
+
+  @IsOptional()
   @IsNumber()
   @IsPositive()
   amount?: number;

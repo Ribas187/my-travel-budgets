@@ -2,6 +2,7 @@ import {
   IsDateString,
   IsNotEmpty,
   IsNumber,
+  IsOptional,
   IsPositive,
   IsString,
   IsUUID,
@@ -11,6 +12,10 @@ import {
 export class CreateExpenseDto {
   @IsUUID()
   categoryId!: string;
+
+  @IsOptional()
+  @IsUUID()
+  memberId?: string;
 
   @IsNumber()
   @IsPositive()

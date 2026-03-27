@@ -71,6 +71,7 @@ export class PrismaExpenseRepository implements IExpenseRepository {
     expId: string,
     data: {
       categoryId?: string;
+      memberId?: string;
       amount?: number;
       description?: string;
       date?: Date;
@@ -91,5 +92,12 @@ export class PrismaExpenseRepository implements IExpenseRepository {
       where: { id: categoryId, travelId },
     });
     return category !== null;
+  }
+
+  async memberBelongsToTravel(memberId: string, travelId: string): Promise<boolean> {
+    const member = await this.prisma.travelMember.findFirst({
+      where: { id: memberId, travelId },
+    });
+    return member !== null;
   }
 }

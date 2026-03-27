@@ -124,6 +124,44 @@ describe('Expenses integration tests', () => {
       expect(expense.description).toBe('Lunch');
     });
 
+    it('creates an expense attributed to another member', async () => {
+      const ownerUser = await createUser('owner@test.com');
+      const { travel, ownerMember } = await createTravelWithOwner(ownerUser.id);
+      const memberUser = await createUser('member@test.com');
+      const member = await createMember(travel.id, memberUser.id);
+      const category = await createCategory(travel.id);
+
+      const expense = await expensesService.create(travel.id, member.id, {
+        categoryId: category.id,
+        amount: 75,
+        description: 'Dinner for member',
+        date: '2026-06-05',
+      });
+
+      expect(expense.memberId).toBe(member.id);
+      expect(expense.memberId).not.toBe(ownerMember.id);
+    });
+
+    it('throws BusinessValidationError when memberId does not belong to travel', async () => {
+      const ownerUser = await createUser('owner@test.com');
+      const { travel } = await createTravelWithOwner(ownerUser.id);
+      const category = await createCategory(travel.id);
+
+      const otherOwner = await createUser('other-owner@test.com');
+      const { travel: otherTravel } = await createTravelWithOwner(otherOwner.id);
+      const otherMemberUser = await createUser('other-member@test.com');
+      const otherMember = await createMember(otherTravel.id, otherMemberUser.id);
+
+      await expect(
+        expensesService.create(travel.id, otherMember.id, {
+          categoryId: category.id,
+          amount: 50,
+          description: 'Cross-travel',
+          date: '2026-06-02',
+        }),
+      ).rejects.toThrow(BusinessValidationError);
+    });
+
     it('throws BusinessValidationError when categoryId does not belong to travel', async () => {
       const owner = await createUser('owner@test.com');
       const { travel, ownerMember } = await createTravelWithOwner(owner.id);
@@ -361,6 +399,49 @@ describe('Expenses integration tests', () => {
       await expect(
         expensesService.update(expense.id, member2, { description: 'Unauthorized edit' }),
       ).rejects.toThrow(ForbiddenError);
+    });
+
+    it('allows updating the memberId of an expense', async () => {
+      const ownerUser = await createUser('owner@test.com');
+      const { travel, ownerMember } = await createTravelWithOwner(ownerUser.id);
+      const memberUser = await createUser('member@test.com');
+      const member = await createMember(travel.id, memberUser.id);
+      const category = await createCategory(travel.id);
+
+      const expense = await expensesService.create(travel.id, ownerMember.id, {
+        categoryId: category.id,
+        amount: 50,
+        description: 'Lunch',
+        date: '2026-06-02',
+      });
+
+      const updated = await expensesService.update(expense.id, ownerMember, {
+        memberId: member.id,
+      });
+
+      expect(updated.memberId).toBe(member.id);
+    });
+
+    it('throws BusinessValidationError when updating memberId to member from another travel', async () => {
+      const ownerUser = await createUser('owner@test.com');
+      const { travel, ownerMember } = await createTravelWithOwner(ownerUser.id);
+      const category = await createCategory(travel.id);
+
+      const expense = await expensesService.create(travel.id, ownerMember.id, {
+        categoryId: category.id,
+        amount: 50,
+        description: 'Lunch',
+        date: '2026-06-02',
+      });
+
+      const otherOwner = await createUser('other-owner@test.com');
+      const { travel: otherTravel } = await createTravelWithOwner(otherOwner.id);
+      const otherMemberUser = await createUser('other-member@test.com');
+      const otherMember = await createMember(otherTravel.id, otherMemberUser.id);
+
+      await expect(
+        expensesService.update(expense.id, ownerMember, { memberId: otherMember.id }),
+      ).rejects.toThrow(BusinessValidationError);
     });
 
     it('throws BusinessValidationError when updating with invalid categoryId', async () => {

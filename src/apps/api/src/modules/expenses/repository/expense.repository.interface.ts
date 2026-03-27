@@ -27,6 +27,7 @@ export interface IExpenseRepository {
     expId: string,
     data: {
       categoryId?: string;
+      memberId?: string;
       amount?: number;
       description?: string;
       date?: Date;
@@ -36,4 +37,6 @@ export interface IExpenseRepository {
   delete(expId: string): Promise<void>;
 
   categoryBelongsToTravel(categoryId: string, travelId: string): Promise<boolean>;
+
+  memberBelongsToTravel(memberId: string, travelId: string): Promise<boolean>;
 }

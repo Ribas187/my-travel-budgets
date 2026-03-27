@@ -27,6 +27,14 @@ export class ExpensesService {
       throw new BusinessValidationError('Category not found in this travel');
     }
 
+    if (memberId) {
+      const memberBelongs = await this.expenseRepository.memberBelongsToTravel(memberId, travelId);
+
+      if (!memberBelongs) {
+        throw new BusinessValidationError('Member not found in this travel');
+      }
+    }
+
     return this.expenseRepository.create({
       travelId,
       memberId,
@@ -65,8 +73,19 @@ export class ExpensesService {
       }
     }
 
+    if (dto.memberId !== undefined) {
+      const memberBelongs = await this.expenseRepository.memberBelongsToTravel(
+        dto.memberId,
+        expense.travelId,
+      );
+      if (!memberBelongs) {
+        throw new BusinessValidationError('Member not found in this travel');
+      }
+    }
+
     return this.expenseRepository.update(expId, {
       ...(dto.categoryId !== undefined && { categoryId: dto.categoryId }),
+      ...(dto.memberId !== undefined && { memberId: dto.memberId }),
       ...(dto.amount !== undefined && { amount: dto.amount }),
       ...(dto.description !== undefined && { description: dto.description }),
       ...(dto.date !== undefined && { date: new Date(dto.date) }),

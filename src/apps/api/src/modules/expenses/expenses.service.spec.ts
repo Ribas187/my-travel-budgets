@@ -16,6 +16,7 @@ const mockFindAllPaginated = jest.fn();
 const mockUpdate = jest.fn();
 const mockDelete = jest.fn();
 const mockCategoryBelongsToTravel = jest.fn();
+const mockMemberBelongsToTravel = jest.fn();
 
 const expenseRepositoryMock = {
   create: mockCreate,
@@ -24,6 +25,7 @@ const expenseRepositoryMock = {
   update: mockUpdate,
   delete: mockDelete,
   categoryBelongsToTravel: mockCategoryBelongsToTravel,
+  memberBelongsToTravel: mockMemberBelongsToTravel,
 };
 
 const ownerMember = {
@@ -80,13 +82,15 @@ describe('ExpensesService', () => {
       date: '2026-06-02',
     };
 
-    it('creates an expense with auto-set memberId', async () => {
+    it('creates an expense with the provided memberId', async () => {
       mockCategoryBelongsToTravel.mockResolvedValue(true);
+      mockMemberBelongsToTravel.mockResolvedValue(true);
       mockCreate.mockResolvedValue(mockExpense);
 
       const result = await service.create('travel-1', 'member-2', createDto);
 
       expect(mockCategoryBelongsToTravel).toHaveBeenCalledWith('cat-1', 'travel-1');
+      expect(mockMemberBelongsToTravel).toHaveBeenCalledWith('member-2', 'travel-1');
       expect(mockCreate).toHaveBeenCalledWith(
         expect.objectContaining({
           travelId: 'travel-1',
@@ -107,6 +111,18 @@ describe('ExpensesService', () => {
       );
       await expect(service.create('travel-1', 'member-2', createDto)).rejects.toThrow(
         'Category not found in this travel',
+      );
+    });
+
+    it('throws BusinessValidationError when memberId does not belong to the travel', async () => {
+      mockCategoryBelongsToTravel.mockResolvedValue(true);
+      mockMemberBelongsToTravel.mockResolvedValue(false);
+
+      await expect(service.create('travel-1', 'member-999', createDto)).rejects.toThrow(
+        BusinessValidationError,
+      );
+      await expect(service.create('travel-1', 'member-999', createDto)).rejects.toThrow(
+        'Member not found in this travel',
       );
     });
   });
@@ -262,6 +278,31 @@ describe('ExpensesService', () => {
       await expect(
         service.update('exp-1', regularMember, { categoryId: 'invalid-cat' }),
       ).rejects.toThrow('Category not found in this travel');
+    });
+
+    it('updates memberId when provided and valid', async () => {
+      mockFindById.mockResolvedValue(mockExpense);
+      mockMemberBelongsToTravel.mockResolvedValue(true);
+      const updated = { ...mockExpense, memberId: 'member-1' };
+      mockUpdate.mockResolvedValue(updated);
+
+      const result = await service.update('exp-1', regularMember, { memberId: 'member-1' });
+
+      expect(mockMemberBelongsToTravel).toHaveBeenCalledWith('member-1', 'travel-1');
+      expect(mockUpdate).toHaveBeenCalledWith('exp-1', { memberId: 'member-1' });
+      expect(result.memberId).toBe('member-1');
+    });
+
+    it('throws BusinessValidationError when updating with memberId from another travel', async () => {
+      mockFindById.mockResolvedValue(mockExpense);
+      mockMemberBelongsToTravel.mockResolvedValue(false);
+
+      await expect(
+        service.update('exp-1', regularMember, { memberId: 'member-other-travel' }),
+      ).rejects.toThrow(BusinessValidationError);
+      await expect(
+        service.update('exp-1', regularMember, { memberId: 'member-other-travel' }),
+      ).rejects.toThrow('Member not found in this travel');
     });
   });
 

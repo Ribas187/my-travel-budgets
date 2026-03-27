@@ -141,7 +141,7 @@ describe('ExpensesController', () => {
         .expect(HttpStatus.BAD_REQUEST);
     });
 
-    it('returns 201 when member creates an expense', async () => {
+    it('returns 201 and defaults memberId to current member when not provided', async () => {
       mockMember();
       const created = {
         id: 'exp-1',
@@ -163,6 +163,32 @@ describe('ExpensesController', () => {
         'travel-1',
         'member-1',
         expect.objectContaining({ categoryId: validExpenseBody.categoryId }),
+      );
+    });
+
+    it('returns 201 and uses provided memberId when specified', async () => {
+      mockMember();
+      const otherMemberId = '660e8400-e29b-41d4-a716-446655440000';
+      const created = {
+        id: 'exp-2',
+        ...validExpenseBody,
+        memberId: otherMemberId,
+        travelId: 'travel-1',
+      };
+      mockCreate.mockResolvedValue(created);
+      const token = signToken('user-1', 'user@test.com');
+
+      const res = await request(app.getHttpServer())
+        .post('/travels/travel-1/expenses')
+        .set('Authorization', `Bearer ${token}`)
+        .send({ ...validExpenseBody, memberId: otherMemberId })
+        .expect(HttpStatus.CREATED);
+
+      expect(res.body).toMatchObject({ id: 'exp-2' });
+      expect(mockCreate).toHaveBeenCalledWith(
+        'travel-1',
+        otherMemberId,
+        expect.objectContaining({ categoryId: validExpenseBody.categoryId, memberId: otherMemberId }),
       );
     });
   });

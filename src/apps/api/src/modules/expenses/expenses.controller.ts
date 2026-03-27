@@ -34,7 +34,7 @@ export class ExpensesController {
     @CurrentTravelMember() currentMember: TravelMember,
     @Body() dto: CreateExpenseDto,
   ) {
-    return this.expensesService.create(travelId, currentMember.id, dto);
+    return this.expensesService.create(travelId, dto.memberId ?? currentMember.id, dto);
   }
 
   @Get()
