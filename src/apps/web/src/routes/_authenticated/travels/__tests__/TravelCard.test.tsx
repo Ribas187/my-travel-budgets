@@ -1,5 +1,6 @@
 import { describe, it, expect, vi } from 'vitest';
 import React from 'react';
+import type { Travel } from '@repo/api-client';
 
 import { TravelCard } from '../index';
 
@@ -10,7 +11,7 @@ vi.mock('react-i18next', () => ({
   }),
 }));
 
-const mockTravel = {
+const mockTravel: Travel = {
   id: 'travel-1',
   name: 'Test Trip',
   description: null,
@@ -26,7 +27,7 @@ const mockTravel = {
 describe('TravelCard star toggle loading state', () => {
   it('renders with loading=true — star icon should be replaced by spinner', () => {
     const element = React.createElement(TravelCard, {
-      travel: mockTravel as any,
+      travel: mockTravel,
       isMainTravel: false,
       loading: true,
       onToggleMain: vi.fn(),
@@ -38,7 +39,7 @@ describe('TravelCard star toggle loading state', () => {
 
   it('renders with loading=true — star button has aria-disabled', () => {
     const element = React.createElement(TravelCard, {
-      travel: mockTravel as any,
+      travel: mockTravel,
       isMainTravel: true,
       loading: true,
       onToggleMain: vi.fn(),
@@ -51,7 +52,7 @@ describe('TravelCard star toggle loading state', () => {
 
   it('renders with loading=false — star icon renders normally (no regression)', () => {
     const element = React.createElement(TravelCard, {
-      travel: mockTravel as any,
+      travel: mockTravel,
       isMainTravel: true,
       loading: false,
       onToggleMain: vi.fn(),
@@ -64,7 +65,7 @@ describe('TravelCard star toggle loading state', () => {
   it('blocks onToggleMain when loading', () => {
     const onToggleMain = vi.fn();
     const element = React.createElement(TravelCard, {
-      travel: mockTravel as any,
+      travel: mockTravel,
       isMainTravel: false,
       loading: true,
       onToggleMain,

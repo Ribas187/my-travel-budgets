@@ -87,7 +87,7 @@ export function ExpenseList({ onNavigateToCategories, onSuccess }: ExpenseListPr
         onSave={handleSave}
         onDelete={handleDelete}
         onClose={() => setSelectedExpense(null)}
-        onNavigateToCategories={onNavigateToCategories}
+        onNavigateToCategories={onNavigateToCategories ?? (() => {})}
         onCategoryChange={setWatchedCategoryId}
         onAmountChange={setWatchedAmount}
       />

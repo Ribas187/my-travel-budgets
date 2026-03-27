@@ -1,4 +1,4 @@
-import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
+import { describe, it, expect, vi, beforeEach } from 'vitest';
 
 // Mock localStorage
 const localStorageMock = (() => {
@@ -33,18 +33,7 @@ describe('Auth Flow', () => {
     });
 
     it('login(token) sets authenticated state', async () => {
-      const React = await import('react');
-      const { AuthProvider, useAuth } = await import('../providers/AuthProvider');
-
-      let authState: ReturnType<typeof useAuth> | null = null;
-
-      function TestComponent() {
-        authState = useAuth();
-        return null;
-      }
-
-      // Use createElement to avoid JSX transform issues in .ts file
-      const tree = React.createElement(AuthProvider, null, React.createElement(TestComponent));
+      const { AuthProvider } = await import('../providers/AuthProvider');
 
       // We can't render without react-dom, but we can test the module exports
       // Instead test the logic directly

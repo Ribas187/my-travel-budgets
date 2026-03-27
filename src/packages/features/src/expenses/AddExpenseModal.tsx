@@ -87,7 +87,7 @@ export function AddExpenseModal({
       onSave={handleSave}
       onDelete={handleDelete}
       onClose={onClose}
-      onNavigateToCategories={onNavigateToCategories}
+      onNavigateToCategories={onNavigateToCategories ?? (() => {})}
       onCategoryChange={setWatchedCategoryId}
       onAmountChange={setWatchedAmount}
     />

@@ -67,14 +67,15 @@ export function NavigationSheet({
   items,
 }: NavigationSheetProps) {
   useEffect(() => {
-    if (!open || typeof window === 'undefined') return;
+    if (!open || typeof globalThis === 'undefined' || !('addEventListener' in globalThis)) return;
     const handleKeyDown = (e: Event) => {
       if ((e as unknown as { key: string }).key === 'Escape') {
         onOpenChange(false);
       }
     };
-    window.addEventListener('keydown', handleKeyDown);
-    return () => window.removeEventListener('keydown', handleKeyDown);
+    const g = globalThis as unknown as { addEventListener: (type: string, listener: (e: Event) => void) => void; removeEventListener: (type: string, listener: (e: Event) => void) => void };
+    g.addEventListener('keydown', handleKeyDown);
+    return () => g.removeEventListener('keydown', handleKeyDown);
   }, [open, onOpenChange]);
 
   return (

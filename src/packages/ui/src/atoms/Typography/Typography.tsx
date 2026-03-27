@@ -77,7 +77,7 @@ const LEVEL_TAG_MAP: Record<string, ElementType> = {
 
 export function Heading({ level = 1, ...props }: HeadingBaseProps) {
   const tag = LEVEL_TAG_MAP[String(level)] ?? 'span';
-  return <HeadingBase level={level} tag={tag} {...props} />;
+  return <HeadingBase level={level} tag={tag as string} {...props} />;
 }
 
 // ---------------------------------------------------------------------------

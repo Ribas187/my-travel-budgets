@@ -1,8 +1,6 @@
 import { createFileRoute, useNavigate } from '@tanstack/react-router';
 import { DashboardPage } from '@repo/features';
 
-import { showToast } from '@/lib/toast';
-
 export const Route = createFileRoute('/_authenticated/travels/$travelId/')({
   component: DashboardRoute,
 });

@@ -1,5 +1,6 @@
 import { describe, it, expect, vi } from 'vitest';
 import React from 'react';
+import type * as ApiClientTypes from '@repo/api-client';
 
 import { AvatarUploadModal } from '../AvatarUploadModal';
 
@@ -10,8 +11,8 @@ vi.mock('react-i18next', () => ({
   }),
 }));
 
-vi.mock('@repo/api-client', async (importOriginal) => {
-  const actual = await importOriginal<typeof import('@repo/api-client')>();
+vi.mock('@repo/api-client', async (importOriginal: () => Promise<typeof ApiClientTypes>) => {
+  const actual = await importOriginal();
   return {
     ...actual,
     useUploadAvatar: () => ({
@@ -28,7 +29,7 @@ vi.mock('@/lib/toast', () => ({
 
 vi.mock('react-easy-crop', () => ({
   __esModule: true,
-  default: (props: any) => React.createElement('div', { 'data-testid': 'cropper', ...props }),
+  default: (props: Record<string, unknown>) => React.createElement('div', { 'data-testid': 'cropper', ...props }),
 }));
 
 describe('AvatarUploadModal', () => {

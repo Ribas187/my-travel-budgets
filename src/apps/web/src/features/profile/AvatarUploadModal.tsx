@@ -26,7 +26,8 @@ interface AvatarUploadModalProps {
 }
 
 const Overlay = styled(View, {
-  position: 'fixed' as any,
+  // @ts-expect-error -- 'fixed' is valid on web but not in RN position types
+  position: 'fixed',
   top: 0,
   left: 0,
   right: 0,
@@ -48,7 +49,7 @@ const ModalCard = styled(YStack, {
 });
 
 const CropperContainer = styled(View, {
-  position: 'relative' as any,
+  position: 'relative',
   width: '100%',
   height: 300,
   borderRadius: '$lg',
@@ -56,7 +57,7 @@ const CropperContainer = styled(View, {
 });
 
 const LoadingOverlay = styled(View, {
-  position: 'absolute' as any,
+  position: 'absolute',
   top: 0,
   left: 0,
   right: 0,
@@ -164,7 +165,7 @@ export function AvatarUploadModal({ open, onClose, onSuccess }: AvatarUploadModa
 
   return (
     <Overlay onPress={handleClose} data-testid="avatar-upload-overlay">
-      <ModalCard onPress={(e: any) => e.stopPropagation()} data-testid="avatar-upload-modal">
+      <ModalCard onPress={(e: { stopPropagation: () => void }) => e.stopPropagation()} data-testid="avatar-upload-modal">
         <Text fontFamily="$heading" fontSize={18} fontWeight="700" color="$textPrimary">
           {imageSrc ? t('profile.cropTitle') : t('profile.uploadPhoto')}
         </Text>

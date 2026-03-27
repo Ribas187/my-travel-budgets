@@ -25,6 +25,7 @@ const mockTravel: TravelDetail = {
         email: 'ricardo@test.com',
         name: 'Ricardo',
         avatarUrl: null,
+        mainTravelId: null,
         createdAt: '',
         updatedAt: '',
       },
@@ -42,6 +43,7 @@ const mockTravel: TravelDetail = {
         email: 'ana@test.com',
         name: 'Ana',
         avatarUrl: null,
+        mainTravelId: null,
         createdAt: '',
         updatedAt: '',
       },
@@ -69,6 +71,7 @@ const mockTravel: TravelDetail = {
         email: 'diana@test.com',
         name: 'Diana',
         avatarUrl: null,
+        mainTravelId: null,
         createdAt: '',
         updatedAt: '',
       },
@@ -183,7 +186,7 @@ describe('TripSummaryPage', () => {
 
     it('AvatarChip can be created for each member', async () => {
       const { AvatarChip } = await import('@repo/ui');
-      const elements = mockTravel.members.map((member, index) => {
+      const elements = mockTravel.members.map((member, _index) => {
         const displayName = member.user?.name ?? member.guestName ?? '';
         return React.createElement(AvatarChip, {
           key: member.id,

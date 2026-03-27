@@ -1,5 +1,6 @@
 import { describe, it, expect, vi } from 'vitest';
 import React from 'react';
+import type * as ApiClientTypes from '@repo/api-client';
 
 import { ProfilePage } from '../ProfilePage';
 
@@ -8,8 +9,8 @@ vi.mock('@/providers/AuthProvider', () => ({
   useAuth: () => ({ logout: vi.fn(), token: 'mock-token' }),
 }));
 
-vi.mock('@repo/api-client', async (importOriginal) => {
-  const actual = await importOriginal<typeof import('@repo/api-client')>();
+vi.mock('@repo/api-client', async (importOriginal: () => Promise<typeof ApiClientTypes>) => {
+  const actual = await importOriginal();
   return {
     ...actual,
     useUpdateUser: () => ({ mutate: vi.fn(), isPending: false }),
@@ -36,7 +37,7 @@ vi.mock('react-i18next', () => ({
 
 vi.mock('react-easy-crop', () => ({
   __esModule: true,
-  default: (props: any) => React.createElement('div', { 'data-testid': 'cropper', ...props }),
+  default: (props: Record<string, unknown>) => React.createElement('div', { 'data-testid': 'cropper', ...props }),
 }));
 
 const mockUserWithName = {
@@ -76,8 +77,8 @@ describe('ProfilePage avatar fallback', () => {
   });
 
   it('renders User icon when user name is empty', () => {
-    vi.doMock('@repo/api-client', async (importOriginal) => {
-      const actual = await importOriginal<typeof import('@repo/api-client')>();
+    vi.doMock('@repo/api-client', async (importOriginal: () => Promise<typeof ApiClientTypes>) => {
+      const actual = await importOriginal();
       return {
         ...actual,
         useUserMe: () => ({ data: mockUserWithoutName }),
@@ -91,8 +92,8 @@ describe('ProfilePage avatar fallback', () => {
   });
 
   it('renders initial letter when user name is present', () => {
-    vi.doMock('@repo/api-client', async (importOriginal) => {
-      const actual = await importOriginal<typeof import('@repo/api-client')>();
+    vi.doMock('@repo/api-client', async (importOriginal: () => Promise<typeof ApiClientTypes>) => {
+      const actual = await importOriginal();
       return {
         ...actual,
         useUserMe: () => ({ data: mockUserWithName }),

@@ -42,9 +42,7 @@ describe('i18n', () => {
     });
 
     it('replaces multiple occurrences of the same variable', () => {
-      const translations = { en: { 'test.key': '{{x}} and {{x}}' } } as any;
-      // Test via the actual function with a key that has repeated vars
-      // We test the regex 'g' flag works by using a real key with a single var
+      // Test the regex 'g' flag works by using a real key with a single var
       const result = translate('en', 'common.save');
       expect(result).toBe('Save');
     });

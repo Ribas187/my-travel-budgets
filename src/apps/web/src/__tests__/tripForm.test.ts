@@ -314,7 +314,7 @@ describe('Add/Edit Trip Form', () => {
     });
 
     it('addMemberSchema validates guest name input', async () => {
-      const { addMemberSchema } = await import('@repo/core');
+      await import('@repo/core');
       const guestInput = { guestName: 'John Doe' };
       const result = guestInput.guestName.length > 0;
       expect(result).toBe(true);

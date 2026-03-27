@@ -1,3 +1,4 @@
+import type { Page } from '@playwright/test';
 import { test, expect } from '@playwright/test';
 
 import { setupApiMocks, authenticatePage } from './mocks/handlers';
@@ -12,7 +13,7 @@ import {
 
 // ─── Helpers ─────────────────────────────────────────────────────────────────
 
-async function setupAuthenticatedWithTravel(page: import('@playwright/test').Page) {
+async function setupAuthenticatedWithTravel(page: Page) {
   const state = await setupApiMocks(page);
   await page.goto('/');
   await authenticatePage(page, TEST_TOKEN);
@@ -58,7 +59,7 @@ function addCategoriesToState(state: Awaited<ReturnType<typeof setupApiMocks>>) 
   );
   state.travelDetail = {
     ...state.travelDetail,
-    categories: state.categories as any,
+    categories: state.categories as typeof state.travelDetail.categories,
   };
 }
 
@@ -72,7 +73,7 @@ test.describe('Mobile navigation flows', () => {
   test.use({ viewport: { width: 390, height: 844 } });
 
   // Skip desktop project — these tests are mobile-only
-  test.beforeEach(({}, testInfo) => {
+  test.beforeEach((_fixtures, testInfo) => {
     if (testInfo.project.name === 'desktop') {
       test.skip();
     }

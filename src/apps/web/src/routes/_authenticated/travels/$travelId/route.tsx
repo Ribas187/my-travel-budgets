@@ -5,9 +5,9 @@ import { YStack, Spinner, Text, View, useMedia } from 'tamagui';
 import { AppShell, BottomNav, DesktopSidebar, FAB, Body, PrimaryButton, NavigationSheet } from '@repo/ui';
 import type { NavigationSheetItem } from '@repo/ui';
 import { useTravelDetail, useUserMe } from '@repo/api-client';
+import { AddExpenseModal, TravelProvider } from '@repo/features';
 
 import { useAuth } from '@/providers/AuthProvider';
-import { AddExpenseModal, TravelProvider } from '@repo/features';
 import { showToast } from '@/lib/toast';
 
 export const Route = createFileRoute('/_authenticated/travels/$travelId')({
@@ -63,7 +63,7 @@ function TravelLayout() {
       icon: <Text fontSize={18}>👤</Text>,
       onPress: () => {
         setSheetOpen(false);
-        navigate({ to: '/profile' as any });
+        navigate({ to: '/profile' });
       },
     },
     {
@@ -72,7 +72,7 @@ function TravelLayout() {
       icon: <Text fontSize={18}>✈️</Text>,
       onPress: () => {
         setSheetOpen(false);
-        navigate({ to: '/travels' as any });
+        navigate({ to: '/travels' });
       },
     },
     {
@@ -128,7 +128,7 @@ function TravelLayout() {
     };
     const to = routes[key];
     if (to) {
-      navigate({ to: to as any });
+      navigate({ to });
     }
   };
 
@@ -143,7 +143,7 @@ function TravelLayout() {
     };
     const to = routes[key];
     if (to) {
-      navigate({ to: to as any });
+      navigate({ to });
     }
   };
 

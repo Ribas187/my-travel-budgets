@@ -1,7 +1,7 @@
 import { useCallback } from 'react';
 import { createFileRoute, useNavigate } from '@tanstack/react-router';
 import { useTranslation } from 'react-i18next';
-import { styled, XStack, YStack, Text, View } from 'tamagui';
+import { styled, XStack, YStack, Text } from 'tamagui';
 import { Heading } from '@repo/ui';
 import type { CreateTravelInput } from '@repo/api-client';
 import { useCreateTravel } from '@repo/api-client';

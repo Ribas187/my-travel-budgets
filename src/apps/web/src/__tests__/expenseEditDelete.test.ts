@@ -36,6 +36,7 @@ const mockTravel: TravelDetail = {
         email: 'user@test.com',
         name: 'Alice',
         avatarUrl: null,
+        mainTravelId: null,
         createdAt: '',
         updatedAt: '',
       },
@@ -169,10 +170,11 @@ describe('AddExpenseModal — create mode', () => {
   });
 
   it('uses empty default values when no expense', () => {
-    const expense: Expense | null = null;
+    const expense = null as Expense | null;
+    const firstMemberId: string = mockTravel.members[0]?.id ?? '';
     const formValues = {
       categoryId: expense?.categoryId ?? '',
-      memberId: expense?.memberId ?? mockTravel.members[0]?.id ?? '',
+      memberId: expense?.memberId ?? firstMemberId,
       amount: expense?.amount ?? 0,
       description: expense?.description ?? '',
     };

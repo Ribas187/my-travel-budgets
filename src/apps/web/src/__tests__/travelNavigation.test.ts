@@ -87,37 +87,37 @@ describe('tab navigation route mapping', () => {
 
 describe('nav visibility logic', () => {
   it('hides nav on edit page', () => {
-    const activeTab = 'edit';
+    const activeTab: string = 'edit';
     const hideNav = activeTab === 'edit' || activeTab === 'categories';
     expect(hideNav).toBe(true);
   });
 
   it('hides nav on categories page', () => {
-    const activeTab = 'categories';
+    const activeTab: string = 'categories';
     const hideNav = activeTab === 'edit' || activeTab === 'categories';
     expect(hideNav).toBe(true);
   });
 
   it('shows nav on home page', () => {
-    const activeTab = 'home';
+    const activeTab: string = 'home';
     const hideNav = activeTab === 'edit' || activeTab === 'categories';
     expect(hideNav).toBe(false);
   });
 
   it('shows nav on expenses page', () => {
-    const activeTab = 'expenses';
+    const activeTab: string = 'expenses';
     const hideNav = activeTab === 'edit' || activeTab === 'categories';
     expect(hideNav).toBe(false);
   });
 
   it('shows nav on budget page', () => {
-    const activeTab = 'budget';
+    const activeTab: string = 'budget';
     const hideNav = activeTab === 'edit' || activeTab === 'categories';
     expect(hideNav).toBe(false);
   });
 
   it('shows nav on group page', () => {
-    const activeTab = 'group';
+    const activeTab: string = 'group';
     const hideNav = activeTab === 'edit' || activeTab === 'categories';
     expect(hideNav).toBe(false);
   });

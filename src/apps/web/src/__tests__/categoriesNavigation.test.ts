@@ -3,39 +3,6 @@ import { resolve } from 'path';
 
 import { describe, it, expect, vi } from 'vitest';
 import React from 'react';
-import type { DashboardData, CategorySpending } from '@repo/api-client';
-
-const mockCategories: CategorySpending[] = [
-  {
-    categoryId: 'cat-1',
-    name: 'Food & Drinks',
-    icon: '🍔',
-    color: '#FF6B35',
-    totalSpent: 380,
-    budgetLimit: 500,
-    status: 'warning',
-  },
-  {
-    categoryId: 'cat-2',
-    name: 'Transport',
-    icon: '🚗',
-    color: '#0EA5E9',
-    totalSpent: 120,
-    budgetLimit: 400,
-    status: 'ok',
-  },
-];
-
-const mockDashboard: DashboardData = {
-  currency: 'EUR',
-  overall: {
-    budget: 3000,
-    totalSpent: 500,
-    status: 'ok',
-  },
-  categorySpending: mockCategories,
-  memberSpending: [{ memberId: 'm1', displayName: 'Alice', totalSpent: 500 }],
-};
 
 describe('Categories Navigation — Task 5', () => {
   describe('BudgetBreakdownPage "Manage" action visibility on all breakpoints', () => {
@@ -67,8 +34,9 @@ describe('Categories Navigation — Task 5', () => {
         ),
       );
 
-      expect(element.props.children.props.children).toBe('Manage');
-      expect(element.props.children.props.role).toBe('button');
+      const child = element.props.children as React.ReactElement<Record<string, unknown>>;
+      expect(child.props.children).toBe('Manage');
+      expect(child.props.role).toBe('button');
     });
 
     it('"Manage" action is visible on mobile (no isDesktop guard)', () => {

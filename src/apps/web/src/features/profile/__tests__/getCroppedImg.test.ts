@@ -31,12 +31,12 @@ vi.stubGlobal(
     _src = '';
     private _loadHandlers: Array<() => void> = [];
 
-    addEventListener(event: string, handler: any) {
+    addEventListener(event: string, handler: () => void) {
       if (event === 'load') this._loadHandlers.push(handler);
     }
 
     setAttribute(key: string, value: string) {
-      (this as any)[key] = value;
+      (this as Record<string, unknown>)[key] = value;
     }
 
     set src(value: string) {

@@ -15,7 +15,6 @@ import {
   TEST_DASHBOARD,
   TEST_USER_ME,
   TEST_AVATAR_URL,
-  TRAVEL_ID,
 } from './fixtures';
 
 interface MockState {
@@ -24,11 +23,6 @@ interface MockState {
   categories: (typeof TEST_CATEGORY_FOOD)[];
   expenses: (typeof TEST_EXPENSE)[];
   user: typeof TEST_USER_ME;
-}
-
-/** Only intercept requests going to the API origin */
-function isApiRequest(url: string): boolean {
-  return url.includes('localhost:3000') || url.includes('api.mybudget.cards');
 }
 
 /**
@@ -211,7 +205,7 @@ export async function setupApiMocks(page: Page): Promise<MockState> {
           createdAt: new Date().toISOString(),
           updatedAt: new Date().toISOString(),
         };
-        state.travelDetail.members.push(newMember as any);
+        state.travelDetail.members.push(newMember as (typeof state.travelDetail.members)[number]);
         return route.fulfill({
           status: 200,
           contentType: 'application/json',

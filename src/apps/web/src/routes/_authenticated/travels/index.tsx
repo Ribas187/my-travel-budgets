@@ -78,7 +78,7 @@ export function TravelCard({ travel, isMainTravel, loading, onToggleMain, onPres
   // so we show the budget amount. Progress bar stays at 0 until dashboard data is available.
   const progress = 0;
 
-  const handleStarPress = (e: React.MouseEvent | React.KeyboardEvent) => {
+  const handleStarPress = (e: { stopPropagation: () => void }) => {
     e.stopPropagation();
     if (loading) return;
     onToggleMain?.();
@@ -103,12 +103,14 @@ export function TravelCard({ travel, isMainTravel, loading, onToggleMain, onPres
             onPress={handleStarPress}
             testID={`star-toggle-${travel.id}`}
             tabIndex={0}
-            onKeyDown={(e: React.KeyboardEvent) => {
-              if (e.key === 'Enter' || e.key === ' ') {
-                e.preventDefault();
-                handleStarPress(e);
-              }
-            }}
+            {...{
+              onKeyDown: (e: React.KeyboardEvent) => {
+                if (e.key === 'Enter' || e.key === ' ') {
+                  e.preventDefault();
+                  handleStarPress(e);
+                }
+              },
+            } as Record<string, unknown>}
           >
             {loading ? (
               <Spinner size="small" color="#9ca3af" data-testid="star-spinner" />

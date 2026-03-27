@@ -1,3 +1,4 @@
+import type { Page } from '@playwright/test';
 import { test, expect } from '@playwright/test';
 
 import { setupApiMocks, authenticatePage } from './mocks/handlers';
@@ -6,7 +7,6 @@ import {
   TRAVEL_ID,
   CAT_FOOD_ID,
   CAT_TRANSPORT_ID,
-  MEMBER_ID,
   EXPENSE_ID,
   TEST_EXPENSE,
   TEST_EXPENSE_2,
@@ -14,7 +14,7 @@ import {
 
 // ─── Helpers ─────────────────────────────────────────────────────────────────
 
-async function setupAuthenticatedWithTravel(page: import('@playwright/test').Page) {
+async function setupAuthenticatedWithTravel(page: Page) {
   const state = await setupApiMocks(page);
   await page.goto('/');
   await authenticatePage(page, TEST_TOKEN);
@@ -60,7 +60,7 @@ function addCategoriesToState(state: Awaited<ReturnType<typeof setupApiMocks>>) 
   );
   state.travelDetail = {
     ...state.travelDetail,
-    categories: state.categories as any,
+    categories: state.categories as typeof state.travelDetail.categories,
   };
 }
 

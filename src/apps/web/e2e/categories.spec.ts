@@ -1,9 +1,10 @@
+import type { Page } from '@playwright/test';
 import { test, expect } from '@playwright/test';
 
 import { setupApiMocks, authenticatePage } from './mocks/handlers';
-import { TEST_TOKEN, TRAVEL_ID, CAT_FOOD_ID, MEMBER_ID } from './mocks/fixtures';
+import { TEST_TOKEN, TRAVEL_ID, CAT_FOOD_ID } from './mocks/fixtures';
 
-async function setupAuthenticatedWithTravel(page: import('@playwright/test').Page) {
+async function setupAuthenticatedWithTravel(page: Page) {
   const state = await setupApiMocks(page);
   await page.goto('/');
   await authenticatePage(page, TEST_TOKEN);
@@ -48,7 +49,7 @@ function addCategoryToState(
   state.categories.push(category);
   state.travelDetail = {
     ...state.travelDetail,
-    categories: state.categories as any,
+    categories: state.categories as typeof state.travelDetail.categories,
   };
   return category;
 }

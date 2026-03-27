@@ -6,6 +6,7 @@ const mockUser: UserMe = {
   email: 'alice@test.com',
   name: 'Alice Johnson',
   avatarUrl: null,
+  mainTravelId: null,
   createdAt: '2026-01-01T00:00:00Z',
   updatedAt: '2026-01-01T00:00:00Z',
 };

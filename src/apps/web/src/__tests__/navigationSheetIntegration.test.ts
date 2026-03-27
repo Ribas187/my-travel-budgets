@@ -26,6 +26,7 @@ const mockTravel: TravelDetail = {
         email: 'user@test.com',
         name: 'Alice',
         avatarUrl: null,
+        mainTravelId: null,
         createdAt: '',
         updatedAt: '',
       },
@@ -155,7 +156,7 @@ describe('NavigationSheet integration with TravelLayout', () => {
     expect(userInitial).toBe('A');
 
     // Edge case: empty name falls back to undefined (icon shown instead)
-    const emptyName = '';
+    const emptyName: string = '';
     const emptyInitial = emptyName ? emptyName.charAt(0).toUpperCase() : undefined;
     expect(emptyInitial).toBeUndefined();
   });
@@ -190,8 +191,8 @@ describe('NavigationSheet integration with TravelLayout', () => {
 
   it('sheet closes before navigating (setSheetOpen called before navigate)', () => {
     const callOrder: string[] = [];
-    const setSheetOpen = vi.fn(() => callOrder.push('close'));
-    const navigate = vi.fn(() => callOrder.push('navigate'));
+    const setSheetOpen = vi.fn((_value: boolean) => callOrder.push('close'));
+    const navigate = vi.fn((_opts: { to: string }) => callOrder.push('navigate'));
 
     // Simulate the profile item's onPress
     setSheetOpen(false);

@@ -1,3 +1,4 @@
+import type { Page } from '@playwright/test';
 import { test, expect } from '@playwright/test';
 
 import { setupApiMocks, authenticatePage } from './mocks/handlers';
@@ -11,7 +12,7 @@ import {
 
 // ─── Helpers ─────────────────────────────────────────────────────────────────
 
-async function setupAuthenticated(page: import('@playwright/test').Page) {
+async function setupAuthenticated(page: Page) {
   const state = await setupApiMocks(page);
   await page.goto('/');
   await authenticatePage(page, TEST_TOKEN);
@@ -218,7 +219,7 @@ test.describe('Profile "My Travels" navigation', () => {
 
 test.describe('Accessibility', () => {
   test('back button has accessible label', async ({ page }) => {
-    const state = await setupAuthenticated(page);
+    await setupAuthenticated(page);
 
     await page.goto('/profile');
     await expect(page.locator('[data-testid="profile-page"]')).toBeVisible();
@@ -241,7 +242,7 @@ test.describe('Accessibility', () => {
   });
 
   test('"My Travels" row is keyboard-reachable', async ({ page }) => {
-    const state = await setupAuthenticated(page);
+    await setupAuthenticated(page);
 
     await page.goto('/profile');
     await expect(page.locator('[data-testid="profile-page"]')).toBeVisible();

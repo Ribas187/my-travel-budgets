@@ -1,7 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import React from 'react';
 import type { TravelDetail } from '@repo/api-client';
-
 import { TravelProvider, useTravelContext } from '@repo/features';
 
 const mockTravel: TravelDetail = {
@@ -27,6 +26,7 @@ const mockTravel: TravelDetail = {
         email: 'user@test.com',
         name: 'Test User',
         avatarUrl: null,
+        mainTravelId: null,
         createdAt: '',
         updatedAt: '',
       },

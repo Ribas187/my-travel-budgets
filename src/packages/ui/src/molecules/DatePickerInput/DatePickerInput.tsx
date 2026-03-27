@@ -49,14 +49,16 @@ export function DatePickerInput({
   const inputRef = useRef<HTMLInputElement>(null);
 
   const handleChange = useCallback(
-    (e: React.ChangeEvent<HTMLInputElement>) => {
-      onChange(e.target.value);
+    (e: unknown) => {
+      const target = (e as { target: { value: string } }).target;
+      onChange(target.value);
     },
     [onChange],
   );
 
-  const handleFocus = useCallback((e: React.FocusEvent<HTMLInputElement>) => {
-    e.target.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+  const handleFocus = useCallback((e: unknown) => {
+    const target = (e as { target: { scrollIntoView?: (opts: object) => void } }).target;
+    target.scrollIntoView?.({ block: 'nearest', behavior: 'smooth' });
   }, []);
 
   return (

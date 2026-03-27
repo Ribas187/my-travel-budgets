@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { createFileRoute, useNavigate } from '@tanstack/react-router';
-import { YStack, Text, Input, Spinner } from 'tamagui';
+import { YStack, Text, Input } from 'tamagui';
 import { useTranslation } from 'react-i18next';
 import { Heading, PrimaryButton } from '@repo/ui';
 

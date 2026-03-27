@@ -47,6 +47,7 @@ const MOCK_TRAVEL_DETAIL: TravelDetail = {
         email: 'owner@test.com',
         name: 'Trip Owner',
         avatarUrl: null,
+        mainTravelId: null,
         createdAt: '2026-01-01T00:00:00.000Z',
         updatedAt: '2026-01-01T00:00:00.000Z',
       },

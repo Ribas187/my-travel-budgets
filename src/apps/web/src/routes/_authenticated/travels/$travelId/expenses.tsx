@@ -1,5 +1,4 @@
 import { createFileRoute, useNavigate } from '@tanstack/react-router';
-import { useTranslation } from 'react-i18next';
 import { XStack, YStack } from 'tamagui';
 import { Heading } from '@repo/ui';
 import { ExpenseList } from '@repo/features';
@@ -12,7 +11,6 @@ export const Route = createFileRoute('/_authenticated/travels/$travelId/expenses
 });
 
 function ExpensesPage() {
-  const { t } = useTranslation();
   const navigate = useNavigate();
   const { travelId } = Route.useParams();
   const { travel } = useTravelContext();

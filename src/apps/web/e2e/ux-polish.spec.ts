@@ -1,3 +1,4 @@
+import type { Page } from '@playwright/test';
 import { test, expect } from '@playwright/test';
 
 import { setupApiMocks, authenticatePage } from './mocks/handlers';
@@ -6,11 +7,10 @@ import {
   TRAVEL_ID,
   CAT_FOOD_ID,
   CAT_TRANSPORT_ID,
-  MEMBER_ID,
 } from './mocks/fixtures';
 
 // Helper to set up authenticated page with a travel
-async function setupAuthenticatedWithTravel(page: import('@playwright/test').Page) {
+async function setupAuthenticatedWithTravel(page: Page) {
   const state = await setupApiMocks(page);
   await page.goto('/');
   await authenticatePage(page, TEST_TOKEN);
@@ -56,7 +56,7 @@ function addCategoriesToState(state: Awaited<ReturnType<typeof setupApiMocks>>) 
   );
   state.travelDetail = {
     ...state.travelDetail,
-    categories: state.categories as any,
+    categories: state.categories as typeof state.travelDetail.categories,
   };
 }
 
@@ -64,7 +64,7 @@ function addCategoriesToState(state: Awaited<ReturnType<typeof setupApiMocks>>) 
 
 test.describe('Empty dashboard flow', () => {
   test('navigation visible and empty state CTA opens add expense modal', async ({ page }) => {
-    const state = await setupAuthenticatedWithTravel(page);
+    await setupAuthenticatedWithTravel(page);
     // No categories, no expenses → empty dashboard
 
     // Override dashboard endpoint to return empty data
@@ -117,7 +117,7 @@ test.describe('Empty dashboard flow', () => {
 
 test.describe('No-categories guard', () => {
   test('shows no-categories message and CTA navigates to categories page', async ({ page }) => {
-    const state = await setupAuthenticatedWithTravel(page);
+    await setupAuthenticatedWithTravel(page);
     // Travel has NO categories
 
     // Navigate to expenses page

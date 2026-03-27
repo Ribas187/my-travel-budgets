@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import React from 'react';
-import type { TravelDetail, TravelMember, MemberSpending } from '@repo/api-client';
+import type { TravelMember, MemberSpending } from '@repo/api-client';
 
 const mockMembers: TravelMember[] = [
   {
@@ -14,6 +14,7 @@ const mockMembers: TravelMember[] = [
       email: 'alice@test.com',
       name: 'Alice',
       avatarUrl: null,
+      mainTravelId: null,
       createdAt: '',
       updatedAt: '',
     },
@@ -31,6 +32,7 @@ const mockMembers: TravelMember[] = [
       email: 'bob@test.com',
       name: 'Bob',
       avatarUrl: null,
+      mainTravelId: null,
       createdAt: '',
       updatedAt: '',
     },
@@ -48,21 +50,6 @@ const mockMembers: TravelMember[] = [
     updatedAt: '',
   },
 ];
-
-const mockTravel: TravelDetail = {
-  id: 'travel-1',
-  name: 'Lisbon Trip',
-  description: null,
-  imageUrl: null,
-  currency: 'EUR',
-  budget: 3000,
-  startDate: '2026-03-15',
-  endDate: '2026-03-25',
-  createdAt: '2026-01-01T00:00:00Z',
-  updatedAt: '2026-01-01T00:00:00Z',
-  members: mockMembers,
-  categories: [],
-};
 
 const mockMemberSpending: MemberSpending[] = [
   { memberId: 'm1', displayName: 'Alice', totalSpent: 1200 },
@@ -82,7 +69,7 @@ describe('MembersPage', () => {
       const { AvatarChip } = await import('@repo/ui');
       expect(AvatarChip).toBeDefined();
 
-      const elements = mockMembers.map((member, index) => {
+      const elements = mockMembers.map((member) => {
         const displayName = member.user?.name ?? member.guestName ?? '';
         const initial = displayName.charAt(0).toUpperCase();
         const roleBadge = member.role === 'owner' ? 'Owner' : 'Member';

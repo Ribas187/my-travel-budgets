@@ -2,6 +2,7 @@ import path from 'node:path';
 import fs from 'node:fs';
 import { fileURLToPath } from 'node:url';
 
+import type { Page } from '@playwright/test';
 import { test, expect } from '@playwright/test';
 
 const __filename = fileURLToPath(import.meta.url);
@@ -17,7 +18,7 @@ import {
 
 // ─── Helpers ─────────────────────────────────────────────────────────────────
 
-async function setupAuthenticated(page: import('@playwright/test').Page) {
+async function setupAuthenticated(page: Page) {
   const state = await setupApiMocks(page);
   await page.goto('/');
   await authenticatePage(page, TEST_TOKEN);
@@ -219,7 +220,7 @@ test.describe('Avatar upload error', () => {
 
 test.describe('Avatar display on dashboard', () => {
   // The header-avatar is only visible on mobile viewport (desktop uses sidebar)
-  test('dashboard header shows avatar on mobile viewport when user has avatarUrl', async ({ page, browserName }, testInfo) => {
+  test('dashboard header shows avatar on mobile viewport when user has avatarUrl', async ({ page, browserName: _browserName }, testInfo) => {
     // Only run on mobile project
     const isMobile = testInfo.project.name.toLowerCase().includes('mobile');
     test.skip(!isMobile, 'Dashboard header avatar only appears on mobile viewport');

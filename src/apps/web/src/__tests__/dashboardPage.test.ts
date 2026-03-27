@@ -27,6 +27,7 @@ const mockTravel: TravelDetail = {
         email: 'user@test.com',
         name: 'Alice',
         avatarUrl: null,
+        mainTravelId: null,
         createdAt: '',
         updatedAt: '',
       },
@@ -344,12 +345,13 @@ describe('DashboardPage', () => {
       );
 
       // Verify element structure matches the SectionHeader pattern
-      expect(element.props.children.props.role).toBe('button');
-      expect(element.props.children.props.style.cursor).toBe('pointer');
-      expect(element.props.children.props.children).toBe('Ver tudo');
+      const child = element.props.children as React.ReactElement<Record<string, unknown>>;
+      expect(child.props.role).toBe('button');
+      expect((child.props.style as Record<string, unknown>).cursor).toBe('pointer');
+      expect(child.props.children).toBe('Ver tudo');
 
       // Simulate the onPress/onClick callback
-      element.props.children.props.onClick();
+      (child.props.onClick as () => void)();
       expect(onAction).toHaveBeenCalledTimes(1);
     });
 
@@ -368,9 +370,10 @@ describe('DashboardPage', () => {
       );
 
       // Verify no role or cursor when onAction is not provided
-      expect(element.props.children.props.role).toBeUndefined();
-      expect(element.props.children.props.style.cursor).toBeUndefined();
-      expect(element.props.children.props.children).toBe('Ver tudo');
+      const child = element.props.children as React.ReactElement<Record<string, unknown>>;
+      expect(child.props.role).toBeUndefined();
+      expect((child.props.style as Record<string, unknown>).cursor).toBeUndefined();
+      expect(child.props.children).toBe('Ver tudo');
     });
   });
 
