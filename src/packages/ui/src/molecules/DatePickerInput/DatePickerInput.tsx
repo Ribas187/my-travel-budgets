@@ -87,7 +87,6 @@ export function DatePickerInput({
           color: '#1A1815',
           minHeight: 48,
           outline: 'none',
-          width: '100%',
           maxWidth: '100%',
           minWidth: 0,
           boxSizing: 'border-box',
@@ -97,9 +96,7 @@ export function DatePickerInput({
         }}
       />
       {error && (
-        <ErrorText testID={testID ? `${testID}-error` : 'date-picker-error'}>
-          {error}
-        </ErrorText>
+        <ErrorText testID={testID ? `${testID}-error` : 'date-picker-error'}>{error}</ErrorText>
       )}
     </YStack>
   );
