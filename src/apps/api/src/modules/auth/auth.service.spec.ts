@@ -13,17 +13,31 @@ const mockFindMagicLinkByToken = jest.fn();
 const mockConsumeMagicLink = jest.fn();
 const mockUpsertUserByEmail = jest.fn();
 const mockSendMagicLink = jest.fn();
+const mockSendLoginPin = jest.fn();
 const mockJwtSign = jest.fn();
+const mockCreateLoginPin = jest.fn();
+const mockFindLoginPin = jest.fn();
+const mockFindLatestUnusedLoginPin = jest.fn();
+const mockConsumeLoginPin = jest.fn();
+const mockIncrementLoginPinAttempts = jest.fn();
+const mockInvalidateLoginPin = jest.fn();
 
 const authRepositoryMock = {
   createMagicLink: mockCreateMagicLink,
   findMagicLinkByToken: mockFindMagicLinkByToken,
   consumeMagicLink: mockConsumeMagicLink,
   upsertUserByEmail: mockUpsertUserByEmail,
+  createLoginPin: mockCreateLoginPin,
+  findLoginPin: mockFindLoginPin,
+  findLatestUnusedLoginPin: mockFindLatestUnusedLoginPin,
+  consumeLoginPin: mockConsumeLoginPin,
+  incrementLoginPinAttempts: mockIncrementLoginPinAttempts,
+  invalidateLoginPin: mockInvalidateLoginPin,
 };
 
 const emailServiceMock = {
   sendMagicLink: mockSendMagicLink,
+  sendLoginPin: mockSendLoginPin,
 };
 
 const jwtServiceMock = {
@@ -194,6 +208,157 @@ describe('AuthService', () => {
       await expect(service.verifyMagicLink({ token: validToken })).rejects.toThrow(
         UnauthorizedError,
       );
+    });
+  });
+
+  describe('requestLoginPin', () => {
+    it('generates a 6-digit zero-padded PIN', async () => {
+      mockCreateLoginPin.mockResolvedValue({});
+      mockSendLoginPin.mockResolvedValue(undefined);
+
+      await service.requestLoginPin({ email: 'user@test.com' });
+
+      const createCall = mockCreateLoginPin.mock.calls[0][0] as { pin: string };
+      expect(createCall.pin).toMatch(/^\d{6}$/);
+      expect(createCall.pin).toHaveLength(6);
+    });
+
+    it('sets expiry to ~5 minutes from now', async () => {
+      mockCreateLoginPin.mockResolvedValue({});
+      mockSendLoginPin.mockResolvedValue(undefined);
+
+      const before = Date.now();
+      await service.requestLoginPin({ email: 'user@test.com' });
+      const after = Date.now();
+
+      const createCall = mockCreateLoginPin.mock.calls[0][0] as { expiresAt: Date };
+      const expectedMin = before + 5 * 60 * 1000;
+      const expectedMax = after + 5 * 60 * 1000;
+      expect(createCall.expiresAt.getTime()).toBeGreaterThanOrEqual(expectedMin);
+      expect(createCall.expiresAt.getTime()).toBeLessThanOrEqual(expectedMax);
+    });
+
+    it('calls createLoginPin and sendLoginPin with correct arguments', async () => {
+      mockCreateLoginPin.mockResolvedValue({});
+      mockSendLoginPin.mockResolvedValue(undefined);
+
+      await service.requestLoginPin({ email: 'user@test.com' });
+
+      expect(mockCreateLoginPin).toHaveBeenCalledTimes(1);
+      const createCall = mockCreateLoginPin.mock.calls[0][0] as {
+        email: string;
+        pin: string;
+      };
+      expect(createCall.email).toBe('user@test.com');
+
+      expect(mockSendLoginPin).toHaveBeenCalledTimes(1);
+      expect(mockSendLoginPin).toHaveBeenCalledWith('user@test.com', createCall.pin);
+    });
+
+    it('does not throw when email send fails (catches and logs)', async () => {
+      mockCreateLoginPin.mockResolvedValue({});
+      mockSendLoginPin.mockRejectedValue(new Error('Resend error'));
+
+      await expect(
+        service.requestLoginPin({ email: 'user@test.com' }),
+      ).resolves.toBeUndefined();
+    });
+  });
+
+  describe('verifyLoginPin', () => {
+    const validPin = {
+      id: 'pin-id-1',
+      email: 'user@test.com',
+      pin: '123456',
+      expiresAt: new Date(Date.now() + 5 * 60 * 1000),
+      usedAt: null,
+      attempts: 0,
+      createdAt: new Date(),
+    };
+
+    it('returns { accessToken } with correct JWT payload on valid PIN', async () => {
+      mockFindLoginPin.mockResolvedValue({ ...validPin });
+      mockConsumeLoginPin.mockResolvedValue(true);
+      mockUpsertUserByEmail.mockResolvedValue({ id: 'user-id-1', email: 'user@test.com' });
+      mockJwtSign.mockReturnValue('signed-jwt-token');
+
+      const result = await service.verifyLoginPin({ email: 'user@test.com', pin: '123456' });
+
+      expect(mockConsumeLoginPin).toHaveBeenCalledWith('pin-id-1');
+      expect(mockUpsertUserByEmail).toHaveBeenCalledWith('user@test.com');
+      expect(mockJwtSign).toHaveBeenCalledWith({ sub: 'user-id-1', email: 'user@test.com' });
+      expect(result).toEqual({ accessToken: 'signed-jwt-token' });
+    });
+
+    it('throws UnauthorizedError("Code expired") when PIN is expired', async () => {
+      mockFindLoginPin.mockResolvedValue({
+        ...validPin,
+        expiresAt: new Date(Date.now() - 1000),
+      });
+
+      await expect(
+        service.verifyLoginPin({ email: 'user@test.com', pin: '123456' }),
+      ).rejects.toThrow(new UnauthorizedError('Code expired'));
+    });
+
+    it('throws UnauthorizedError("Invalid code") when PIN is not found (used or wrong)', async () => {
+      mockFindLoginPin.mockResolvedValue(null);
+      mockFindLatestUnusedLoginPin.mockResolvedValue(null);
+
+      await expect(
+        service.verifyLoginPin({ email: 'user@test.com', pin: '000000' }),
+      ).rejects.toThrow(new UnauthorizedError('Invalid code'));
+    });
+
+    it('throws UnauthorizedError("Invalid code") when concurrent consume fails', async () => {
+      mockFindLoginPin.mockResolvedValue({ ...validPin });
+      mockConsumeLoginPin.mockResolvedValue(false);
+
+      await expect(
+        service.verifyLoginPin({ email: 'user@test.com', pin: '123456' }),
+      ).rejects.toThrow(new UnauthorizedError('Invalid code'));
+    });
+
+    it('increments attempts on wrong PIN when a latest unused pin exists', async () => {
+      mockFindLoginPin.mockResolvedValue(null);
+      mockFindLatestUnusedLoginPin.mockResolvedValue({
+        ...validPin,
+        pin: '654321',
+      });
+      mockIncrementLoginPinAttempts.mockResolvedValue(1);
+
+      await expect(
+        service.verifyLoginPin({ email: 'user@test.com', pin: '000000' }),
+      ).rejects.toThrow(UnauthorizedError);
+
+      expect(mockIncrementLoginPinAttempts).toHaveBeenCalledWith('pin-id-1');
+    });
+
+    it('invalidates PIN when attempts reach 5 and throws "Too many attempts"', async () => {
+      // First, set up the found PIN with 4 attempts (so next increment makes 5)
+      const pinWith4Attempts = { ...validPin, attempts: 4 };
+      mockFindLoginPin.mockResolvedValue(null);
+      mockFindLatestUnusedLoginPin.mockResolvedValue(pinWith4Attempts);
+      mockIncrementLoginPinAttempts.mockResolvedValue(5);
+      mockInvalidateLoginPin.mockResolvedValue(undefined);
+
+      await expect(
+        service.verifyLoginPin({ email: 'user@test.com', pin: '000000' }),
+      ).rejects.toThrow(new UnauthorizedError('Invalid code'));
+
+      expect(mockIncrementLoginPinAttempts).toHaveBeenCalledWith('pin-id-1');
+      expect(mockInvalidateLoginPin).toHaveBeenCalledWith('pin-id-1');
+    });
+
+    it('throws UnauthorizedError("Too many attempts") when PIN has >= 5 attempts', async () => {
+      mockFindLoginPin.mockResolvedValue({
+        ...validPin,
+        attempts: 5,
+      });
+
+      await expect(
+        service.verifyLoginPin({ email: 'user@test.com', pin: '123456' }),
+      ).rejects.toThrow(new UnauthorizedError('Too many attempts'));
     });
   });
 });

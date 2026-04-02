@@ -58,6 +58,16 @@ export class PrismaAuthRepository implements IAuthRepository {
     });
   }
 
+  findLatestUnusedLoginPin(email: string): Promise<LoginPin | null> {
+    return this.prisma.loginPin.findFirst({
+      where: {
+        email,
+        usedAt: null,
+      },
+      orderBy: { createdAt: 'desc' },
+    });
+  }
+
   async consumeLoginPin(id: string): Promise<boolean> {
     const result = await this.prisma.loginPin.updateMany({
       where: { id, usedAt: null },

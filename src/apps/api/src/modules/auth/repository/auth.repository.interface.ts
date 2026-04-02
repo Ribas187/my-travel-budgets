@@ -16,6 +16,7 @@ export interface IAuthRepository {
     expiresAt: Date;
   }): Promise<LoginPin>;
   findLoginPin(data: { email: string; pin: string }): Promise<LoginPin | null>;
+  findLatestUnusedLoginPin(email: string): Promise<LoginPin | null>;
   consumeLoginPin(id: string): Promise<boolean>;
   incrementLoginPinAttempts(id: string): Promise<number>;
   invalidateLoginPin(id: string): Promise<void>;

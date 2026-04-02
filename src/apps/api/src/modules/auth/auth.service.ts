@@ -1,4 +1,4 @@
-import { randomBytes } from 'node:crypto';
+import { randomBytes, randomInt } from 'node:crypto';
 
 import { Inject, Injectable, Logger } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
@@ -71,5 +71,73 @@ export class AuthService {
     const accessToken = this.jwt.sign(payload);
 
     return { accessToken };
+  }
+
+  async requestLoginPin(input: { email: string }): Promise<void> {
+    const pin = randomInt(0, 1_000_000).toString().padStart(6, '0');
+    const expiresAt = new Date(Date.now() + 5 * 60 * 1000);
+
+    await this.authRepository.createLoginPin({
+      email: input.email,
+      pin,
+      expiresAt,
+    });
+
+    try {
+      await this.email.sendLoginPin(input.email, pin);
+    } catch (err) {
+      this.logger.error('Failed to send login PIN email', err);
+    }
+  }
+
+  async verifyLoginPin(input: { email: string; pin: string }): Promise<{ accessToken: string }> {
+    const loginPin = await this.authRepository.findLoginPin({
+      email: input.email,
+      pin: input.pin,
+    });
+
+    if (!loginPin) {
+      await this.handleFailedPinAttempt(input.email);
+      throw new UnauthorizedError('Invalid code');
+    }
+
+    if (loginPin.expiresAt < new Date()) {
+      this.logger.warn('Login PIN expired');
+      throw new UnauthorizedError('Code expired');
+    }
+
+    if (loginPin.attempts >= 5) {
+      this.logger.warn('Login PIN max attempts reached');
+      throw new UnauthorizedError('Too many attempts');
+    }
+
+    const consumed = await this.authRepository.consumeLoginPin(loginPin.id);
+
+    if (!consumed) {
+      this.logger.warn('Login PIN consumed by concurrent request');
+      throw new UnauthorizedError('Invalid code');
+    }
+
+    const user = await this.authRepository.upsertUserByEmail(loginPin.email);
+
+    const payload: JwtSessionPayload = { sub: user.id, email: user.email };
+    const accessToken = this.jwt.sign(payload);
+
+    return { accessToken };
+  }
+
+  private async handleFailedPinAttempt(email: string): Promise<void> {
+    const latestPin = await this.authRepository.findLatestUnusedLoginPin(email);
+
+    if (!latestPin) {
+      return;
+    }
+
+    const attempts = await this.authRepository.incrementLoginPinAttempts(latestPin.id);
+
+    if (attempts >= 5) {
+      this.logger.warn('Login PIN invalidated after too many attempts');
+      await this.authRepository.invalidateLoginPin(latestPin.id);
+    }
   }
 }

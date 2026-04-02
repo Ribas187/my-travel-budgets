@@ -36,4 +36,30 @@ export class EmailService {
       throw new Error(`Resend error: ${error.message}`);
     }
   }
+
+  async sendLoginPin(email: string, pin: string): Promise<void> {
+    const from = this.config.get<string>('RESEND_FROM_EMAIL') ?? 'onboarding@resend.dev';
+
+    const idempotencyKey = createHash('sha256')
+      .update(`login-pin:${email}:${pin}`)
+      .digest('hex');
+
+    const { error } = await this.resend.emails.send(
+      {
+        from,
+        to: email,
+        subject: `Your login code: ${pin}`,
+        html: `
+          <p>Your login code for My Travel Budgets:</p>
+          <p style="font-size: 32px; font-family: monospace; font-weight: bold; letter-spacing: 8px; padding: 16px; background: #f4f4f4; text-align: center;">${pin}</p>
+          <p>This code expires in 5 minutes.</p>
+        `,
+      },
+      { idempotencyKey },
+    );
+
+    if (error) {
+      throw new Error(`Resend error: ${error.message}`);
+    }
+  }
 }
