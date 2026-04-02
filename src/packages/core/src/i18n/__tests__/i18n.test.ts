@@ -157,6 +157,60 @@ describe('i18n', () => {
     });
   });
 
+  describe('auth PIN keys', () => {
+    const pinKeys = [
+      'auth.sendCode',
+      'auth.sendLink',
+      'auth.enterCode',
+      'auth.codeSentTo',
+      'auth.resendCode',
+      'auth.codeExpired',
+      'auth.invalidCode',
+      'auth.tooManyAttempts',
+      'auth.expiresIn',
+    ];
+
+    it('all PIN keys exist in en.json with non-empty values', () => {
+      for (const key of pinKeys) {
+        const value = (en as Record<string, string>)[key];
+        expect(value, `Missing or empty key in en.json: ${key}`).toBeTruthy();
+      }
+    });
+
+    it('all PIN keys exist in pt-BR.json with non-empty values', () => {
+      for (const key of pinKeys) {
+        const value = (ptBR as Record<string, string>)[key];
+        expect(value, `Missing or empty key in pt-BR.json: ${key}`).toBeTruthy();
+      }
+    });
+
+    it('interpolation variables are consistent across locales', () => {
+      const extractVars = (s: string) => [...s.matchAll(/\{\{(\w+)\}\}/g)].map((m) => m[1]).sort();
+
+      for (const key of pinKeys) {
+        const enValue = (en as Record<string, string>)[key];
+        const ptBRValue = (ptBR as Record<string, string>)[key];
+        expect(extractVars(enValue), `Interpolation mismatch for ${key}`).toEqual(
+          extractVars(ptBRValue),
+        );
+      }
+    });
+
+    it('translates auth.codeSentTo with interpolation', () => {
+      expect(translate('en', 'auth.codeSentTo', { email: 'user@test.com' })).toBe(
+        'We sent a code to user@test.com',
+      );
+      expect(translate('pt-BR', 'auth.codeSentTo', { email: 'user@test.com' })).toBe(
+        'Enviamos um código para user@test.com',
+      );
+    });
+
+    it('translates auth.expiresIn with interpolation', () => {
+      expect(translate('en', 'auth.expiresIn', { time: '4:30' })).toBe('Expires in 4:30');
+      expect(translate('pt-BR', 'auth.expiresIn', { time: '4:30' })).toBe('Expira em 4:30');
+    });
+  });
+
   describe('SupportedLocale type', () => {
     it('accepts en and pt-BR', () => {
       const en: SupportedLocale = 'en';

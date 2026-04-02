@@ -106,6 +106,12 @@ export class ApiClient {
 
     verify: (token: string): Promise<AuthSession> =>
       this.request('GET', `/auth/verify`, { auth: false, query: { token } }),
+
+    requestPin: (email: string): Promise<void> =>
+      this.request('POST', '/auth/login-pin', { body: { email }, auth: false }),
+
+    verifyPin: (email: string, pin: string): Promise<AuthSession> =>
+      this.request('POST', '/auth/verify-pin', { body: { email, pin }, auth: false }),
   };
 
   // Travels methods

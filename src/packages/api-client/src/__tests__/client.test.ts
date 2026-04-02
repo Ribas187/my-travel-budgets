@@ -109,6 +109,40 @@ describe('ApiClient', () => {
     });
   });
 
+  describe('auth.requestPin', () => {
+    it('sends POST to /auth/login-pin with email body and no auth header', async () => {
+      const fetchMock = mockFetchSuccess(undefined, 202);
+      globalThis.fetch = fetchMock;
+
+      const client = createClient(() => TEST_TOKEN);
+      await client.auth.requestPin('user@example.com');
+
+      const [url, init] = fetchMock.mock.calls[0];
+      expect(url).toBe(`${BASE_URL}/auth/login-pin`);
+      expect(init.method).toBe('POST');
+      expect(JSON.parse(init.body)).toEqual({ email: 'user@example.com' });
+      expect(init.headers['Authorization']).toBeUndefined();
+    });
+  });
+
+  describe('auth.verifyPin', () => {
+    it('sends POST to /auth/verify-pin with email and pin body, returns AuthSession', async () => {
+      const session = { accessToken: 'jwt', tokenType: 'Bearer', expiresIn: 2592000 };
+      const fetchMock = mockFetchSuccess(session);
+      globalThis.fetch = fetchMock;
+
+      const client = createClient(() => TEST_TOKEN);
+      const result = await client.auth.verifyPin('user@example.com', '482917');
+
+      const [url, init] = fetchMock.mock.calls[0];
+      expect(url).toBe(`${BASE_URL}/auth/verify-pin`);
+      expect(init.method).toBe('POST');
+      expect(JSON.parse(init.body)).toEqual({ email: 'user@example.com', pin: '482917' });
+      expect(init.headers['Authorization']).toBeUndefined();
+      expect(result).toEqual(session);
+    });
+  });
+
   describe('travels', () => {
     it('list sends GET to /travels', async () => {
       const travels = [{ id: '1', name: 'Trip 1' }];
