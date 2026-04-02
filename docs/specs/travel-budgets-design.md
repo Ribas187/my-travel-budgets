@@ -30,8 +30,8 @@ A full-stack travel budget management application where users can create trips, 
 | Email         | Resend                               |
 | Image Storage | Cloudinary                           |
 | Hosting (web) | Vercel (`mybudget.cards`)            |
-| Hosting (API) | Railway (`api.mybudget.cards`)       |
-| Hosting (DB)  | Railway (managed PostgreSQL)         |
+| Hosting (API) | Render                               |
+| Hosting (DB)  | Neon (managed PostgreSQL)            |
 | Mobile Builds | Expo EAS                             |
 
 ## Monorepo Structure
@@ -249,8 +249,8 @@ Visual indicators:
 
 - **Domain:** `mybudget.cards` (web), `api.mybudget.cards` (API)
 - **Web hosting:** Vercel — deploy from `apps/web`, mobile-first responsive
-- **API hosting:** Railway — deploy from `apps/api`, auto-deploy on push
-- **Database:** Railway managed PostgreSQL
+- **API hosting:** Render — deploy from `apps/api`, auto-deploy on push
+- **Database:** Neon managed PostgreSQL
 - **Email:** Resend for magic link delivery
 - **Image storage:** Cloudinary for travel cover photos and user avatars
 - **Mobile:** Expo EAS for builds and OTA updates
