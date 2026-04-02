@@ -15,6 +15,7 @@ import { AUTH_REPOSITORY } from '@/modules/common/database';
 import { EmailService } from '@/modules/common/email/email.service';
 
 const mockSendMagicLink = jest.fn().mockResolvedValue(undefined);
+const mockSendLoginPin = jest.fn().mockResolvedValue(undefined);
 
 describe('Auth integration tests', () => {
   let moduleRef: TestingModule;
@@ -63,7 +64,10 @@ describe('Auth integration tests', () => {
         { provide: AUTH_REPOSITORY, useClass: PrismaAuthRepository },
         {
           provide: EmailService,
-          useValue: { sendMagicLink: mockSendMagicLink },
+          useValue: {
+            sendMagicLink: mockSendMagicLink,
+            sendLoginPin: mockSendLoginPin,
+          },
         },
       ],
     }).compile();
@@ -80,6 +84,7 @@ describe('Auth integration tests', () => {
 
   afterEach(async () => {
     mockSendMagicLink.mockClear();
+    mockSendLoginPin.mockClear();
     await prisma.loginPin.deleteMany({});
     await prisma.magicLink.deleteMany({});
     await prisma.expense.deleteMany({});
@@ -175,6 +180,135 @@ describe('Auth integration tests', () => {
 
       const consumed = await prisma.magicLink.findUnique({ where: { token } });
       expect(consumed!.usedAt).not.toBeNull();
+    });
+  });
+
+  describe('Task 3: PIN login full flow', () => {
+    it('full flow: request PIN → verify with correct PIN → receive valid JWT', async () => {
+      const email = 'pin-flow@test.com';
+      const jwtService = moduleRef.get(JwtService);
+
+      await authService.requestLoginPin({ email });
+
+      const loginPin = await prisma.loginPin.findFirst({ where: { email } });
+      expect(loginPin).not.toBeNull();
+
+      const { accessToken } = await authService.verifyLoginPin({
+        email,
+        pin: loginPin!.pin,
+      });
+
+      expect(accessToken).toBeTruthy();
+      const payload = jwtService.verify(accessToken);
+      expect(payload.email).toBe(email);
+      expect(payload.sub).toBeTruthy();
+    });
+
+    it('expired PIN: verify returns "Code expired"', async () => {
+      const email = 'pin-expired@test.com';
+
+      await authRepository.createLoginPin({
+        email,
+        pin: '111111',
+        expiresAt: new Date(Date.now() - 1000),
+      });
+
+      await expect(
+        authService.verifyLoginPin({ email, pin: '111111' }),
+      ).rejects.toThrow('Code expired');
+    });
+
+    it('wrong PIN: verify returns "Invalid code" and increments attempts', async () => {
+      const email = 'pin-wrong@test.com';
+
+      await authService.requestLoginPin({ email });
+
+      await expect(
+        authService.verifyLoginPin({ email, pin: '000000' }),
+      ).rejects.toThrow('Invalid code');
+
+      const loginPin = await prisma.loginPin.findFirst({ where: { email } });
+      expect(loginPin!.attempts).toBe(1);
+    });
+
+    it('attempt exhaustion: fail 5 times → "Too many attempts" and PIN invalidated', async () => {
+      const email = 'pin-exhausted@test.com';
+
+      await authService.requestLoginPin({ email });
+
+      for (let i = 0; i < 5; i++) {
+        await expect(
+          authService.verifyLoginPin({ email, pin: '000000' }),
+        ).rejects.toThrow('Invalid code');
+      }
+
+      const loginPin = await prisma.loginPin.findFirst({ where: { email } });
+      expect(loginPin!.attempts).toBeGreaterThanOrEqual(5);
+      expect(loginPin!.usedAt).not.toBeNull();
+
+      const realPin = loginPin!.pin;
+      await expect(
+        authService.verifyLoginPin({ email, pin: realPin }),
+      ).rejects.toThrow('Invalid code');
+    });
+
+    it('atomic double-use: verify same PIN concurrently → only one succeeds', async () => {
+      const email = 'pin-concurrent@test.com';
+
+      await authService.requestLoginPin({ email });
+
+      const loginPin = await prisma.loginPin.findFirst({ where: { email } });
+      const pin = loginPin!.pin;
+
+      const results = await Promise.allSettled([
+        authService.verifyLoginPin({ email, pin }),
+        authService.verifyLoginPin({ email, pin }),
+      ]);
+
+      const fulfilled = results.filter((r) => r.status === 'fulfilled');
+      const rejected = results.filter((r) => r.status === 'rejected');
+
+      expect(fulfilled).toHaveLength(1);
+      expect(rejected).toHaveLength(1);
+    });
+
+    it('new email: verify PIN creates user in DB', async () => {
+      const email = 'pin-new-user@test.com';
+
+      await authService.requestLoginPin({ email });
+
+      const loginPin = await prisma.loginPin.findFirst({ where: { email } });
+      await authService.verifyLoginPin({ email, pin: loginPin!.pin });
+
+      const user = await prisma.user.findUnique({ where: { email } });
+      expect(user).not.toBeNull();
+      expect(user!.email).toBe(email);
+    });
+
+    it('existing user: verify PIN returns same JWT sub, no duplicate user', async () => {
+      const email = 'pin-existing-user@test.com';
+      const jwtService = moduleRef.get(JwtService);
+
+      await authService.requestMagicLink({ email });
+      const magicLink = await prisma.magicLink.findFirst({ where: { email } });
+      const { accessToken: firstToken } = await authService.verifyMagicLink({
+        token: magicLink!.token,
+      });
+      const firstPayload = jwtService.verify(firstToken);
+
+      await authService.requestLoginPin({ email });
+      const loginPin = await prisma.loginPin.findFirst({ where: { email } });
+      const { accessToken: secondToken } = await authService.verifyLoginPin({
+        email,
+        pin: loginPin!.pin,
+      });
+      const secondPayload = jwtService.verify(secondToken);
+
+      expect(secondPayload.sub).toBe(firstPayload.sub);
+      expect(secondPayload.email).toBe(email);
+
+      const users = await prisma.user.findMany({ where: { email } });
+      expect(users).toHaveLength(1);
     });
   });
 
