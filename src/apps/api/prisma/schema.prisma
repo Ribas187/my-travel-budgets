@@ -94,3 +94,15 @@ model MagicLink {
 
   @@index([email])
 }
+
+model LoginPin {
+  id        String    @id @default(uuid())
+  email     String
+  pin       String
+  expiresAt DateTime
+  usedAt    DateTime?
+  attempts  Int       @default(0)
+  createdAt DateTime  @default(now())
+
+  @@index([email, pin, usedAt, expiresAt])
+}

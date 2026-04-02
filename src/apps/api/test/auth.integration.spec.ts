@@ -10,6 +10,7 @@ import { PrismaModule } from '@/modules/prisma/prisma.module';
 import { PrismaService } from '@/modules/prisma/prisma.service';
 import { AuthService } from '@/modules/auth/auth.service';
 import { PrismaAuthRepository } from '@/modules/auth/repository/auth.repository.prisma';
+import type { IAuthRepository } from '@/modules/auth/repository/auth.repository.interface';
 import { AUTH_REPOSITORY } from '@/modules/common/database';
 import { EmailService } from '@/modules/common/email/email.service';
 
@@ -19,6 +20,7 @@ describe('Auth integration tests', () => {
   let moduleRef: TestingModule;
   let prisma: PrismaService;
   let authService: AuthService;
+  let authRepository: IAuthRepository;
 
   beforeAll(async () => {
     loadEnv({ path: '.env.local', quiet: true });
@@ -69,6 +71,7 @@ describe('Auth integration tests', () => {
     await moduleRef.init();
     prisma = moduleRef.get(PrismaService);
     authService = moduleRef.get(AuthService);
+    authRepository = moduleRef.get(AUTH_REPOSITORY);
   });
 
   afterAll(async () => {
@@ -77,7 +80,12 @@ describe('Auth integration tests', () => {
 
   afterEach(async () => {
     mockSendMagicLink.mockClear();
+    await prisma.loginPin.deleteMany({});
     await prisma.magicLink.deleteMany({});
+    await prisma.expense.deleteMany({});
+    await prisma.category.deleteMany({});
+    await prisma.travelMember.deleteMany({});
+    await prisma.travel.deleteMany({});
     await prisma.user.deleteMany({});
   });
 
@@ -167,6 +175,147 @@ describe('Auth integration tests', () => {
 
       const consumed = await prisma.magicLink.findUnique({ where: { token } });
       expect(consumed!.usedAt).not.toBeNull();
+    });
+  });
+
+  describe('Task 1: LoginPin repository methods', () => {
+    const testEmail = 'pin-test@test.com';
+    const testPin = '123456';
+    const futureExpiry = new Date(Date.now() + 5 * 60 * 1000);
+
+    describe('createLoginPin', () => {
+      it('persists a row with correct email, pin, expiresAt, attempts=0, usedAt=null', async () => {
+        const loginPin = await authRepository.createLoginPin({
+          email: testEmail,
+          pin: testPin,
+          expiresAt: futureExpiry,
+        });
+
+        expect(loginPin.email).toBe(testEmail);
+        expect(loginPin.pin).toBe(testPin);
+        expect(loginPin.expiresAt.getTime()).toBe(futureExpiry.getTime());
+        expect(loginPin.attempts).toBe(0);
+        expect(loginPin.usedAt).toBeNull();
+        expect(loginPin.id).toBeTruthy();
+        expect(loginPin.createdAt).toBeInstanceOf(Date);
+      });
+    });
+
+    describe('findLoginPin', () => {
+      it('returns the PIN by email+pin when unused', async () => {
+        await authRepository.createLoginPin({
+          email: testEmail,
+          pin: testPin,
+          expiresAt: futureExpiry,
+        });
+
+        const found = await authRepository.findLoginPin({
+          email: testEmail,
+          pin: testPin,
+        });
+
+        expect(found).not.toBeNull();
+        expect(found!.email).toBe(testEmail);
+        expect(found!.pin).toBe(testPin);
+      });
+
+      it('returns null when the PIN has been used', async () => {
+        const loginPin = await authRepository.createLoginPin({
+          email: testEmail,
+          pin: testPin,
+          expiresAt: futureExpiry,
+        });
+
+        await authRepository.consumeLoginPin(loginPin.id);
+
+        const found = await authRepository.findLoginPin({
+          email: testEmail,
+          pin: testPin,
+        });
+
+        expect(found).toBeNull();
+      });
+
+      it('returns null when no matching PIN exists', async () => {
+        const found = await authRepository.findLoginPin({
+          email: testEmail,
+          pin: '999999',
+        });
+
+        expect(found).toBeNull();
+      });
+    });
+
+    describe('consumeLoginPin', () => {
+      it('marks usedAt and returns true on first call', async () => {
+        const loginPin = await authRepository.createLoginPin({
+          email: testEmail,
+          pin: testPin,
+          expiresAt: futureExpiry,
+        });
+
+        const result = await authRepository.consumeLoginPin(loginPin.id);
+        expect(result).toBe(true);
+
+        const record = await prisma.loginPin.findUnique({
+          where: { id: loginPin.id },
+        });
+        expect(record!.usedAt).not.toBeNull();
+        expect(record!.usedAt).toBeInstanceOf(Date);
+      });
+
+      it('returns false on second call (atomic prevention of double-use)', async () => {
+        const loginPin = await authRepository.createLoginPin({
+          email: testEmail,
+          pin: testPin,
+          expiresAt: futureExpiry,
+        });
+
+        const first = await authRepository.consumeLoginPin(loginPin.id);
+        const second = await authRepository.consumeLoginPin(loginPin.id);
+
+        expect(first).toBe(true);
+        expect(second).toBe(false);
+      });
+    });
+
+    describe('incrementLoginPinAttempts', () => {
+      it('increments attempts from 0 to 1 to 2 and returns updated count', async () => {
+        const loginPin = await authRepository.createLoginPin({
+          email: testEmail,
+          pin: testPin,
+          expiresAt: futureExpiry,
+        });
+
+        const first = await authRepository.incrementLoginPinAttempts(loginPin.id);
+        expect(first).toBe(1);
+
+        const second = await authRepository.incrementLoginPinAttempts(loginPin.id);
+        expect(second).toBe(2);
+      });
+    });
+
+    describe('invalidateLoginPin', () => {
+      it('sets usedAt so findLoginPin no longer returns it', async () => {
+        const loginPin = await authRepository.createLoginPin({
+          email: testEmail,
+          pin: testPin,
+          expiresAt: futureExpiry,
+        });
+
+        await authRepository.invalidateLoginPin(loginPin.id);
+
+        const found = await authRepository.findLoginPin({
+          email: testEmail,
+          pin: testPin,
+        });
+        expect(found).toBeNull();
+
+        const record = await prisma.loginPin.findUnique({
+          where: { id: loginPin.id },
+        });
+        expect(record!.usedAt).not.toBeNull();
+      });
     });
   });
 });
