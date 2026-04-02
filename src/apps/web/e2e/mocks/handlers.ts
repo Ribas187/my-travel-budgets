@@ -17,12 +17,21 @@ import {
   TEST_AVATAR_URL,
 } from './fixtures';
 
+interface PinRecord {
+  email: string;
+  pin: string;
+  expiresAt: Date;
+  usedAt: Date | null;
+  attempts: number;
+}
+
 interface MockState {
   travels: (typeof TEST_TRAVEL)[];
   travelDetail: typeof TEST_TRAVEL_DETAIL;
   categories: (typeof TEST_CATEGORY_FOOD)[];
   expenses: (typeof TEST_EXPENSE)[];
   user: typeof TEST_USER_ME;
+  pins: PinRecord[];
 }
 
 /**
@@ -36,6 +45,7 @@ export async function setupApiMocks(page: Page): Promise<MockState> {
     categories: [],
     expenses: [],
     user: { ...TEST_USER_ME },
+    pins: [],
   };
 
   // Single catch-all route for the API origin
@@ -50,6 +60,64 @@ export async function setupApiMocks(page: Page): Promise<MockState> {
         status: 202,
         headers: { 'content-length': '0' },
         body: '',
+      });
+    }
+
+    // ── Auth: request PIN ──
+    if (pathname === '/auth/login-pin' && method === 'POST') {
+      const body = route.request().postDataJSON();
+      const pin: PinRecord = {
+        email: body.email,
+        pin: '123456',
+        expiresAt: new Date(Date.now() + 5 * 60 * 1000),
+        usedAt: null,
+        attempts: 0,
+      };
+      state.pins.push(pin);
+      return route.fulfill({
+        status: 202,
+        contentType: 'application/json',
+        body: JSON.stringify({ message: 'If your email is registered, you will receive a code.' }),
+      });
+    }
+
+    // ── Auth: verify PIN ──
+    if (pathname === '/auth/verify-pin' && method === 'POST') {
+      const body = route.request().postDataJSON();
+      const pinRecord = state.pins.find(
+        (p) => p.email === body.email && p.usedAt === null,
+      );
+
+      if (!pinRecord) {
+        return route.fulfill({
+          status: 401,
+          contentType: 'application/json',
+          body: JSON.stringify({ message: 'Invalid code' }),
+        });
+      }
+
+      if (pinRecord.expiresAt < new Date()) {
+        return route.fulfill({
+          status: 401,
+          contentType: 'application/json',
+          body: JSON.stringify({ message: 'Code expired' }),
+        });
+      }
+
+      if (pinRecord.pin !== body.pin) {
+        pinRecord.attempts += 1;
+        return route.fulfill({
+          status: 401,
+          contentType: 'application/json',
+          body: JSON.stringify({ message: 'Invalid code' }),
+        });
+      }
+
+      pinRecord.usedAt = new Date();
+      return route.fulfill({
+        status: 200,
+        contentType: 'application/json',
+        body: JSON.stringify(TEST_AUTH_SESSION),
       });
     }
 

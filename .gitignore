@@ -37,8 +37,12 @@ tasks/prd-ux-polish-and-reliability/
 tasks/prd-profile-picture-upload/
 tasks/prd-mobile-web-input-fixes/
 tasks/prd-shared-data-layer/
+tasks/prd-fix-expense-member-attribution/
+tasks/prd-shared-features/
+tasks/prd-email-pin-login/
 qa-screenshots/
 
+.superpowers/
 
 # Playwright
 test-results/
