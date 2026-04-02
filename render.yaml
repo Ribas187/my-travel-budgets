@@ -24,3 +24,5 @@ services:
         sync: false
       - key: CLOUDINARY_URL
         sync: false
+      - key: CORS_ORIGIN
+        value: "https://mybudget.cards"

@@ -25,6 +25,10 @@ class EnvironmentVariables {
   @IsString()
   @IsNotEmpty()
   CLOUDINARY_URL!: string;
+
+  @IsString()
+  @IsNotEmpty()
+  CORS_ORIGIN!: string;
 }
 
 export function validateEnv(config: Record<string, unknown>): EnvironmentVariables {

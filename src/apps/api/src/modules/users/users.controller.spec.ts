@@ -47,6 +47,8 @@ describe('UsersController', () => {
               JWT_SECRET: TEST_JWT_SECRET,
               JWT_EXPIRES_IN: '30d',
               RESEND_API_KEY: 're_test_placeholder',
+              CLOUDINARY_URL: 'cloudinary://key:secret@cloud',
+              CORS_ORIGIN: 'http://localhost:5173',
               PORT: '3000',
             }),
           ],
