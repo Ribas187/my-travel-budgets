@@ -80,6 +80,27 @@ vi.mock('@/apiClient', () => ({
   },
 }));
 
+describe('LoginPage — authenticated redirect (BUG-01 regression)', () => {
+  it('uses useEffect for the isAuthenticated redirect, not direct render-phase call', () => {
+    // Ensure onLoginSuccess() is called inside useEffect, not directly in the render body.
+    // A direct render-phase call causes "Cannot update a component while rendering a different
+    // component" React error (BUG-01).
+    expect(loginPageSource).toContain('useEffect(');
+    // useEffect must depend on isAuthenticated
+    expect(loginPageSource).toMatch(/useEffect\([^)]*[\s\S]*?isAuthenticated/);
+    // onLoginSuccess must be inside the useEffect callback
+    const useEffectBlock = loginPageSource.match(/useEffect\([\s\S]*?\}, \[/);
+    expect(useEffectBlock).not.toBeNull();
+    expect(useEffectBlock![0]).toContain('onLoginSuccess()');
+  });
+
+  it('early-returns null for authenticated users without calling onLoginSuccess in render', () => {
+    // After the fix the render body must use the single-line guard pattern
+    // (no side-effect call) so navigation is only triggered by the useEffect above.
+    expect(loginPageSource).toContain('if (isAuthenticated) return null;');
+  });
+});
+
 describe('Login route — thin wrapper', () => {
   it('imports LoginPage from @repo/features', () => {
     expect(loginRouteSource).toContain("import { LoginPage } from '@repo/features'");

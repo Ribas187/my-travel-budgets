@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { LoginFormView, CheckEmailView, PinVerifyView } from '@repo/ui';
 
@@ -38,11 +38,14 @@ export function LoginPage({
     onSuccess: onLoginSuccess,
   });
 
-  // Redirect authenticated users
-  if (isAuthenticated) {
-    onLoginSuccess();
-    return null;
-  }
+  // Redirect authenticated users after render (not during)
+  useEffect(() => {
+    if (isAuthenticated) {
+      onLoginSuccess();
+    }
+  }, [isAuthenticated, onLoginSuccess]);
+
+  if (isAuthenticated) return null;
 
   // Magic link "check email" view
   if (sent) {
