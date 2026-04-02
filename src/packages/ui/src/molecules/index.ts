@@ -16,3 +16,7 @@ export { DeleteConfirmDialog } from './DeleteConfirmDialog';
 export { MemberRow } from './MemberRow';
 export { TabButtonGroup } from './TabButtonGroup';
 export { LanguageSelector } from './LanguageSelector';
+export { SegmentedControl } from './SegmentedControl';
+export type { SegmentedControlProps, SegmentedControlOption } from './SegmentedControl';
+export { PinInput } from './PinInput';
+export type { PinInputProps } from './PinInput';

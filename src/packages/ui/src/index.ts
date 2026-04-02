@@ -62,8 +62,10 @@ export {
   MemberRow,
   TabButtonGroup,
   LanguageSelector,
+  SegmentedControl,
+  PinInput,
 } from './molecules';
-export type { DatePickerInputProps } from './molecules';
+export type { DatePickerInputProps, SegmentedControlProps, SegmentedControlOption, PinInputProps } from './molecules';
 
 // Hooks
 export { useCalculatorInput } from './hooks/useCalculatorInput';
@@ -94,5 +96,8 @@ export {
   MembersView,
   TripFormView,
   ExpenseListView,
+  LoginFormView,
+  CheckEmailView,
+  PinVerifyView,
 } from './templates';
-export type { CategoryFormState } from './templates';
+export type { CategoryFormState, LoginFormViewProps, CheckEmailViewProps, PinVerifyViewProps } from './templates';

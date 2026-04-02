@@ -21,11 +21,11 @@ vi.mock('@/apiClient', () => ({
 }));
 
 describe('LoginPage email input height', () => {
-  it('email input has minHeight of 48', async () => {
-    // Read the source to verify minHeight={48} is set on the login email Input
+  it('email input has minHeight of 48 in LoginFormView template', async () => {
     const { readFileSync } = await import('fs');
+    const { resolve } = await import('path');
     const source = readFileSync(
-      new URL('../../routes/login.tsx', import.meta.url).pathname,
+      resolve(__dirname, '../../../../../packages/ui/src/templates/LoginFormView/LoginFormView.tsx'),
       'utf-8',
     );
     // The Input component should have minHeight={48}
