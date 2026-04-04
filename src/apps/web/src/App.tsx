@@ -12,7 +12,17 @@ import { AuthProvider, useAuth } from './providers/AuthProvider';
 import { apiClient, setTokenGetter, setOnUnauthorized } from './apiClient';
 import { routeTree } from './routeTree.gen';
 
-const router = createRouter({ routeTree });
+const router = createRouter({
+  routeTree,
+  context: {
+    auth: {
+      isAuthenticated: false,
+      getToken: () => null,
+    },
+    queryClient,
+    apiClient,
+  },
+});
 
 declare module '@tanstack/react-router' {
   interface Register {
@@ -20,18 +30,30 @@ declare module '@tanstack/react-router' {
   }
 }
 
-function AuthWiring({ children }: { children: React.ReactNode }) {
-  const { getToken, logout } = useAuth();
+function InnerApp() {
+  const auth = useAuth();
 
   useEffect(() => {
-    setTokenGetter(getToken);
+    setTokenGetter(auth.getToken);
     setOnUnauthorized(() => {
-      logout();
+      auth.logout();
       router.navigate({ to: '/login' });
     });
-  }, [getToken, logout]);
+  }, [auth]);
 
-  return <>{children}</>;
+  return (
+    <RouterProvider
+      router={router}
+      context={{
+        auth: {
+          isAuthenticated: auth.isAuthenticated,
+          getToken: auth.getToken,
+        },
+        queryClient,
+        apiClient,
+      }}
+    />
+  );
 }
 
 export function App() {
@@ -41,9 +63,7 @@ export function App() {
         <QueryClientProvider client={queryClient}>
           <I18nextProvider i18n={i18n}>
             <AuthProvider>
-              <AuthWiring>
-                <RouterProvider router={router} />
-              </AuthWiring>
+              <InnerApp />
             </AuthProvider>
           </I18nextProvider>
         </QueryClientProvider>

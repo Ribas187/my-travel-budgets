@@ -16,3 +16,7 @@ export { MembersPage, type MembersPageProps } from './members';
 
 // Feature hooks
 export { useCategoryForm } from './categories';
+
+// Onboarding
+export { OnboardingWizard, useTip } from './onboarding';
+export type { OnboardingWizardProps } from './onboarding';
