@@ -110,3 +110,12 @@ export {
   OnboardingCategoriesView,
   OnboardingReadyView,
 } from './templates';
+export type {
+  OnboardingWelcomeViewProps,
+  OnboardingTripFormViewProps,
+  OnboardingCategoriesViewProps,
+  CategoryOption,
+  OnboardingReadyViewProps,
+} from './templates';
+export { OnboardingProgressBar } from './molecules';
+export type { OnboardingProgressBarProps } from './molecules';

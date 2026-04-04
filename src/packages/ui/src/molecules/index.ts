@@ -25,3 +25,4 @@ export type { InlineTipProps } from './InlineTip';
 export { TooltipTip } from './TooltipTip';
 export type { TooltipTipProps } from './TooltipTip';
 export { OnboardingProgressBar } from './OnboardingProgressBar';
+export type { OnboardingProgressBarProps } from './OnboardingProgressBar';

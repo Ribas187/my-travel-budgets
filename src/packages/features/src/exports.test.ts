@@ -22,7 +22,8 @@ describe('@repo/features exports', () => {
     expect(features.useCategoryForm).toBeDefined();
   });
 
-  it('exports useTip hook', () => {
+  it('exports OnboardingWizard and useTip', () => {
+    expect(features.OnboardingWizard).toBeDefined();
     expect(features.useTip).toBeDefined();
   });
 
