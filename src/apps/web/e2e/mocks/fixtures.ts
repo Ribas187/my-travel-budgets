@@ -122,6 +122,8 @@ export const TEST_USER_ME = {
   name: TEST_USER.name,
   avatarUrl: null,
   mainTravelId: null as string | null,
+  onboardingCompletedAt: null as string | null,
+  dismissedTips: [] as string[],
   createdAt: TEST_USER.createdAt,
   updatedAt: TEST_USER.updatedAt,
 };
@@ -177,4 +179,15 @@ export const TEST_DASHBOARD = {
       status: 'ok' as const,
     },
   ],
+};
+
+export const TEST_DASHBOARD_EMPTY = {
+  currency: 'EUR',
+  overall: {
+    budget: 3000,
+    totalSpent: 0,
+    status: 'ok' as const,
+  },
+  memberSpending: [],
+  categorySpending: [],
 };

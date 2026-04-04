@@ -32,6 +32,7 @@ interface MockState {
   expenses: (typeof TEST_EXPENSE)[];
   user: typeof TEST_USER_ME;
   pins: PinRecord[];
+  dashboard: typeof TEST_DASHBOARD | null;
 }
 
 /**
@@ -46,6 +47,7 @@ export async function setupApiMocks(page: Page): Promise<MockState> {
     expenses: [],
     user: { ...TEST_USER_ME },
     pins: [],
+    dashboard: null,
   };
 
   // Single catch-all route for the API origin
@@ -136,7 +138,7 @@ export async function setupApiMocks(page: Page): Promise<MockState> {
       return route.fulfill({
         status: 200,
         contentType: 'application/json',
-        body: JSON.stringify(TEST_DASHBOARD),
+        body: JSON.stringify(state.dashboard ?? TEST_DASHBOARD),
       });
     }
 
@@ -419,6 +421,66 @@ export async function setupApiMocks(page: Page): Promise<MockState> {
         });
       }
       return route.fallback();
+    }
+
+    // ── Onboarding: complete ──
+    if (pathname === '/onboarding/complete' && method === 'PATCH') {
+      state.user = {
+        ...state.user,
+        onboardingCompletedAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString(),
+      };
+      return route.fulfill({
+        status: 204,
+        headers: { 'content-length': '0' },
+        body: '',
+      });
+    }
+
+    // ── Onboarding: reset (replay wizard) ──
+    if (pathname === '/onboarding/reset' && method === 'PATCH') {
+      state.user = {
+        ...state.user,
+        onboardingCompletedAt: null,
+        updatedAt: new Date().toISOString(),
+      };
+      return route.fulfill({
+        status: 204,
+        headers: { 'content-length': '0' },
+        body: '',
+      });
+    }
+
+    // ── Onboarding: dismiss tip ──
+    const dismissTipMatch = pathname.match(/^\/onboarding\/tips\/([^/]+)\/dismiss$/);
+    if (dismissTipMatch && method === 'PATCH') {
+      const tipId = dismissTipMatch[1]!;
+      if (!state.user.dismissedTips.includes(tipId)) {
+        state.user = {
+          ...state.user,
+          dismissedTips: [...state.user.dismissedTips, tipId],
+          updatedAt: new Date().toISOString(),
+        };
+      }
+      return route.fulfill({
+        status: 204,
+        headers: { 'content-length': '0' },
+        body: '',
+      });
+    }
+
+    // ── Onboarding: reset tips ──
+    if (pathname === '/onboarding/tips/reset' && method === 'PATCH') {
+      state.user = {
+        ...state.user,
+        dismissedTips: [],
+        updatedAt: new Date().toISOString(),
+      };
+      return route.fulfill({
+        status: 204,
+        headers: { 'content-length': '0' },
+        body: '',
+      });
     }
 
     // Unhandled API request — let it through (will likely 404)
