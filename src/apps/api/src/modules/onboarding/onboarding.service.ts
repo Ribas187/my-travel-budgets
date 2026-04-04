@@ -20,6 +20,11 @@ export class OnboardingService {
     this.logger.log(`Onboarding completed for user ${userId}`);
   }
 
+  async resetOnboarding(userId: string): Promise<void> {
+    await this.onboardingRepository.clearOnboardingCompleted(userId);
+    this.logger.log(`Onboarding reset for user ${userId}`);
+  }
+
   async dismissTip(userId: string, tipId: string): Promise<void> {
     if (!ONBOARDING_TIP_IDS.includes(tipId as OnboardingTipId)) {
       this.logger.warn(`Invalid tip ID attempted: ${tipId} by user ${userId}`);

@@ -8,6 +8,7 @@ import { ApiClientProvider } from '../../provider';
 import { queryKeys } from '../../queryKeys';
 import type { UserMe } from '../../types';
 import { useCompleteOnboarding } from './useCompleteOnboarding';
+import { useResetOnboarding } from './useResetOnboarding';
 import { useDismissTip } from './useDismissTip';
 import { useResetTips } from './useResetTips';
 
@@ -30,6 +31,7 @@ function createMockClient() {
   });
 
   client.onboarding.complete = vi.fn().mockResolvedValue(undefined);
+  client.onboarding.reset = vi.fn().mockResolvedValue(undefined);
   client.onboarding.dismissTip = vi.fn().mockResolvedValue(undefined);
   client.onboarding.resetTips = vi.fn().mockResolvedValue(undefined);
 
@@ -64,6 +66,23 @@ describe('useCompleteOnboarding', () => {
     await waitFor(() => expect(result.current.isSuccess).toBe(true));
 
     expect(mockClient.onboarding.complete).toHaveBeenCalledOnce();
+    expect(invalidateSpy).toHaveBeenCalledWith({ queryKey: queryKeys.users.me });
+  });
+});
+
+describe('useResetOnboarding', () => {
+  it('calls apiClient.onboarding.reset() and invalidates users.me', async () => {
+    const mockClient = createMockClient();
+    const { wrapper, queryClient } = createTestWrapper(mockClient);
+    const invalidateSpy = vi.spyOn(queryClient, 'invalidateQueries');
+
+    const { result } = renderHook(() => useResetOnboarding(), { wrapper });
+
+    result.current.mutate();
+
+    await waitFor(() => expect(result.current.isSuccess).toBe(true));
+
+    expect(mockClient.onboarding.reset).toHaveBeenCalledOnce();
     expect(invalidateSpy).toHaveBeenCalledWith({ queryKey: queryKeys.users.me });
   });
 });

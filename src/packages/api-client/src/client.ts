@@ -193,6 +193,9 @@ export class ApiClient {
     complete: (): Promise<void> =>
       this.request('PATCH', '/onboarding/complete'),
 
+    reset: (): Promise<void> =>
+      this.request('PATCH', '/onboarding/reset'),
+
     dismissTip: (tipId: string): Promise<void> =>
       this.request('PATCH', `/onboarding/tips/${tipId}/dismiss`),
 
