@@ -22,6 +22,11 @@ describe('@repo/features exports', () => {
     expect(features.useCategoryForm).toBeDefined();
   });
 
+  it('exports OnboardingWizard and useTip', () => {
+    expect(features.OnboardingWizard).toBeDefined();
+    expect(features.useTip).toBeDefined();
+  });
+
   it('exports all expected items as functions', () => {
     // All containers and hooks should be functions
     const expectedFunctions = [
