@@ -101,3 +101,18 @@ export {
   PinVerifyView,
 } from './templates';
 export type { CategoryFormState, LoginFormViewProps, CheckEmailViewProps, PinVerifyViewProps } from './templates';
+export {
+  OnboardingWelcomeView,
+  OnboardingTripFormView,
+  OnboardingCategoriesView,
+  OnboardingReadyView,
+} from './templates';
+export type {
+  OnboardingWelcomeViewProps,
+  OnboardingTripFormViewProps,
+  OnboardingCategoriesViewProps,
+  CategoryOption,
+  OnboardingReadyViewProps,
+} from './templates';
+export { OnboardingProgressBar } from './molecules';
+export type { OnboardingProgressBarProps } from './molecules';

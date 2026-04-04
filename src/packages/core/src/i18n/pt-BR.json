@@ -223,5 +223,40 @@
   "category.emojiGroup.shopping": "Compras",
   "category.emojiGroup.health": "Saúde",
   "category.emojiGroup.services": "Serviços",
-  "category.emojiGroup.other": "Outros"
+  "category.emojiGroup.other": "Outros",
+
+  "onboarding.welcome.title": "Bem-vindo ao My Travel Budgets!",
+  "onboarding.welcome.subtitle": "Vamos configurar sua primeira viagem em poucos passos.",
+  "onboarding.welcome.nameLabel": "Como devemos te chamar?",
+  "onboarding.welcome.namePlaceholder": "Seu nome",
+  "onboarding.welcome.getStarted": "Começar",
+  "onboarding.welcome.skip": "Pular configuração",
+
+  "onboarding.trip.title": "Crie Sua Primeira Viagem",
+  "onboarding.trip.subtitle": "Para onde você vai? Configure o básico da sua viagem.",
+
+  "onboarding.categories.title": "Escolha Suas Categorias",
+  "onboarding.categories.subtitle": "Escolha categorias para organizar suas despesas. Você pode personalizá-las depois.",
+  "onboarding.categories.addCustom": "Adicionar personalizada",
+
+  "onboarding.ready.title": "Tudo Pronto!",
+  "onboarding.ready.subtitle": "Sua viagem \"{{tripName}}\" está pronta com {{categoryCount}} categorias.",
+  "onboarding.ready.addExpense": "Adicionar primeira despesa",
+  "onboarding.ready.inviteMembers": "Convidar membros",
+  "onboarding.ready.goToDashboard": "Ir para o painel",
+  "onboarding.ready.skipSubtitle": "Você está pronto para explorar!",
+
+  "onboarding.progress.step": "Passo {{current}} de {{total}}",
+  "onboarding.next": "Próximo",
+  "onboarding.back": "Voltar",
+  "onboarding.skip": "Pular",
+  "onboarding.finish": "Finalizar",
+  "onboarding.completing": "Finalizando...",
+
+  "onboarding.category.food": "Alimentação",
+  "onboarding.category.transport": "Transporte",
+  "onboarding.category.accommodation": "Hospedagem",
+  "onboarding.category.activities": "Atividades",
+  "onboarding.category.shopping": "Compras",
+  "onboarding.category.other": "Outros"
 }

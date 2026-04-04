@@ -16,6 +16,8 @@ export interface UserMe {
   name: string;
   avatarUrl: string | null;
   mainTravelId: string | null;
+  onboardingCompletedAt: string | null;
+  dismissedTips: string[];
   createdAt: string;
   updatedAt: string;
 }

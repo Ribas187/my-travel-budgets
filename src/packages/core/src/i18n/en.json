@@ -223,5 +223,40 @@
   "category.emojiGroup.shopping": "Shopping",
   "category.emojiGroup.health": "Health",
   "category.emojiGroup.services": "Services",
-  "category.emojiGroup.other": "Other"
+  "category.emojiGroup.other": "Other",
+
+  "onboarding.welcome.title": "Welcome to My Travel Budgets!",
+  "onboarding.welcome.subtitle": "Let's set up your first trip in just a few steps.",
+  "onboarding.welcome.nameLabel": "What should we call you?",
+  "onboarding.welcome.namePlaceholder": "Your name",
+  "onboarding.welcome.getStarted": "Get Started",
+  "onboarding.welcome.skip": "Skip setup",
+
+  "onboarding.trip.title": "Create Your First Trip",
+  "onboarding.trip.subtitle": "Where are you heading? Set up the basics for your trip.",
+
+  "onboarding.categories.title": "Pick Your Categories",
+  "onboarding.categories.subtitle": "Choose categories to organize your expenses. You can customize them later.",
+  "onboarding.categories.addCustom": "Add custom",
+
+  "onboarding.ready.title": "You're All Set!",
+  "onboarding.ready.subtitle": "Your trip \"{{tripName}}\" is ready with {{categoryCount}} categories.",
+  "onboarding.ready.addExpense": "Add your first expense",
+  "onboarding.ready.inviteMembers": "Invite members",
+  "onboarding.ready.goToDashboard": "Go to dashboard",
+  "onboarding.ready.skipSubtitle": "You're ready to explore!",
+
+  "onboarding.progress.step": "Step {{current}} of {{total}}",
+  "onboarding.next": "Next",
+  "onboarding.back": "Back",
+  "onboarding.skip": "Skip",
+  "onboarding.finish": "Finish",
+  "onboarding.completing": "Completing...",
+
+  "onboarding.category.food": "Food",
+  "onboarding.category.transport": "Transport",
+  "onboarding.category.accommodation": "Accommodation",
+  "onboarding.category.activities": "Activities",
+  "onboarding.category.shopping": "Shopping",
+  "onboarding.category.other": "Other"
 }

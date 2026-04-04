@@ -187,6 +187,19 @@ export class ApiClient {
       this.request('GET', `/travels/${travelId}/dashboard`),
   };
 
+  // Onboarding methods
+
+  readonly onboarding = {
+    complete: (): Promise<void> =>
+      this.request('PATCH', '/onboarding/complete'),
+
+    dismissTip: (tipId: string): Promise<void> =>
+      this.request('PATCH', `/onboarding/tips/${tipId}/dismiss`),
+
+    resetTips: (): Promise<void> =>
+      this.request('PATCH', '/onboarding/tips/reset'),
+  };
+
   // Users methods
 
   readonly users = {
