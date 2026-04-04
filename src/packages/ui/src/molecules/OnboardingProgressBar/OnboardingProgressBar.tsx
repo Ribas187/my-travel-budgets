@@ -1,7 +1,7 @@
 import { useTranslation } from 'react-i18next';
 import { styled, XStack, YStack, View, Text } from 'tamagui';
 
-interface OnboardingProgressBarProps {
+export interface OnboardingProgressBarProps {
   currentStep: number;
   totalSteps: number;
 }

@@ -1,3 +1,4 @@
+import { type RefObject } from 'react';
 import { useTranslation } from 'react-i18next';
 import { YStack, Text } from 'tamagui';
 import { SectionHeader, SkeletonBox } from '../../atoms';
@@ -10,6 +11,7 @@ interface BudgetBreakdownViewProps {
   expenseCountByCategory: Record<string, number>;
   isLoading: boolean;
   onManageCategories: () => void;
+  progressBarRef?: RefObject<HTMLElement | null>;
 }
 
 function BudgetSkeleton() {

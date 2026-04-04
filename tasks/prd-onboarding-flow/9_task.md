@@ -23,12 +23,12 @@ Add "Replay onboarding" and "Reset tips" buttons to the profile settings page. T
 
 ## Subtasks
 
-- [ ] 9.1 Add a new API client method or hook for resetting onboarding (clearing `onboardingCompletedAt`)—this may need a new endpoint `PATCH /onboarding/reset` or reuse existing `clearOnboardingCompleted` via the complete endpoint with a toggle
-- [ ] 9.2 Add "Onboarding" section to the profile page with "Replay onboarding" and "Reset tips" buttons
-- [ ] 9.3 "Replay onboarding" calls the reset endpoint, invalidates user cache, shows toast
-- [ ] 9.4 "Reset tips" calls `useResetTips` mutation, shows toast
-- [ ] 9.5 Use i18n keys: `onboarding.profile.replayOnboarding`, `onboarding.profile.resetTips`
-- [ ] 9.6 Write tests
+- [x] 9.1 Add a new API client method or hook for resetting onboarding (clearing `onboardingCompletedAt`)—this may need a new endpoint `PATCH /onboarding/reset` or reuse existing `clearOnboardingCompleted` via the complete endpoint with a toggle
+- [x] 9.2 Add "Onboarding" section to the profile page with "Replay onboarding" and "Reset tips" buttons
+- [x] 9.3 "Replay onboarding" calls the reset endpoint, invalidates user cache, shows toast
+- [x] 9.4 "Reset tips" calls `useResetTips` mutation, shows toast
+- [x] 9.5 Use i18n keys: `onboarding.profile.replayOnboarding`, `onboarding.profile.resetTips`
+- [x] 9.6 Write tests
 
 ## Implementation Details
 
@@ -48,10 +48,10 @@ Follow the existing profile page pattern in `src/apps/web/src/features/profile/`
 
 ## Task Tests
 
-- [ ] Unit tests: Profile page renders "Replay onboarding" and "Reset tips" buttons
-- [ ] Unit tests: Clicking "Replay onboarding" calls the reset mutation
-- [ ] Unit tests: Clicking "Reset tips" calls `useResetTips` mutation
-- [ ] Integration tests: After replaying, user is redirected to wizard on next navigation
+- [x] Unit tests: Profile page renders "Replay onboarding" and "Reset tips" buttons
+- [x] Unit tests: Clicking "Replay onboarding" calls the reset mutation
+- [x] Unit tests: Clicking "Reset tips" calls `useResetTips` mutation
+- [x] Integration tests: After replaying, user is redirected to wizard on next navigation
 
 <critical>ALWAYS CREATE AND RUN THE TASK TESTS BEFORE CONSIDERING IT COMPLETE</critical>
 

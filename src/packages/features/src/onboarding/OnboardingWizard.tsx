@@ -132,18 +132,14 @@ export function OnboardingWizard({ onNavigate }: OnboardingWizardProps) {
       <OnboardingProgressBar
         currentStep={step}
         totalSteps={TOTAL_STEPS}
-        stepLabel={t('onboarding.progress.step', {
-          current: step,
-          total: TOTAL_STEPS,
-        })}
       />
 
       {step === 1 && (
         <OnboardingWelcomeView
           title={t('onboarding.welcome.title')}
           subtitle={t('onboarding.welcome.subtitle')}
-          nameLabel={t('onboarding.welcome.nameLabel')}
-          namePlaceholder={t('onboarding.welcome.namePlaceholder')}
+          nameLabel={t('onboarding.welcome.namePrompt')}
+          namePlaceholder={t('onboarding.welcome.namePrompt')}
           getStartedLabel={t('onboarding.welcome.getStarted')}
           skipLabel={t('onboarding.welcome.skip')}
           showNameInput={showNameInput}
@@ -184,8 +180,8 @@ export function OnboardingWizard({ onNavigate }: OnboardingWizardProps) {
           title={t('onboarding.ready.title')}
           subtitle={
             tripId
-              ? t('onboarding.ready.subtitle', { tripName, categoryCount })
-              : t('onboarding.ready.skipSubtitle')
+              ? t('onboarding.ready.summary', { tripName, count: categoryCount })
+              : t('onboarding.ready.title')
           }
           addExpenseLabel={t('onboarding.ready.addExpense')}
           inviteMembersLabel={t('onboarding.ready.inviteMembers')}

@@ -20,11 +20,11 @@ vi.mock('@repo/ui', () => ({
   ),
   InlineTip: (props: Record<string, unknown>) => (
     <div data-testid={`inline-tip-${props.tipId}`} data-message={props.message}>
-      {props.ctaLabel && (
+      {props.ctaLabel ? (
         <button data-testid="tip-cta" onClick={props.onCtaPress as () => void}>
           {props.ctaLabel as string}
         </button>
-      )}
+      ) : null}
       <button data-testid="dismiss-tip" onClick={props.onDismiss as () => void} />
     </div>
   ),

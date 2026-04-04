@@ -4,7 +4,7 @@ import { BudgetRing, Heading, Body, SkeletonBox, SectionHeader } from '../../ato
 import { CategoryProgressRow, StatCard, ExpenseRow, EmptyState } from '../../molecules';
 import { DashboardHeader } from '../../organisms';
 import { formatCurrency, formatAmount, formatTime, getMemberDisplayName, getDaysSinceStart, getTripTotalDays } from '../../quarks';
-import type { DashboardData, TravelDetail, Expense, CategorySpending } from '@repo/api-client';
+import { type DashboardData, type TravelDetail, type Expense, type CategorySpending, useUserMe } from '@repo/api-client';
 
 interface DashboardTemplateProps {
   dashboard: DashboardData | null;
@@ -104,10 +104,10 @@ function MobileLayout({ dashboard, recentExpenses, travel, locale, t, onSeeAllCa
   const remaining = Math.max(0, overall.budget - overall.totalSpent);
   const daysSinceStart = getDaysSinceStart(travel.startDate, travel.endDate);
   const totalDays = getTripTotalDays(travel.startDate, travel.endDate);
-
-  const currentMember = (travel.members ?? []).find((m) => m.userId != null);
-  const memberName = currentMember?.user?.name ?? '';
-  const memberAvatarUrl = currentMember?.user?.avatarUrl ?? null;
+  const { data: user } = useUserMe();
+  const memberName = user?.name ?? '';
+  const memberAvatarUrl = user?.avatarUrl ?? null;
+  
 
   return (
     <YStack gap="$lg" flex={1} data-testid="dashboard-mobile">

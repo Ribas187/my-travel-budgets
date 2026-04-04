@@ -1,4 +1,4 @@
-import { useMemo } from 'react';
+import { useMemo, type RefObject } from 'react';
 import { useTranslation } from 'react-i18next';
 import { styled, XStack, YStack, Text, View, Spinner, Input } from 'tamagui';
 import { Heading, FormField, FormLabel } from '../../atoms';
@@ -34,7 +34,10 @@ interface CategoriesViewProps {
   onDeleteRequest: (category: Category) => void;
   onDeleteConfirm: () => void;
   onDeleteCancel: () => void;
+  budgetLimitRef?: RefObject<HTMLElement | null>;
 }
+
+export type { CategoriesViewProps };
 
 export type { CategoryFormState };
 

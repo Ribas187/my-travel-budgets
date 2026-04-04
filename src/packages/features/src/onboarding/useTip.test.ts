@@ -10,8 +10,8 @@ const mockUseUserMe = vi.fn();
 const mockUseDismissTip = vi.fn(() => ({ mutate: mockMutate }));
 
 vi.mock('@repo/api-client', () => ({
-  useUserMe: (...args: unknown[]) => mockUseUserMe(...args),
-  useDismissTip: (...args: unknown[]) => mockUseDismissTip(...args),
+  useUserMe: () => mockUseUserMe(),
+  useDismissTip: () => mockUseDismissTip(),
 }));
 
 // Import after mocks are set up

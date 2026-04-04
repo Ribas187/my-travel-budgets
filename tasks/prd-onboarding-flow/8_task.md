@@ -26,13 +26,13 @@ Wire the `useTip` hook with `InlineTip` and `TooltipTip` components into 6 exist
 
 ## Subtasks
 
-- [ ] 8.1 Add `dashboard_first_visit` InlineTip to `src/packages/features/src/dashboard/DashboardPage.tsx` — shown when expenses count is 0
-- [ ] 8.2 Add `expenses_no_categories` InlineTip to expenses feature — shown when categories list is empty, CTA navigates to categories
-- [ ] 8.3 Add `summary_first_visit` InlineTip to `src/packages/features/src/summary/TripSummaryPage.tsx`
-- [ ] 8.4 Add `budget_progress_bar` TooltipTip to budget feature — anchored to budget progress bar element
-- [ ] 8.5 Add `members_invite_button` TooltipTip to `src/packages/features/src/members/MembersPage.tsx` — anchored to invite button
-- [ ] 8.6 Add `category_budget_limit` TooltipTip to `src/packages/features/src/categories/CategoriesPage.tsx` — anchored to budget limit field
-- [ ] 8.7 Write tests for each integration
+- [x] 8.1 Add `dashboard_first_visit` InlineTip to `src/packages/features/src/dashboard/DashboardPage.tsx` — shown when expenses count is 0
+- [x] 8.2 Add `expenses_no_categories` InlineTip to expenses feature — shown when categories list is empty, CTA navigates to categories
+- [x] 8.3 Add `summary_first_visit` InlineTip to `src/packages/features/src/summary/TripSummaryPage.tsx`
+- [x] 8.4 Add `budget_progress_bar` TooltipTip to budget feature — anchored to budget progress bar element
+- [x] 8.5 Add `members_invite_button` TooltipTip to `src/packages/features/src/members/MembersPage.tsx` — anchored to invite button
+- [x] 8.6 Add `category_budget_limit` TooltipTip to `src/packages/features/src/categories/CategoriesPage.tsx` — anchored to budget limit field
+- [x] 8.7 Write tests for each integration
 
 ## Implementation Details
 
@@ -66,11 +66,11 @@ For TooltipTip, create a `ref` on the anchor element and pass it to the componen
 
 ## Task Tests
 
-- [ ] Unit tests: DashboardPage shows InlineTip when user has 0 expenses and tip not dismissed
-- [ ] Unit tests: DashboardPage does NOT show InlineTip when tip is dismissed
-- [ ] Unit tests: Expenses page shows InlineTip when no categories exist
-- [ ] Unit tests: CTA on expenses tip navigates to categories
-- [ ] Unit tests: TooltipTip components render when conditions met
+- [x] Unit tests: DashboardPage shows InlineTip when user has 0 expenses and tip not dismissed
+- [x] Unit tests: DashboardPage does NOT show InlineTip when tip is dismissed
+- [x] Unit tests: Expenses page shows InlineTip when no categories exist
+- [x] Unit tests: CTA on expenses tip navigates to categories
+- [x] Unit tests: TooltipTip components render when conditions met
 
 <critical>ALWAYS CREATE AND RUN THE TASK TESTS BEFORE CONSIDERING IT COMPLETE</critical>
 

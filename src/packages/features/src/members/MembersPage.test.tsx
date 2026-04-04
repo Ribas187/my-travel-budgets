@@ -36,8 +36,8 @@ const mockTravel: TravelDetail = {
   createdAt: '2026-01-01T00:00:00Z',
   updatedAt: '2026-01-01T00:00:00Z',
   members: [
-    { id: 'm1', travelId: 't1', userId: 'u1', guestName: null, role: 'owner' as const, user: { id: 'u1', name: 'Alice', email: 'alice@test.com', avatarUrl: null, mainTravelId: null, createdAt: '2026-01-01T00:00:00Z', updatedAt: '2026-01-01T00:00:00Z' }, createdAt: '2026-01-01T00:00:00Z', updatedAt: '2026-01-01T00:00:00Z' },
-    { id: 'm2', travelId: 't1', userId: 'u2', guestName: null, role: 'member' as const, user: { id: 'u2', name: 'Bob', email: 'bob@test.com', avatarUrl: null, mainTravelId: null, createdAt: '2026-01-01T00:00:00Z', updatedAt: '2026-01-01T00:00:00Z' }, createdAt: '2026-01-01T00:00:00Z', updatedAt: '2026-01-01T00:00:00Z' },
+    { id: 'm1', travelId: 't1', userId: 'u1', guestName: null, role: 'owner' as const, user: { id: 'u1', name: 'Alice', email: 'alice@test.com', avatarUrl: null, mainTravelId: null, onboardingCompletedAt: '2026-01-01T00:00:00Z', dismissedTips: [], createdAt: '2026-01-01T00:00:00Z', updatedAt: '2026-01-01T00:00:00Z' }, createdAt: '2026-01-01T00:00:00Z', updatedAt: '2026-01-01T00:00:00Z' },
+    { id: 'm2', travelId: 't1', userId: 'u2', guestName: null, role: 'member' as const, user: { id: 'u2', name: 'Bob', email: 'bob@test.com', avatarUrl: null, mainTravelId: null, onboardingCompletedAt: '2026-01-01T00:00:00Z', dismissedTips: [], createdAt: '2026-01-01T00:00:00Z', updatedAt: '2026-01-01T00:00:00Z' }, createdAt: '2026-01-01T00:00:00Z', updatedAt: '2026-01-01T00:00:00Z' },
   ],
   categories: [],
 };

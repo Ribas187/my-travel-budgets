@@ -1,11 +1,12 @@
 // @vitest-environment jsdom
 import { describe, it, expect, vi, afterEach, beforeEach } from 'vitest';
-import { render, waitFor, cleanup, screen } from '@testing-library/react';
+import { render, cleanup, screen } from '@testing-library/react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { ApiClient, ApiClientProvider } from '@repo/api-client';
 import type { TravelDetail } from '@repo/api-client';
 
 import { TravelProvider } from '../context/TravelContext';
+
 import { TripSummaryPage } from './TripSummaryPage';
 
 vi.mock('@repo/ui', () => ({
@@ -92,8 +93,9 @@ describe('TripSummaryPage — contextual tips', () => {
     renderSummary();
 
     expect(screen.getByTestId('inline-tip-summary_first_visit')).toBeTruthy();
-    expect(screen.getByTestId('inline-tip-summary_first_visit').getAttribute('data-message'))
-      .toBe('onboarding.tip.summaryFirstVisit');
+    expect(screen.getByTestId('inline-tip-summary_first_visit').getAttribute('data-message')).toBe(
+      'onboarding.tip.summaryFirstVisit',
+    );
   });
 
   it('does NOT show InlineTip when tip is dismissed', () => {

@@ -6,6 +6,7 @@ import { ApiClient, ApiClientProvider } from '@repo/api-client';
 import type { TravelDetail } from '@repo/api-client';
 
 import { TravelProvider } from '../context/TravelContext';
+
 import { TripSummaryPage } from './TripSummaryPage';
 
 vi.mock('@repo/ui', () => ({

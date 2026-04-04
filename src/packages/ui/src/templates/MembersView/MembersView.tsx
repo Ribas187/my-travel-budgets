@@ -1,12 +1,13 @@
+import { type RefObject } from 'react';
 import { useTranslation } from 'react-i18next';
-import { XStack, YStack, Text } from 'tamagui';
+import { XStack, YStack, Text, View } from 'tamagui';
 import { Heading, PrimaryButton } from '../../atoms';
 import { MemberRow, ConfirmDialog } from '../../molecules';
 import { InviteMemberForm } from '../../organisms';
 import { formatCurrency, getMemberDisplayName, getAvatarColor } from '../../quarks';
 import type { TravelMember, MemberSpending } from '@repo/api-client';
 
-interface MembersViewProps {
+export interface MembersViewProps {
   members: TravelMember[];
   memberSpendingMap: Map<string, MemberSpending>;
   currency: string;
@@ -22,12 +23,13 @@ interface MembersViewProps {
   onRemoveRequest: (member: TravelMember) => void;
   onRemoveConfirm: () => void;
   onRemoveCancel: () => void;
+  inviteButtonRef?: RefObject<HTMLElement | null>;
 }
 
 export function MembersView({
   members, memberSpendingMap, currency, locale, isOwner, showInviteForm, inviteLoading,
   memberToRemove, onShowInviteForm, onInviteByEmail, onAddGuest, onCancelInvite,
-  onRemoveRequest, onRemoveConfirm, onRemoveCancel,
+  onRemoveRequest, onRemoveConfirm, onRemoveCancel, inviteButtonRef,
 }: MembersViewProps) {
   const { t } = useTranslation();
 
@@ -36,7 +38,9 @@ export function MembersView({
       <XStack justifyContent="space-between" alignItems="center">
         <Heading level={2}>{t('member.title')}</Heading>
         {isOwner && !showInviteForm && (
-          <PrimaryButton label={t('member.add')} onPress={onShowInviteForm} data-testid="invite-button" />
+          <View ref={inviteButtonRef as RefObject<HTMLElement>}>
+            <PrimaryButton label={t('member.add')} onPress={onShowInviteForm} data-testid="invite-button" />
+          </View>
         )}
       </XStack>
 

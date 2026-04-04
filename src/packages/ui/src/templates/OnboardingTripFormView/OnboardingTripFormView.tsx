@@ -2,7 +2,6 @@ import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { styled, XStack, YStack, Text, View } from 'tamagui';
 import { PrimaryButton, FormInput, SectionLabel } from '../../atoms';
-import { OnboardingProgressBar } from '../../molecules/OnboardingProgressBar';
 
 interface TripFormData {
   name: string;
@@ -126,8 +125,6 @@ export function OnboardingTripFormView({
       gap="$xl"
       testID="onboarding-trip-form-view"
     >
-      <OnboardingProgressBar currentStep={2} totalSteps={4} />
-
       <Title testID="trip-form-title">
         {t('onboarding.createTrip.title')}
       </Title>

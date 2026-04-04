@@ -109,21 +109,31 @@ export function TooltipTip({
       // Handle both web (HTMLElement) and native (View with measure)
       if ('getBoundingClientRect' in anchor) {
         const rect = (anchor as HTMLElement).getBoundingClientRect();
+        const viewportWidth =
+          typeof window !== 'undefined' ? window.innerWidth : 390;
         const viewportHeight =
           typeof window !== 'undefined' ? window.innerHeight : 0;
         const spaceBelow = viewportHeight - rect.bottom;
         const spaceAbove = rect.top;
+        const tooltipWidth = 280; // matches maxWidth on BubbleFrame
+        const gap = 8;
+        const edgePadding = 12;
+
+        // Center tooltip horizontally on anchor, clamp to viewport
+        const anchorCenter = rect.left + rect.width / 2;
+        let left = anchorCenter - tooltipWidth / 2;
+        left = Math.max(edgePadding, Math.min(left, viewportWidth - tooltipWidth - edgePadding));
 
         // Place below if more space, otherwise above
         if (spaceBelow >= 100 || spaceBelow > spaceAbove) {
           setPosition({
-            top: rect.bottom + 8,
-            left: rect.left,
+            top: rect.bottom + gap,
+            left,
           });
         } else {
           setPosition({
-            top: rect.top - 8,
-            left: rect.left,
+            top: rect.top - gap,
+            left,
           });
         }
       }

@@ -9,6 +9,6 @@
 - [x] 5.0 useTip Hook
 - [x] 6.0 Wizard Step Views (UI Templates)
 - [x] 7.0 Wizard Container & Web Routing
-- [ ] 8.0 Contextual Tips Integration
-- [ ] 9.0 Profile Settings (Replay & Reset)
-- [ ] 10.0 E2E Tests
+- [x] 8.0 Contextual Tips Integration
+- [x] 9.0 Profile Settings (Replay & Reset)
+- [x] 10.0 E2E Tests

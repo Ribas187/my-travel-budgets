@@ -1,7 +1,6 @@
 import { useTranslation } from 'react-i18next';
 import { styled, XStack, YStack, Text, View } from 'tamagui';
 import { PrimaryButton } from '../../atoms';
-import { OnboardingProgressBar } from '../../molecules/OnboardingProgressBar';
 import type { DefaultCategory } from '@repo/core';
 
 interface CategoryItem extends DefaultCategory {
@@ -162,8 +161,6 @@ export function OnboardingCategoriesView({
       gap="$xl"
       testID="onboarding-categories-view"
     >
-      <OnboardingProgressBar currentStep={3} totalSteps={4} />
-
       <YStack gap="$sm">
         <Title testID="categories-title">
           {t('onboarding.categories.title')}

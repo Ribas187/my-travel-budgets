@@ -25,14 +25,14 @@ Write Playwright E2E tests covering the full onboarding flow: wizard completion,
 
 ## Subtasks
 
-- [ ] 10.1 Write E2E test: New user completes full wizard (step 1-4), lands on trip dashboard with trip and categories created
-- [ ] 10.2 Write E2E test: New user skips at step 1, lands on travels list, onboarding marked complete
-- [ ] 10.3 Write E2E test: New user skips at step 2, no trip created, onboarding marked complete
-- [ ] 10.4 Write E2E test: Returning user (onboarding complete) navigates normally, no wizard redirect
-- [ ] 10.5 Write E2E test: Dashboard shows `dashboard_first_visit` tip for user with 0 expenses, dismissing removes it
-- [ ] 10.6 Write E2E test: Dismissed tip does not reappear after page reload
-- [ ] 10.7 Write E2E test: Profile "Replay onboarding" button triggers wizard redirect
-- [ ] 10.8 Write E2E test: Profile "Reset tips" button re-enables tips on pages
+- [x] 10.1 Write E2E test: New user completes full wizard (step 1-4), lands on trip dashboard with trip and categories created
+- [x] 10.2 Write E2E test: New user skips at step 1, lands on travels list, onboarding marked complete
+- [x] 10.3 Write E2E test: New user skips at step 2, no trip created, onboarding marked complete
+- [x] 10.4 Write E2E test: Returning user (onboarding complete) navigates normally, no wizard redirect
+- [x] 10.5 Write E2E test: Dashboard shows `dashboard_first_visit` tip for user with 0 expenses, dismissing removes it
+- [x] 10.6 Write E2E test: Dismissed tip does not reappear after page reload
+- [x] 10.7 Write E2E test: Profile "Replay onboarding" button triggers wizard redirect
+- [x] 10.8 Write E2E test: Profile "Reset tips" button re-enables tips on pages
 
 ## Implementation Details
 
@@ -53,7 +53,7 @@ For test setup, you may need to:
 
 ## Task Tests
 
-- [ ] E2E tests: All scenarios listed above pass with Playwright
+- [x] E2E tests: All scenarios listed above pass with Playwright
 
 <critical>ALWAYS CREATE AND RUN THE TASK TESTS BEFORE CONSIDERING IT COMPLETE</critical>
 
