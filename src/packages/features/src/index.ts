@@ -16,3 +16,4 @@ export { MembersPage, type MembersPageProps } from './members';
 
 // Feature hooks
 export { useCategoryForm } from './categories';
+export { useTip } from './onboarding';

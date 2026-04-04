@@ -1,0 +1,1 @@
+export { useTip } from './useTip';
