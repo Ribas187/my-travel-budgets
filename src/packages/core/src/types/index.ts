@@ -6,3 +6,6 @@ export type { AddMemberInput } from '../schemas/member';
 export type { Currency } from '../constants/currencies';
 
 export type MemberRole = 'owner' | 'member';
+
+export type { OnboardingTipId } from './onboarding';
+export { ONBOARDING_TIP_IDS } from './onboarding';
