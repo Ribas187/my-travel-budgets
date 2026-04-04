@@ -2,6 +2,8 @@ import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { styled, XStack, YStack, Text, View } from 'tamagui';
 import { PrimaryButton, FormInput, SectionLabel } from '../../atoms';
+import { DatePickerInput } from '../../molecules';
+import { SUPPORTED_CURRENCIES } from '@repo/core';
 
 interface TripFormData {
   name: string;
@@ -65,6 +67,16 @@ const NavButton = styled(View, {
   pressStyle: { opacity: 0.85 },
 });
 
+const CurrencySelect = styled(View, {
+  borderWidth: 1,
+  borderColor: '$borderDefault',
+  borderRadius: '$lg',
+  minHeight: 48,
+  justifyContent: 'center',
+  paddingHorizontal: '$lg',
+  position: 'relative' as const,
+});
+
 const TOTAL_GROUPS = 3;
 
 export function OnboardingTripFormView({
@@ -81,6 +93,7 @@ export function OnboardingTripFormView({
 }: OnboardingTripFormViewProps) {
   const { t } = useTranslation();
   const [fieldGroup, setFieldGroup] = useState(0);
+  const [showCurrencyDropdown, setShowCurrencyDropdown] = useState(false);
   const [internalFormData, setInternalFormData] = useState<TripFormData>({
     name: '',
     description: '',
@@ -163,26 +176,22 @@ export function OnboardingTripFormView({
         <YStack gap="$lg" testID="field-group-dates">
           <HelperText>{t('onboarding.createTrip.datesHelper')}</HelperText>
           <XStack gap="$md">
-            <YStack gap="$sm" flex={1}>
+            <YStack gap="$sm" flex={1} minWidth={0}>
               <SectionLabel>{t('travel.startDate')}</SectionLabel>
-              <FormInput
+              <DatePickerInput
                 testID="trip-start-date-input"
                 value={formData.startDate}
-                onChangeText={(val: string) => onFieldChange('startDate', val)}
-                placeholder="YYYY-MM-DD"
-                placeholderTextColor="$textTertiary"
-                aria-label={t('travel.startDate')}
+                onChange={(val: string) => onFieldChange('startDate', val)}
+                label={t('travel.startDate')}
               />
             </YStack>
-            <YStack gap="$sm" flex={1}>
+            <YStack gap="$sm" flex={1} minWidth={0}>
               <SectionLabel>{t('travel.endDate')}</SectionLabel>
-              <FormInput
+              <DatePickerInput
                 testID="trip-end-date-input"
                 value={formData.endDate}
-                onChangeText={(val: string) => onFieldChange('endDate', val)}
-                placeholder="YYYY-MM-DD"
-                placeholderTextColor="$textTertiary"
-                aria-label={t('travel.endDate')}
+                onChange={(val: string) => onFieldChange('endDate', val)}
+                label={t('travel.endDate')}
               />
             </YStack>
           </XStack>
@@ -196,21 +205,68 @@ export function OnboardingTripFormView({
           <XStack gap="$md">
             <YStack gap="$sm" flex={1}>
               <SectionLabel>{t('travel.currency')}</SectionLabel>
-              <FormInput
-                testID="trip-currency-input"
-                value={formData.currency}
-                onChangeText={(val: string) => onFieldChange('currency', val)}
-                placeholder="USD"
-                placeholderTextColor="$textTertiary"
-                aria-label={t('travel.currency')}
-              />
+              <CurrencySelect
+                onPress={() => setShowCurrencyDropdown(!showCurrencyDropdown)}
+                testID="trip-currency-select"
+                role="combobox"
+                aria-expanded={showCurrencyDropdown}
+              >
+                <Text fontFamily="$body" fontSize={16} color="$textPrimary">
+                  {formData.currency || t('travel.currency')}
+                </Text>
+                {showCurrencyDropdown && (
+                  <YStack
+                    position="absolute"
+                    top="100%"
+                    left={0}
+                    right={0}
+                    backgroundColor="$white"
+                    borderWidth={1}
+                    borderColor="$borderDefault"
+                    borderRadius="$lg"
+                    zIndex={100}
+                    maxHeight={200}
+                    overflow="scroll"
+                    marginTop="$xs"
+                  >
+                    {SUPPORTED_CURRENCIES.map((curr) => (
+                      <View
+                        key={curr.code}
+                        paddingVertical="$sm"
+                        paddingHorizontal="$lg"
+                        cursor="pointer"
+                        backgroundColor={
+                          formData.currency === curr.code ? '$parchment' : '$white'
+                        }
+                        hoverStyle={{ backgroundColor: '$parchment' }}
+                        onPress={() => {
+                          onFieldChange('currency', curr.code);
+                          setShowCurrencyDropdown(false);
+                        }}
+                        testID={`currency-option-${curr.code}`}
+                      >
+                        <Text
+                          fontFamily="$body"
+                          fontSize={14}
+                          color="$textPrimary"
+                        >
+                          {curr.code} ({curr.symbol})
+                        </Text>
+                      </View>
+                    ))}
+                  </YStack>
+                )}
+              </CurrencySelect>
             </YStack>
             <YStack gap="$sm" flex={1}>
               <SectionLabel>{t('travel.totalBudget')}</SectionLabel>
               <FormInput
                 testID="trip-budget-input"
                 value={formData.budget}
-                onChangeText={(val: string) => onFieldChange('budget', val)}
+                onChangeText={(text: string) => {
+                  const cleaned = text.replace(/[^0-9.]/g, '');
+                  onFieldChange('budget', cleaned);
+                }}
                 inputMode="numeric"
                 placeholder="0"
                 placeholderTextColor="$textTertiary"
@@ -234,11 +290,7 @@ export function OnboardingTripFormView({
           </Text>
         </NavButton>
         <PrimaryButton
-          label={
-            fieldGroup === TOTAL_GROUPS - 1
-              ? t('common.next')
-              : t('common.next')
-          }
+          label={t('common.next')}
           onPress={handleGroupNext}
           loading={saving && fieldGroup === TOTAL_GROUPS - 1}
           disabled={saving}
