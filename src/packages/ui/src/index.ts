@@ -66,10 +66,9 @@ export {
   PinInput,
   InlineTip,
   TooltipTip,
+  OnboardingProgressBar,
 } from './molecules';
-export type { DatePickerInputProps, SegmentedControlProps, SegmentedControlOption, PinInputProps, InlineTipProps, TooltipTipProps } from './molecules';
-export { OnboardingProgressBar } from './molecules';
-
+export type { DatePickerInputProps, SegmentedControlProps, SegmentedControlOption, PinInputProps, InlineTipProps, TooltipTipProps, OnboardingProgressBarProps } from './molecules';
 // Hooks
 export { useCalculatorInput } from './hooks/useCalculatorInput';
 export type { UseCalculatorInputOptions, UseCalculatorInputReturn } from './hooks/useCalculatorInput';
@@ -117,5 +116,3 @@ export type {
   CategoryOption,
   OnboardingReadyViewProps,
 } from './templates';
-export { OnboardingProgressBar } from './molecules';
-export type { OnboardingProgressBarProps } from './molecules';

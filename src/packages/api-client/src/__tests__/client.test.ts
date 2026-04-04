@@ -426,6 +426,18 @@ describe('ApiClient', () => {
       expect(init.method).toBe('PATCH');
     });
 
+    it('reset sends PATCH to /onboarding/reset', async () => {
+      const fetchMock = mockFetch204();
+      globalThis.fetch = fetchMock;
+
+      const client = createClient();
+      await client.onboarding.reset();
+
+      const [url, init] = fetchMock.mock.calls[0];
+      expect(url).toBe(`${BASE_URL}/onboarding/reset`);
+      expect(init.method).toBe('PATCH');
+    });
+
     it('dismissTip sends PATCH to /onboarding/tips/:tipId/dismiss', async () => {
       const fetchMock = mockFetch204();
       globalThis.fetch = fetchMock;

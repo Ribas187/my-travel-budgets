@@ -47,6 +47,17 @@ describe('OnboardingService', () => {
     });
   });
 
+  describe('resetOnboarding', () => {
+    it('clears the onboarding completed timestamp', async () => {
+      const user = { id: 'user-1', onboardingCompletedAt: null };
+      mockClearOnboardingCompleted.mockResolvedValue(user);
+
+      await service.resetOnboarding('user-1');
+
+      expect(mockClearOnboardingCompleted).toHaveBeenCalledWith('user-1');
+    });
+  });
+
   describe('dismissTip', () => {
     it('validates and appends a valid tip ID', async () => {
       mockGetDismissedTips.mockResolvedValue([]);

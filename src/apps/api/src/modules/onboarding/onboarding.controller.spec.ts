@@ -18,11 +18,13 @@ import { AllExceptionsFilter } from '@/modules/common/filters';
 const TEST_JWT_SECRET = 'unit-test-jwt-secret-min-32-characters!!';
 
 const mockCompleteOnboarding = jest.fn();
+const mockResetOnboarding = jest.fn();
 const mockDismissTip = jest.fn();
 const mockResetTips = jest.fn();
 
 const onboardingServiceMock = {
   completeOnboarding: mockCompleteOnboarding,
+  resetOnboarding: mockResetOnboarding,
   dismissTip: mockDismissTip,
   resetTips: mockResetTips,
 };
@@ -102,6 +104,25 @@ describe('OnboardingController', () => {
         .expect(HttpStatus.NO_CONTENT);
 
       expect(mockCompleteOnboarding).toHaveBeenCalledWith('user-1');
+    });
+  });
+
+  describe('PATCH /onboarding/reset', () => {
+    it('returns 401 without auth', async () => {
+      await request(app.getHttpServer())
+        .patch('/onboarding/reset')
+        .expect(HttpStatus.UNAUTHORIZED);
+    });
+
+    it('returns 204 when authenticated', async () => {
+      mockResetOnboarding.mockResolvedValue(undefined);
+
+      await request(app.getHttpServer())
+        .patch('/onboarding/reset')
+        .set('Authorization', `Bearer ${authToken()}`)
+        .expect(HttpStatus.NO_CONTENT);
+
+      expect(mockResetOnboarding).toHaveBeenCalledWith('user-1');
     });
   });
 
