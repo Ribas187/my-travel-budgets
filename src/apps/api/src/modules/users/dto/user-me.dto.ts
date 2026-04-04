@@ -4,6 +4,8 @@ export class UserMeDto {
   name!: string;
   avatarUrl!: string | null;
   mainTravelId!: string | null;
+  onboardingCompletedAt!: Date | null;
+  dismissedTips!: string[];
   createdAt!: Date;
   updatedAt!: Date;
 }
