@@ -6,6 +6,7 @@ export * from './schemas/member';
 export * from './constants/currencies';
 export * from './constants/category-emojis';
 export * from './constants/category-colors';
+export * from './constants/default-categories';
 export * from './types/index';
 export * from './i18n/index';
 export * from './utils/index';

@@ -11,9 +11,11 @@ model User {
   email        String   @unique
   name         String
   avatarUrl    String?
-  mainTravelId String?
-  createdAt    DateTime @default(now())
-  updatedAt    DateTime @updatedAt
+  mainTravelId          String?
+  onboardingCompletedAt DateTime?
+  dismissedTips         String[]  @default([])
+  createdAt             DateTime  @default(now())
+  updatedAt             DateTime  @updatedAt
 
   travels      Travel[]
   memberships  TravelMember[]
