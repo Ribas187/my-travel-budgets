@@ -12,6 +12,7 @@
   "common.search": "Search",
   "common.noResults": "No results found",
   "common.retry": "Retry",
+  "common.next": "Next",
 
   "auth.login": "Log in",
   "auth.magicLink": "Send magic link",
@@ -230,6 +231,7 @@
   "onboarding.welcome.namePrompt": "What should we call you?",
   "onboarding.welcome.getStarted": "Get Started",
   "onboarding.welcome.skip": "Skip",
+  "onboarding.step": "Step {{current}} of {{total}}",
   "onboarding.createTrip.title": "Create Your Trip",
   "onboarding.createTrip.nameHelper": "Give your trip a name, like 'Summer in Italy'",
   "onboarding.createTrip.datesHelper": "When are you traveling?",

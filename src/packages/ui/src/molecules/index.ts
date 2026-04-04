@@ -24,3 +24,4 @@ export { InlineTip } from './InlineTip';
 export type { InlineTipProps } from './InlineTip';
 export { TooltipTip } from './TooltipTip';
 export type { TooltipTipProps } from './TooltipTip';
+export { OnboardingProgressBar } from './OnboardingProgressBar';

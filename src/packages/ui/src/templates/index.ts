@@ -14,3 +14,7 @@ export { CheckEmailView } from './CheckEmailView';
 export type { CheckEmailViewProps } from './CheckEmailView';
 export { PinVerifyView } from './PinVerifyView';
 export type { PinVerifyViewProps } from './PinVerifyView';
+export { OnboardingWelcomeView } from './OnboardingWelcomeView';
+export { OnboardingTripFormView } from './OnboardingTripFormView';
+export { OnboardingCategoriesView } from './OnboardingCategoriesView';
+export { OnboardingReadyView } from './OnboardingReadyView';
