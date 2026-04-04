@@ -413,6 +413,44 @@ describe('ApiClient', () => {
     });
   });
 
+  describe('onboarding', () => {
+    it('complete sends PATCH to /onboarding/complete', async () => {
+      const fetchMock = mockFetch204();
+      globalThis.fetch = fetchMock;
+
+      const client = createClient();
+      await client.onboarding.complete();
+
+      const [url, init] = fetchMock.mock.calls[0];
+      expect(url).toBe(`${BASE_URL}/onboarding/complete`);
+      expect(init.method).toBe('PATCH');
+    });
+
+    it('dismissTip sends PATCH to /onboarding/tips/:tipId/dismiss', async () => {
+      const fetchMock = mockFetch204();
+      globalThis.fetch = fetchMock;
+
+      const client = createClient();
+      await client.onboarding.dismissTip('dashboard_first_visit');
+
+      const [url, init] = fetchMock.mock.calls[0];
+      expect(url).toBe(`${BASE_URL}/onboarding/tips/dashboard_first_visit/dismiss`);
+      expect(init.method).toBe('PATCH');
+    });
+
+    it('resetTips sends PATCH to /onboarding/tips/reset', async () => {
+      const fetchMock = mockFetch204();
+      globalThis.fetch = fetchMock;
+
+      const client = createClient();
+      await client.onboarding.resetTips();
+
+      const [url, init] = fetchMock.mock.calls[0];
+      expect(url).toBe(`${BASE_URL}/onboarding/tips/reset`);
+      expect(init.method).toBe('PATCH');
+    });
+  });
+
   describe('users', () => {
     it('getMe sends GET to /users/me', async () => {
       const user = {
