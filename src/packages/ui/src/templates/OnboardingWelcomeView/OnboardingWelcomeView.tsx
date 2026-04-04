@@ -1,14 +1,18 @@
-import { useTranslation } from 'react-i18next';
+import { useState } from 'react';
 import { styled, YStack, Text, View } from 'tamagui';
 import { PrimaryButton } from '../../atoms';
-import { OnboardingProgressBar } from '../../molecules/OnboardingProgressBar';
 import { FormInput } from '../../atoms';
 
-interface OnboardingWelcomeViewProps {
+export interface OnboardingWelcomeViewProps {
+  title: string;
+  subtitle: string;
+  nameLabel?: string;
+  namePlaceholder?: string;
+  getStartedLabel: string;
+  skipLabel: string;
   showNameInput: boolean;
-  nameValue: string;
-  onNameChange: (name: string) => void;
-  onGetStarted: () => void;
+  saving?: boolean;
+  onNext: (name?: string) => void;
   onSkip: () => void;
 }
 
@@ -42,13 +46,26 @@ const SkipButton = styled(Text, {
 });
 
 export function OnboardingWelcomeView({
+  title,
+  subtitle,
+  nameLabel,
+  namePlaceholder,
+  getStartedLabel,
+  skipLabel,
   showNameInput,
-  nameValue,
-  onNameChange,
-  onGetStarted,
+  saving = false,
+  onNext,
   onSkip,
 }: OnboardingWelcomeViewProps) {
-  const { t } = useTranslation();
+  const [nameValue, setNameValue] = useState('');
+
+  const handleGetStarted = () => {
+    if (showNameInput && nameValue.trim()) {
+      onNext(nameValue.trim());
+    } else {
+      onNext();
+    }
+  };
 
   return (
     <YStack
@@ -59,34 +76,34 @@ export function OnboardingWelcomeView({
       alignItems="center"
       testID="onboarding-welcome-view"
     >
-      <OnboardingProgressBar currentStep={1} totalSteps={4} />
-
       <YStack gap="$md" alignItems="center" maxWidth={400} width="100%">
         <Title testID="welcome-title">
-          {t('onboarding.welcome.title')}
+          {title}
         </Title>
         <Subtitle testID="welcome-subtitle">
-          {t('onboarding.welcome.subtitle')}
+          {subtitle}
         </Subtitle>
       </YStack>
 
       {showNameInput && (
         <YStack gap="$sm" width="100%" maxWidth={400}>
-          <Text
-            fontFamily="$body"
-            fontSize={14}
-            fontWeight="500"
-            color="$textSecondary"
-          >
-            {t('onboarding.welcome.namePrompt')}
-          </Text>
+          {nameLabel && (
+            <Text
+              fontFamily="$body"
+              fontSize={14}
+              fontWeight="500"
+              color="$textSecondary"
+            >
+              {nameLabel}
+            </Text>
+          )}
           <FormInput
             testID="name-input"
             value={nameValue}
-            onChangeText={onNameChange}
-            placeholder={t('onboarding.welcome.namePrompt')}
+            onChangeText={setNameValue}
+            placeholder={namePlaceholder ?? nameLabel ?? ''}
             placeholderTextColor="$textTertiary"
-            aria-label={t('onboarding.welcome.namePrompt')}
+            aria-label={nameLabel ?? ''}
           />
         </YStack>
       )}
@@ -94,17 +111,19 @@ export function OnboardingWelcomeView({
       <YStack gap="$md" width="100%" maxWidth={400}>
         <View testID="get-started-button">
           <PrimaryButton
-            label={t('onboarding.welcome.getStarted')}
-            onPress={onGetStarted}
+            label={getStartedLabel}
+            onPress={handleGetStarted}
+            loading={saving}
+            disabled={saving}
           />
         </View>
         <SkipButton
           testID="skip-button"
           onPress={onSkip}
           role="button"
-          aria-label={t('onboarding.welcome.skip')}
+          aria-label={skipLabel}
         >
-          {t('onboarding.welcome.skip')}
+          {skipLabel}
         </SkipButton>
       </YStack>
     </YStack>

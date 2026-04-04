@@ -13,11 +13,15 @@ interface TripFormData {
   budget: string;
 }
 
-interface OnboardingTripFormViewProps {
-  formData: TripFormData;
-  onFieldChange: (field: keyof TripFormData, value: string) => void;
-  onNext: () => void;
-  onBack: () => void;
+export interface OnboardingTripFormViewProps {
+  title?: string;
+  subtitle?: string;
+  nextLabel?: string;
+  skipLabel?: string;
+  formData?: TripFormData;
+  onFieldChange?: (field: keyof TripFormData, value: string) => void;
+  onNext: ((data: { name: string; description: string; currency: string; budget: number; startDate: string; endDate: string }) => void) | (() => void);
+  onBack?: () => void;
   onSkip: () => void;
   saving?: boolean;
 }
@@ -65,8 +69,12 @@ const NavButton = styled(View, {
 const TOTAL_GROUPS = 3;
 
 export function OnboardingTripFormView({
-  formData,
-  onFieldChange,
+  title: titleProp,
+  subtitle: subtitleProp,
+  nextLabel: nextLabelProp,
+  skipLabel: skipLabelProp,
+  formData: externalFormData,
+  onFieldChange: externalOnFieldChange,
   onNext,
   onBack,
   onSkip,
@@ -74,10 +82,23 @@ export function OnboardingTripFormView({
 }: OnboardingTripFormViewProps) {
   const { t } = useTranslation();
   const [fieldGroup, setFieldGroup] = useState(0);
+  const [internalFormData, setInternalFormData] = useState<TripFormData>({
+    name: '',
+    description: '',
+    startDate: '',
+    endDate: '',
+    currency: 'USD',
+    budget: '',
+  });
+
+  const formData = externalFormData ?? internalFormData;
+  const onFieldChange: (field: keyof TripFormData, value: string) => void = externalOnFieldChange ?? ((field, value) => {
+    setInternalFormData((prev) => ({ ...prev, [field]: value }));
+  });
 
   const handleGroupBack = () => {
     if (fieldGroup === 0) {
-      onBack();
+      onBack?.();
     } else {
       setFieldGroup((prev) => prev - 1);
     }
@@ -85,7 +106,14 @@ export function OnboardingTripFormView({
 
   const handleGroupNext = () => {
     if (fieldGroup === TOTAL_GROUPS - 1) {
-      onNext();
+      (onNext as (data: { name: string; description: string; currency: string; budget: number; startDate: string; endDate: string }) => void)({
+        name: formData.name,
+        description: formData.description,
+        currency: formData.currency,
+        budget: Number(formData.budget) || 0,
+        startDate: formData.startDate,
+        endDate: formData.endDate,
+      });
     } else {
       setFieldGroup((prev) => prev + 1);
     }

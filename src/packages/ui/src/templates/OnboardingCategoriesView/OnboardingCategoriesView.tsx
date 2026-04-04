@@ -8,13 +8,24 @@ interface CategoryItem extends DefaultCategory {
   selected: boolean;
 }
 
+export interface CategoryOption {
+  nameKey: string;
+  icon: string;
+  color: string;
+  selected: boolean;
+}
+
 interface OnboardingCategoriesViewProps {
-  categories: CategoryItem[];
+  title?: string;
+  subtitle?: string;
+  nextLabel?: string;
+  skipLabel?: string;
+  categories: CategoryItem[] | CategoryOption[];
   onToggleCategory: (index: number) => void;
-  onEditCategory: (index: number) => void;
-  onAddCustom: () => void;
+  onEditCategory?: (index: number) => void;
+  onAddCustom?: () => void;
   onNext: () => void;
-  onBack: () => void;
+  onBack?: () => void;
   onSkip: () => void;
   saving?: boolean;
 }
@@ -130,6 +141,8 @@ const AddCustomButton = styled(View, {
   flex: 1,
 });
 
+export { type OnboardingCategoriesViewProps };
+
 export function OnboardingCategoriesView({
   categories,
   onToggleCategory,
@@ -174,42 +187,48 @@ export function OnboardingCategoriesView({
           >
             <CategoryEmoji>{category.icon}</CategoryEmoji>
             <CategoryName>{t(category.nameKey)}</CategoryName>
-            <EditLink
-              onPress={(e: { stopPropagation: () => void }) => {
-                e.stopPropagation();
-                onEditCategory(index);
-              }}
-              testID={`category-edit-${index}`}
-              role="button"
-              aria-label={`${t('common.edit')} ${t(category.nameKey)}`}
-            >
-              {t('common.edit')}
-            </EditLink>
+            {onEditCategory && (
+              <EditLink
+                onPress={(e: { stopPropagation: () => void }) => {
+                  e.stopPropagation();
+                  onEditCategory(index);
+                }}
+                testID={`category-edit-${index}`}
+                role="button"
+                aria-label={`${t('common.edit')} ${t(category.nameKey)}`}
+              >
+                {t('common.edit')}
+              </EditLink>
+            )}
           </CategoryCard>
         ))}
-        <AddCustomButton
-          onPress={onAddCustom}
-          testID="add-custom-button"
-          role="button"
-          aria-label={t('onboarding.categories.addCustom')}
-        >
-          <Text fontSize={28}>{'+'}</Text>
-          <CategoryName>{t('onboarding.categories.addCustom')}</CategoryName>
-        </AddCustomButton>
+        {onAddCustom && (
+          <AddCustomButton
+            onPress={onAddCustom}
+            testID="add-custom-button"
+            role="button"
+            aria-label={t('onboarding.categories.addCustom')}
+          >
+            <Text fontSize={28}>{'+'}</Text>
+            <CategoryName>{t('onboarding.categories.addCustom')}</CategoryName>
+          </AddCustomButton>
+        )}
       </XStack>
 
       {/* Navigation */}
       <XStack justifyContent="space-between" alignItems="center">
-        <NavButton
-          onPress={onBack}
-          testID="back-button"
-          role="button"
-          aria-label={t('common.back')}
-        >
-          <Text fontFamily="$body" fontWeight="600" color="$textPrimary">
-            {t('common.back')}
-          </Text>
-        </NavButton>
+        {onBack && (
+          <NavButton
+            onPress={onBack}
+            testID="back-button"
+            role="button"
+            aria-label={t('common.back')}
+          >
+            <Text fontFamily="$body" fontWeight="600" color="$textPrimary">
+              {t('common.back')}
+            </Text>
+          </NavButton>
+        )}
         <PrimaryButton
           label={t('common.next')}
           onPress={onNext}

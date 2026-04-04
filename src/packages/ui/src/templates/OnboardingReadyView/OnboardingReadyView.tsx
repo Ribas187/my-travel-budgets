@@ -1,15 +1,19 @@
-import { useTranslation } from 'react-i18next';
 import { styled, YStack, Text, View } from 'tamagui';
 import { PrimaryButton } from '../../atoms';
-import { OnboardingProgressBar } from '../../molecules/OnboardingProgressBar';
 
 interface OnboardingReadyViewProps {
-  tripName: string;
-  categoryCount: number;
+  title: string;
+  subtitle: string;
+  addExpenseLabel: string;
+  inviteMembersLabel: string;
+  goToDashboardLabel: string;
+  completing?: boolean;
+  tripName?: string;
+  categoryCount?: number;
   onAddExpense: () => void;
   onInviteMembers: () => void;
   onGoToDashboard: () => void;
-  onSkip: () => void;
+  onSkip?: () => void;
 }
 
 const Title = styled(Text, {
@@ -50,27 +54,20 @@ const SecondaryActionButton = styled(View, {
   width: '100%',
 });
 
-const SkipButton = styled(Text, {
-  name: 'SkipButton',
-  fontFamily: '$body',
-  fontSize: 14,
-  fontWeight: '600',
-  color: '$textTertiary',
-  textAlign: 'center',
-  cursor: 'pointer',
-  pressStyle: { opacity: 0.7 },
-});
+
+export { type OnboardingReadyViewProps };
 
 export function OnboardingReadyView({
-  tripName,
-  categoryCount,
+  title,
+  subtitle,
+  addExpenseLabel,
+  inviteMembersLabel,
+  goToDashboardLabel,
+  completing = false,
   onAddExpense,
   onInviteMembers,
   onGoToDashboard,
-  onSkip,
 }: OnboardingReadyViewProps) {
-  const { t } = useTranslation();
-
   return (
     <YStack
       flex={1}
@@ -80,27 +77,24 @@ export function OnboardingReadyView({
       alignItems="center"
       testID="onboarding-ready-view"
     >
-      <OnboardingProgressBar currentStep={4} totalSteps={4} />
-
       <CelebrationEmoji>{'🎉'}</CelebrationEmoji>
 
       <YStack gap="$md" alignItems="center" maxWidth={400} width="100%">
         <Title testID="ready-title">
-          {t('onboarding.ready.title')}
+          {title}
         </Title>
         <Summary testID="ready-summary">
-          {t('onboarding.ready.summary', {
-            tripName,
-            count: categoryCount,
-          })}
+          {subtitle}
         </Summary>
       </YStack>
 
       <YStack gap="$md" width="100%" maxWidth={400}>
         <View testID="add-expense-button">
           <PrimaryButton
-            label={t('onboarding.ready.addExpense')}
+            label={addExpenseLabel}
             onPress={onAddExpense}
+            loading={completing}
+            disabled={completing}
           />
         </View>
 
@@ -108,10 +102,10 @@ export function OnboardingReadyView({
           testID="invite-members-button"
           onPress={onInviteMembers}
           role="button"
-          aria-label={t('onboarding.ready.inviteMembers')}
+          aria-label={inviteMembersLabel}
         >
           <Text fontFamily="$body" fontWeight="600" color="$textPrimary">
-            {t('onboarding.ready.inviteMembers')}
+            {inviteMembersLabel}
           </Text>
         </SecondaryActionButton>
 
@@ -119,22 +113,13 @@ export function OnboardingReadyView({
           testID="go-to-dashboard-button"
           onPress={onGoToDashboard}
           role="button"
-          aria-label={t('onboarding.ready.goToDashboard')}
+          aria-label={goToDashboardLabel}
         >
           <Text fontFamily="$body" fontWeight="600" color="$textPrimary">
-            {t('onboarding.ready.goToDashboard')}
+            {goToDashboardLabel}
           </Text>
         </SecondaryActionButton>
       </YStack>
-
-      <SkipButton
-        testID="skip-button"
-        onPress={onSkip}
-        role="button"
-        aria-label={t('onboarding.welcome.skip')}
-      >
-        {t('onboarding.welcome.skip')}
-      </SkipButton>
     </YStack>
   );
 }
