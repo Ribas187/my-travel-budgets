@@ -6,4 +6,5 @@ export {
   DASHBOARD_REPOSITORY,
   USER_REPOSITORY,
   AUTH_REPOSITORY,
+  ONBOARDING_REPOSITORY,
 } from './repository.tokens';

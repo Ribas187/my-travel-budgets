@@ -27,6 +27,8 @@ export class UsersService {
     name: string;
     avatarUrl: string | null;
     mainTravelId: string | null;
+    onboardingCompletedAt: Date | null;
+    dismissedTips: string[];
     createdAt: Date;
     updatedAt: Date;
   }): UserMeDto {
@@ -36,6 +38,8 @@ export class UsersService {
       name: user.name,
       avatarUrl: user.avatarUrl,
       mainTravelId: user.mainTravelId,
+      onboardingCompletedAt: user.onboardingCompletedAt,
+      dismissedTips: user.dismissedTips,
       createdAt: user.createdAt,
       updatedAt: user.updatedAt,
     };

@@ -12,6 +12,7 @@ import { MembersModule } from './modules/members/members.module';
 import { CategoriesModule } from './modules/categories/categories.module';
 import { ExpensesModule } from './modules/expenses/expenses.module';
 import { DashboardModule } from './modules/dashboard/dashboard.module';
+import { OnboardingModule } from './modules/onboarding/onboarding.module';
 
 @Module({
   imports: [
@@ -29,6 +30,7 @@ import { DashboardModule } from './modules/dashboard/dashboard.module';
     CategoriesModule,
     ExpensesModule,
     DashboardModule,
+    OnboardingModule,
   ],
   controllers: [AppController],
 })

@@ -51,6 +51,8 @@ describe('UsersService', () => {
         name: 'Test User',
         avatarUrl: 'https://example.com/avatar.png',
         mainTravelId: null,
+        onboardingCompletedAt: null,
+        dismissedTips: [],
         createdAt: new Date('2024-01-01'),
         updatedAt: new Date('2024-01-02'),
       };
@@ -65,6 +67,8 @@ describe('UsersService', () => {
         name: 'Test User',
         avatarUrl: 'https://example.com/avatar.png',
         mainTravelId: null,
+        onboardingCompletedAt: null,
+        dismissedTips: [],
         createdAt: user.createdAt,
         updatedAt: user.updatedAt,
       });
@@ -77,6 +81,8 @@ describe('UsersService', () => {
         name: 'Test User',
         avatarUrl: null,
         mainTravelId: 'travel-123',
+        onboardingCompletedAt: null,
+        dismissedTips: [],
         createdAt: new Date('2024-01-01'),
         updatedAt: new Date('2024-01-02'),
       };
@@ -101,6 +107,8 @@ describe('UsersService', () => {
       name: 'Original Name',
       avatarUrl: null as string | null,
       mainTravelId: null as string | null,
+      onboardingCompletedAt: null,
+      dismissedTips: [] as string[],
       createdAt: new Date('2024-01-01'),
       updatedAt: new Date('2024-01-02'),
     };
@@ -174,6 +182,8 @@ describe('UsersService', () => {
       name: 'Test User',
       avatarUrl: null,
       mainTravelId: null as string | null,
+      onboardingCompletedAt: null,
+      dismissedTips: [] as string[],
       createdAt: new Date('2024-01-01'),
       updatedAt: new Date('2024-01-02'),
     };
@@ -229,6 +239,8 @@ describe('UsersService', () => {
       name: 'Test User',
       avatarUrl: null as string | null,
       mainTravelId: null as string | null,
+      onboardingCompletedAt: null,
+      dismissedTips: [] as string[],
       createdAt: new Date('2024-01-01'),
       updatedAt: new Date('2024-01-02'),
     };
@@ -344,6 +356,8 @@ describe('UsersService', () => {
       name: 'Test User',
       avatarUrl: 'https://res.cloudinary.com/test/avatars/user-1.jpg' as string | null,
       mainTravelId: null as string | null,
+      onboardingCompletedAt: null,
+      dismissedTips: [] as string[],
       createdAt: new Date('2024-01-01'),
       updatedAt: new Date('2024-01-02'),
     };
