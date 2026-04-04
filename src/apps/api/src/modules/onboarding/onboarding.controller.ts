@@ -15,6 +15,12 @@ export class OnboardingController {
     await this.onboardingService.completeOnboarding(user.userId);
   }
 
+  @Patch('reset')
+  @HttpCode(HttpStatus.NO_CONTENT)
+  async reset(@CurrentUser() user: JwtAuthUser): Promise<void> {
+    await this.onboardingService.resetOnboarding(user.userId);
+  }
+
   @Patch('tips/:tipId/dismiss')
   @HttpCode(HttpStatus.NO_CONTENT)
   async dismissTip(

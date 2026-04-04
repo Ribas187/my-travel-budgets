@@ -1,6 +1,6 @@
 import { useTranslation } from 'react-i18next';
 import { styled, XStack, YStack, Text, View, Input } from 'tamagui';
-import { Camera, Map } from 'lucide-react';
+import { Camera, Map, RotateCcw, Lightbulb } from 'lucide-react';
 import { Heading, Body, PrimaryButton, UserAvatar, SectionCard, NavigationRowLink } from '../../atoms';
 import { BackHeader, LanguageSelector } from '../../molecules';
 
@@ -20,6 +20,10 @@ interface ProfileViewProps {
   onBack: () => void;
   onMyTravels: () => void;
   onLogout: () => void;
+  onReplayOnboarding?: () => void;
+  isReplayingOnboarding?: boolean;
+  onResetTips?: () => void;
+  isResettingTips?: boolean;
 }
 
 const AvatarWrapper = styled(View, {
@@ -60,6 +64,26 @@ const NameInput = styled(Input, {
   minHeight: 48,
 });
 
+const OnboardingActionButton = styled(XStack, {
+  paddingVertical: '$md',
+  paddingHorizontal: '$lg',
+  borderRadius: '$lg',
+  borderWidth: 1,
+  borderColor: '$borderDefault',
+  alignItems: 'center',
+  gap: '$md',
+  cursor: 'pointer',
+  hoverStyle: { backgroundColor: '$backgroundSecondary' },
+  variants: {
+    disabled: {
+      true: {
+        opacity: 0.5,
+        cursor: 'not-allowed',
+      },
+    },
+  } as const,
+});
+
 const LogoutButton = styled(XStack, {
   paddingVertical: '$md',
   paddingHorizontal: '$xl',
@@ -75,6 +99,7 @@ export function ProfileView({
   user, currentLanguage, isEditingName, nameValue, isSaving,
   onStartEditName, onNameChange, onSaveName, onCancelEdit,
   onChangeLanguage, onAvatarPress, onRemoveAvatar, onBack, onMyTravels, onLogout,
+  onReplayOnboarding, isReplayingOnboarding, onResetTips, isResettingTips,
 }: ProfileViewProps) {
   const { t } = useTranslation();
 
@@ -132,6 +157,43 @@ export function ProfileView({
         <SectionLabel>{t('profile.language')}</SectionLabel>
         <LanguageSelector languages={languages} currentLanguage={currentLanguage} onSelect={onChangeLanguage} />
       </SectionCard>
+
+      {/* Onboarding Section */}
+      {(onReplayOnboarding || onResetTips) && (
+        <SectionCard data-testid="onboarding-section">
+          <SectionLabel>{t('onboarding.profile.sectionTitle')}</SectionLabel>
+          <YStack gap="$md">
+            {onReplayOnboarding && (
+              <OnboardingActionButton
+                onPress={isReplayingOnboarding ? undefined : onReplayOnboarding}
+                disabled={isReplayingOnboarding}
+                data-testid="replay-onboarding-button"
+                role="button"
+                aria-label={t('onboarding.profile.replayOnboarding')}
+              >
+                <RotateCcw size={18} color="#8C8580" />
+                <Text fontFamily="$body" fontSize={15} color="$textPrimary" flex={1}>
+                  {t('onboarding.profile.replayOnboarding')}
+                </Text>
+              </OnboardingActionButton>
+            )}
+            {onResetTips && (
+              <OnboardingActionButton
+                onPress={isResettingTips ? undefined : onResetTips}
+                disabled={isResettingTips}
+                data-testid="reset-tips-button"
+                role="button"
+                aria-label={t('onboarding.profile.resetTips')}
+              >
+                <Lightbulb size={18} color="#8C8580" />
+                <Text fontFamily="$body" fontSize={15} color="$textPrimary" flex={1}>
+                  {t('onboarding.profile.resetTips')}
+                </Text>
+              </OnboardingActionButton>
+            )}
+          </YStack>
+        </SectionCard>
+      )}
 
       {/* My Travels */}
       <NavigationRowLink icon={<Map size={20} color="#8C8580" />} label={t('profile.myTravels')} onPress={onMyTravels} testID="my-travels-row" />

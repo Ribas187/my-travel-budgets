@@ -2,7 +2,7 @@ import { useState, useCallback } from 'react';
 import { useNavigate, useRouter } from '@tanstack/react-router';
 import { useTranslation } from 'react-i18next';
 import { ProfileView } from '@repo/ui';
-import { useUserMe, useUpdateUser, useRemoveAvatar } from '@repo/api-client';
+import { useUserMe, useUpdateUser, useRemoveAvatar, useResetOnboarding, useResetTips } from '@repo/api-client';
 
 import { AvatarUploadModal } from './AvatarUploadModal';
 
@@ -17,6 +17,8 @@ export function ProfilePage() {
   const { data: user } = useUserMe();
   const updateUser = useUpdateUser();
   const removeAvatar = useRemoveAvatar();
+  const resetOnboarding = useResetOnboarding();
+  const resetTips = useResetTips();
 
   const [isEditingName, setIsEditingName] = useState(false);
   const [nameValue, setNameValue] = useState('');
@@ -78,6 +80,22 @@ export function ProfilePage() {
     });
   }, [removeAvatar, t]);
 
+  const handleReplayOnboarding = useCallback(() => {
+    resetOnboarding.mutate(undefined, {
+      onSuccess: () => {
+        showToast(t('onboarding.profile.replaySuccess'), 'success');
+      },
+    });
+  }, [resetOnboarding, t]);
+
+  const handleResetTips = useCallback(() => {
+    resetTips.mutate(undefined, {
+      onSuccess: () => {
+        showToast(t('onboarding.profile.resetTipsSuccess'), 'success');
+      },
+    });
+  }, [resetTips, t]);
+
   if (!user) return null;
 
   return (
@@ -98,6 +116,10 @@ export function ProfilePage() {
         onBack={handleBack}
         onMyTravels={handleMyTravels}
         onLogout={handleLogout}
+        onReplayOnboarding={handleReplayOnboarding}
+        isReplayingOnboarding={resetOnboarding.isPending}
+        onResetTips={handleResetTips}
+        isResettingTips={resetTips.isPending}
       />
       <AvatarUploadModal
         open={isUploadModalOpen}
