@@ -64,8 +64,10 @@ export {
   LanguageSelector,
   SegmentedControl,
   PinInput,
+  InlineTip,
+  TooltipTip,
 } from './molecules';
-export type { DatePickerInputProps, SegmentedControlProps, SegmentedControlOption, PinInputProps } from './molecules';
+export type { DatePickerInputProps, SegmentedControlProps, SegmentedControlOption, PinInputProps, InlineTipProps, TooltipTipProps } from './molecules';
 
 // Hooks
 export { useCalculatorInput } from './hooks/useCalculatorInput';

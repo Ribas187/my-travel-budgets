@@ -20,3 +20,7 @@ export { SegmentedControl } from './SegmentedControl';
 export type { SegmentedControlProps, SegmentedControlOption } from './SegmentedControl';
 export { PinInput } from './PinInput';
 export type { PinInputProps } from './PinInput';
+export { InlineTip } from './InlineTip';
+export type { InlineTipProps } from './InlineTip';
+export { TooltipTip } from './TooltipTip';
+export type { TooltipTipProps } from './TooltipTip';
