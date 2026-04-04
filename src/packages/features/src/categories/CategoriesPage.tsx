@@ -1,11 +1,12 @@
-import { useCallback } from 'react';
+import { useCallback, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
-import { CategoriesView } from '@repo/ui';
+import { CategoriesView, TooltipTip } from '@repo/ui';
 import type { CreateCategoryInput, UpdateCategoryInput } from '@repo/api-client';
 import { useCreateCategory, useUpdateCategory, useDeleteCategory, useTravelExpenses } from '@repo/api-client';
 
 import { useTravelContext } from '../context/TravelContext';
 import { useCategoryForm } from './useCategoryForm';
+import { useTip } from '../onboarding/useTip';
 
 export interface CategoriesPageProps {
   onSuccess?: (message: string) => void;
@@ -17,6 +18,8 @@ export function CategoriesPage({ onSuccess, onError }: CategoriesPageProps) {
   const { travel, isOwner } = useTravelContext();
   const categories = travel.categories ?? [];
   const travelId = travel.id;
+  const budgetLimitRef = useRef<HTMLElement>(null);
+  const { shouldShow: shouldShowTip, dismiss: dismissTip } = useTip('category_budget_limit');
 
   const createCategory = useCreateCategory(travelId);
   const updateCategory = useUpdateCategory(travelId);
@@ -33,6 +36,8 @@ export function CategoriesPage({ onSuccess, onError }: CategoriesPageProps) {
     handleAddNew,
     handleFormChange,
   } = useCategoryForm();
+
+  const isEditingCategory = !!expandedId && expandedId !== 'new';
 
   const handleSave = useCallback(() => {
     const budgetLimit = form.budgetLimit ? Number(form.budgetLimit) : null;
@@ -99,23 +104,35 @@ export function CategoriesPage({ onSuccess, onError }: CategoriesPageProps) {
   );
 
   return (
-    <CategoriesView
-      categories={categories}
-      isOwner={isOwner}
-      expandedId={expandedId}
-      form={form}
-      isSaving={createCategory.isPending || updateCategory.isPending}
-      deleteTarget={deleteTarget}
-      deleteExpenseCount={deleteTarget ? getExpenseCountForCategory(deleteTarget.id) : 0}
-      isDeleting={deleteCategory.isPending}
-      onToggle={handleToggle}
-      onAddNew={handleAddNew}
-      onCancel={handleCancel}
-      onFormChange={handleFormChange}
-      onSave={handleSave}
-      onDeleteRequest={setDeleteTarget}
-      onDeleteConfirm={handleDeleteConfirm}
-      onDeleteCancel={() => setDeleteTarget(null)}
-    />
+    <>
+      <CategoriesView
+        categories={categories}
+        isOwner={isOwner}
+        expandedId={expandedId}
+        form={form}
+        isSaving={createCategory.isPending || updateCategory.isPending}
+        deleteTarget={deleteTarget}
+        deleteExpenseCount={deleteTarget ? getExpenseCountForCategory(deleteTarget.id) : 0}
+        isDeleting={deleteCategory.isPending}
+        onToggle={handleToggle}
+        onAddNew={handleAddNew}
+        onCancel={handleCancel}
+        onFormChange={handleFormChange}
+        onSave={handleSave}
+        onDeleteRequest={setDeleteTarget}
+        onDeleteConfirm={handleDeleteConfirm}
+        onDeleteCancel={() => setDeleteTarget(null)}
+        budgetLimitRef={budgetLimitRef}
+      />
+      {shouldShowTip && isEditingCategory && (
+        <TooltipTip
+          tipId="category_budget_limit"
+          message={t('onboarding.tip.categoryBudgetLimit')}
+          dismissLabel={t('onboarding.tip.dismiss')}
+          onDismiss={dismissTip}
+          anchorRef={budgetLimitRef}
+        />
+      )}
+    </>
   );
 }

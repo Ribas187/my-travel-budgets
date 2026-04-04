@@ -1,11 +1,12 @@
 import { useState, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
-import { ExpenseListView, AddExpenseModal as AddExpenseModalUI } from '@repo/ui';
+import { ExpenseListView, AddExpenseModal as AddExpenseModalUI, InlineTip } from '@repo/ui';
 import type { AddExpenseFormValues } from '@repo/ui';
 import type { Expense, ExpenseFilters } from '@repo/api-client';
 import { useTravelExpenses, useCreateExpense, useUpdateExpense, useDeleteExpense, useBudgetImpact } from '@repo/api-client';
 
 import { useTravelContext } from '../context/TravelContext';
+import { useTip } from '../onboarding/useTip';
 
 export interface ExpenseListProps {
   onNavigateToCategories?: () => void;
@@ -16,6 +17,8 @@ export interface ExpenseListProps {
 export function ExpenseList({ onNavigateToCategories, onSuccess }: ExpenseListProps) {
   const { t } = useTranslation();
   const { travel } = useTravelContext();
+  const { shouldShow: shouldShowNoCategoriesTip, dismiss: dismissNoCategoriesTip } = useTip('expenses_no_categories');
+  const hasNoCategories = !travel.categories || travel.categories.length === 0;
 
   const [selectedCategoryId, setSelectedCategoryId] = useState<string | undefined>(undefined);
   const [selectedExpense, setSelectedExpense] = useState<Expense | null>(null);
@@ -69,14 +72,25 @@ export function ExpenseList({ onNavigateToCategories, onSuccess }: ExpenseListPr
   );
 
   return (
-    <ExpenseListView
-      travel={travel}
-      expenses={expenses}
-      isLoading={isLoading}
-      selectedCategoryId={selectedCategoryId}
-      onSelectCategory={setSelectedCategoryId}
-      onSelectExpense={setSelectedExpense}
-    >
+    <>
+      {shouldShowNoCategoriesTip && hasNoCategories && (
+        <InlineTip
+          tipId="expenses_no_categories"
+          message={t('onboarding.tip.expensesNoCategories')}
+          icon="📂"
+          ctaLabel={t('onboarding.tip.expensesNoCategoriesCta')}
+          onCtaPress={onNavigateToCategories}
+          onDismiss={dismissNoCategoriesTip}
+        />
+      )}
+      <ExpenseListView
+        travel={travel}
+        expenses={expenses}
+        isLoading={isLoading}
+        selectedCategoryId={selectedCategoryId}
+        onSelectCategory={setSelectedCategoryId}
+        onSelectExpense={setSelectedExpense}
+      >
       <AddExpenseModalUI
         open={!!selectedExpense}
         travel={travel}
@@ -92,5 +106,6 @@ export function ExpenseList({ onNavigateToCategories, onSuccess }: ExpenseListPr
         onAmountChange={setWatchedAmount}
       />
     </ExpenseListView>
+    </>
   );
 }
