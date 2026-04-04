@@ -66,6 +66,7 @@ export {
   PinInput,
 } from './molecules';
 export type { DatePickerInputProps, SegmentedControlProps, SegmentedControlOption, PinInputProps } from './molecules';
+export { OnboardingProgressBar } from './molecules';
 
 // Hooks
 export { useCalculatorInput } from './hooks/useCalculatorInput';
@@ -101,3 +102,9 @@ export {
   PinVerifyView,
 } from './templates';
 export type { CategoryFormState, LoginFormViewProps, CheckEmailViewProps, PinVerifyViewProps } from './templates';
+export {
+  OnboardingWelcomeView,
+  OnboardingTripFormView,
+  OnboardingCategoriesView,
+  OnboardingReadyView,
+} from './templates';

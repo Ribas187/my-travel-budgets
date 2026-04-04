@@ -20,3 +20,4 @@ export { SegmentedControl } from './SegmentedControl';
 export type { SegmentedControlProps, SegmentedControlOption } from './SegmentedControl';
 export { PinInput } from './PinInput';
 export type { PinInputProps } from './PinInput';
+export { OnboardingProgressBar } from './OnboardingProgressBar';

@@ -1,0 +1,1 @@
+export { OnboardingCategoriesView } from './OnboardingCategoriesView';
