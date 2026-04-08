@@ -2,8 +2,6 @@
 
 Full-stack travel budget management app for tracking shared trip expenses. Plan trips, split costs with travel companions, and keep spending under control — all from web or mobile.
 
-Served at **mybudget.cards**
-
 ## Screenshots
 
 <p align="center">
@@ -31,7 +29,7 @@ Served at **mybudget.cards**
 | Auth          | Magic link + PIN login (JWT sessions)      |
 | Email         | Resend                                     |
 | Image Storage | Cloudinary                                 |
-| Hosting (web) | Vercel (`mybudget.cards`)                  |
+| Hosting (web) | Vercel                                     |
 | Hosting (API) | Render                                     |
 | Hosting (DB)  | Neon (managed PostgreSQL)                  |
 | Mobile Builds | Expo EAS                                   |
