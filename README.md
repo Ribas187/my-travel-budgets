@@ -7,9 +7,13 @@ Full-stack travel budget management app for tracking shared trip expenses. Plan 
 <p align="center">
   <img src="docs/screenshots/mobile-dashboard.png" alt="Dashboard" width="180"/>
   &nbsp;&nbsp;
+  <img src="docs/screenshots/mobile-add-budget.png" alt="Dashboard" width="180"/>
+  &nbsp;&nbsp;
   <img src="docs/screenshots/mobile-budget.png" alt="Budget Breakdown" width="180"/>
   &nbsp;&nbsp;
   <img src="docs/screenshots/mobile-categories.png" alt="Categories" width="180"/>
+  &nbsp;&nbsp;
+  <img src="docs/screenshots/mobile-profile.png" alt="Dashboard" width="180"/>
   &nbsp;&nbsp;
 </p>
 
