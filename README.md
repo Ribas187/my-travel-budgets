@@ -37,6 +37,12 @@ Full-stack travel budget management app for tracking shared trip expenses. Plan 
 | Mobile Builds | Expo EAS                                   |
 | Language      | TypeScript (strict)                        |
 
+## Architecture
+
+<p align="center">
+  <img src="docs/architecture-diagram.png" alt="System Architecture" width="800"/>
+</p>
+
 ## Project Structure
 
 ```

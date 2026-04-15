@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>My Travel Budgets — System Architecture</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Caveat:wght@400;600;700&display=swap');
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: #FAFAFA;
+    font-family: 'Caveat', cursive, sans-serif;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 40px 20px;
+  }
+
+  h1 {
+    font-size: 42px;
+    color: #1e1e1e;
+    margin-bottom: 4px;
+  }
+
+  .subtitle {
+    font-size: 22px;
+    color: #666;
+    margin-bottom: 40px;
+  }
+
+  svg {
+    max-width: 1200px;
+    width: 100%;
+    height: auto;
+  }
+</style>
+</head>
+<body>
+
+<h1>My Travel Budgets</h1>
+<p class="subtitle">System Architecture — mybudget.cards</p>
+
+<svg viewBox="0 0 1100 1050" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <marker id="arr" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#888"/>
+    </marker>
+    <marker id="arr-blue" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#4A90D9"/>
+    </marker>
+    <marker id="arr-green" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#43A047"/>
+    </marker>
+    <marker id="arr-orange" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#EF6C00"/>
+    </marker>
+    <marker id="arr-teal" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#00897B"/>
+    </marker>
+
+    <!-- Subtle hand-drawn effect -->
+    <filter id="sketch">
+      <feTurbulence type="turbulence" baseFrequency="0.03" numOctaves="3" result="noise" seed="5"/>
+      <feDisplacementMap in="SourceGraphic" in2="noise" scale="0.8" xChannelSelector="R" yChannelSelector="G"/>
+    </filter>
+  </defs>
+
+  <!-- ============================== -->
+  <!--        ROW 1: CLIENTS          -->
+  <!-- ============================== -->
+  <text x="550" y="28" text-anchor="middle" font-family="Caveat, cursive" font-size="20" fill="#aaa" font-weight="700" letter-spacing="3">CLIENTS</text>
+
+  <!-- Web App -->
+  <rect x="40" y="45" width="300" height="110" rx="14" fill="#E8F0FE" stroke="#4A90D9" stroke-width="2.5" filter="url(#sketch)"/>
+  <text x="190" y="78" text-anchor="middle" font-family="Caveat, cursive" font-size="32" fill="#1a73e8" font-weight="700">Web App</text>
+  <text x="190" y="103" text-anchor="middle" font-family="Caveat, cursive" font-size="19" fill="#555">React 19 · Vite · Tamagui</text>
+  <text x="190" y="123" text-anchor="middle" font-family="Caveat, cursive" font-size="18" fill="#777">TanStack Router + Query</text>
+  <text x="190" y="143" text-anchor="middle" font-family="Caveat, cursive" font-size="16" fill="#999">mybudget.cards — Vercel</text>
+
+  <!-- Mobile App -->
+  <rect x="400" y="45" width="300" height="110" rx="14" fill="#E8F5E9" stroke="#43A047" stroke-width="2.5" filter="url(#sketch)"/>
+  <text x="550" y="78" text-anchor="middle" font-family="Caveat, cursive" font-size="32" fill="#2E7D32" font-weight="700">Mobile App</text>
+  <text x="550" y="103" text-anchor="middle" font-family="Caveat, cursive" font-size="19" fill="#555">Expo 55 · React Native</text>
+  <text x="550" y="123" text-anchor="middle" font-family="Caveat, cursive" font-size="18" fill="#777">Tamagui · Expo Router</text>
+  <text x="550" y="143" text-anchor="middle" font-family="Caveat, cursive" font-size="16" fill="#999">iOS + Android — EAS</text>
+
+  <!-- AI-Native Dev -->
+  <rect x="760" y="45" width="300" height="110" rx="14" fill="#FFF3E0" stroke="#EF6C00" stroke-width="2.5" filter="url(#sketch)"/>
+  <text x="910" y="78" text-anchor="middle" font-family="Caveat, cursive" font-size="32" fill="#E65100" font-weight="700">AI-Native Dev</text>
+  <text x="910" y="103" text-anchor="middle" font-family="Caveat, cursive" font-size="19" fill="#555">Claude Code</text>
+  <text x="910" y="123" text-anchor="middle" font-family="Caveat, cursive" font-size="18" fill="#777">Pair Programmer</text>
+  <text x="910" y="143" text-anchor="middle" font-family="Caveat, cursive" font-size="16" fill="#999">Specs · Conventions · Code</text>
+
+  <!-- ============================== -->
+  <!--  ARROWS: Clients → Packages   -->
+  <!-- ============================== -->
+
+  <!-- Web App → down to shared packages (single arrow to center of package row) -->
+  <path d="M 190 155 L 190 195 Q 190 205 200 205 L 340 205 L 340 225"
+        fill="none" stroke="#4A90D9" stroke-width="2" stroke-dasharray="6,3" marker-end="url(#arr-blue)"/>
+  <text x="205" y="195" font-family="Caveat, cursive" font-size="16" fill="#4A90D9">uses</text>
+
+  <!-- Mobile App → down to shared packages -->
+  <path d="M 550 155 L 550 195 Q 550 205 540 205 L 460 205 L 460 225"
+        fill="none" stroke="#43A047" stroke-width="2" stroke-dasharray="6,3" marker-end="url(#arr-green)"/>
+  <text x="555" y="195" font-family="Caveat, cursive" font-size="16" fill="#43A047">uses</text>
+
+  <!-- AI Dev → dashed arrow to whole codebase -->
+  <path d="M 910 155 L 910 195 Q 910 210 895 210 L 560 210 L 560 225"
+        fill="none" stroke="#EF6C00" stroke-width="1.5" stroke-dasharray="4,4" marker-end="url(#arr-orange)"/>
+  <text x="750" y="207" font-family="Caveat, cursive" font-size="16" fill="#EF6C00">drives development</text>
+
+  <!-- ============================== -->
+  <!--    ROW 2: SHARED PACKAGES      -->
+  <!-- ============================== -->
+  <text x="550" y="245" text-anchor="middle" font-family="Caveat, cursive" font-size="20" fill="#aaa" font-weight="700" letter-spacing="3">SHARED PACKAGES — Turborepo</text>
+
+  <!-- Big container rect -->
+  <rect x="40" y="255" width="1020" height="105" rx="12" fill="#F9F5FF" stroke="#B39DDB" stroke-width="1.5" stroke-dasharray="8,4" filter="url(#sketch)"/>
+
+  <!-- @repo/features -->
+  <rect x="60" y="270" width="210" height="70" rx="10" fill="#F3E5F5" stroke="#9C27B0" stroke-width="2" filter="url(#sketch)"/>
+  <text x="165" y="298" text-anchor="middle" font-family="Caveat, cursive" font-size="24" fill="#6A1B9A" font-weight="600">@repo/features</text>
+  <text x="165" y="320" text-anchor="middle" font-family="Caveat, cursive" font-size="17" fill="#777">Cross-platform containers</text>
+
+  <!-- @repo/ui -->
+  <rect x="290" y="270" width="210" height="70" rx="10" fill="#FCE4EC" stroke="#E91E63" stroke-width="2" filter="url(#sketch)"/>
+  <text x="395" y="298" text-anchor="middle" font-family="Caveat, cursive" font-size="24" fill="#AD1457" font-weight="600">@repo/ui</text>
+  <text x="395" y="320" text-anchor="middle" font-family="Caveat, cursive" font-size="17" fill="#777">Tamagui · Atomic Design</text>
+
+  <!-- @repo/api-client -->
+  <rect x="520" y="270" width="220" height="70" rx="10" fill="#E0F2F1" stroke="#00897B" stroke-width="2" filter="url(#sketch)"/>
+  <text x="630" y="298" text-anchor="middle" font-family="Caveat, cursive" font-size="24" fill="#00695C" font-weight="600">@repo/api-client</text>
+  <text x="630" y="320" text-anchor="middle" font-family="Caveat, cursive" font-size="17" fill="#777">React Query hooks</text>
+
+  <!-- @repo/core -->
+  <rect x="760" y="270" width="280" height="70" rx="10" fill="#FFFDE7" stroke="#F9A825" stroke-width="2" filter="url(#sketch)"/>
+  <text x="900" y="298" text-anchor="middle" font-family="Caveat, cursive" font-size="24" fill="#F57F17" font-weight="600">@repo/core</text>
+  <text x="900" y="320" text-anchor="middle" font-family="Caveat, cursive" font-size="17" fill="#777">Zod schemas · Types · i18n · Constants</text>
+
+  <!-- Internal arrows: features/ui/api-client → core (horizontal inside the container) -->
+  <path d="M 270 305 Q 290 305 290 302" fill="none" stroke="#B39DDB" stroke-width="1.2"/>
+  <path d="M 500 305 Q 520 305 520 302" fill="none" stroke="#B39DDB" stroke-width="1.2"/>
+  <!-- Small "depends on" label -->
+  <text x="680" y="350" font-family="Caveat, cursive" font-size="15" fill="#B39DDB">all depend on @repo/core →</text>
+
+  <!-- ============================== -->
+  <!--  ARROW: api-client → API       -->
+  <!-- ============================== -->
+  <path d="M 630 340 L 630 395 L 550 395 L 550 420"
+        fill="none" stroke="#00897B" stroke-width="2.5" marker-end="url(#arr-teal)"/>
+  <text x="640" y="388" font-family="Caveat, cursive" font-size="17" fill="#00897B" font-weight="600">HTTP / REST</text>
+
+  <!-- ============================== -->
+  <!--     ROW 3: NESTJS API          -->
+  <!-- ============================== -->
+  <text x="550" y="440" text-anchor="middle" font-family="Caveat, cursive" font-size="20" fill="#aaa" font-weight="700" letter-spacing="3">BACKEND API — api.mybudget.cards</text>
+
+  <!-- Big API container -->
+  <rect x="40" y="450" width="1020" height="210" rx="14" fill="#FFF8E1" stroke="#EF6C00" stroke-width="2.5" filter="url(#sketch)"/>
+  <text x="550" y="480" text-anchor="middle" font-family="Caveat, cursive" font-size="30" fill="#E65100" font-weight="700">NestJS 11 API</text>
+  <text x="550" y="498" text-anchor="middle" font-family="Caveat, cursive" font-size="16" fill="#999">Hosted on Render</text>
+
+  <!-- Row A inside API: Guards + Modules -->
+  <rect x="65" y="510" width="290" height="55" rx="8" fill="#FFECB3" stroke="#FFA000" stroke-width="1.5" filter="url(#sketch)"/>
+  <text x="210" y="533" text-anchor="middle" font-family="Caveat, cursive" font-size="21" fill="#E65100" font-weight="600">Guard Chain</text>
+  <text x="210" y="553" text-anchor="middle" font-family="Caveat, cursive" font-size="17" fill="#777">JWT → TravelMember → Policy</text>
+
+  <rect x="375" y="510" width="300" height="55" rx="8" fill="#FFECB3" stroke="#FFA000" stroke-width="1.5" filter="url(#sketch)"/>
+  <text x="525" y="533" text-anchor="middle" font-family="Caveat, cursive" font-size="21" fill="#E65100" font-weight="600">Domain Modules</text>
+  <text x="525" y="553" text-anchor="middle" font-family="Caveat, cursive" font-size="17" fill="#777">Auth · Travels · Expenses · Members</text>
+
+  <rect x="695" y="510" width="345" height="55" rx="8" fill="#FFECB3" stroke="#FFA000" stroke-width="1.5" filter="url(#sketch)"/>
+  <text x="867" y="533" text-anchor="middle" font-family="Caveat, cursive" font-size="21" fill="#E65100" font-weight="600">Services</text>
+  <text x="867" y="553" text-anchor="middle" font-family="Caveat, cursive" font-size="17" fill="#777">Dashboard · Categories · Onboarding · Cloudinary</text>
+
+  <!-- Row B inside API: Repository + Prisma -->
+  <rect x="120" y="585" width="380" height="50" rx="8" fill="#FFF3E0" stroke="#FF9800" stroke-width="1.5" filter="url(#sketch)"/>
+  <text x="310" y="610" text-anchor="middle" font-family="Caveat, cursive" font-size="20" fill="#BF360C" font-weight="600">Repository Pattern</text>
+  <text x="310" y="627" text-anchor="middle" font-family="Caveat, cursive" font-size="16" fill="#888">Interface-based DI · Symbol tokens</text>
+
+  <rect x="530" y="585" width="200" height="50" rx="8" fill="#FFF3E0" stroke="#FF9800" stroke-width="1.5" filter="url(#sketch)"/>
+  <text x="630" y="610" text-anchor="middle" font-family="Caveat, cursive" font-size="20" fill="#BF360C" font-weight="600">Prisma 7 ORM</text>
+  <text x="630" y="627" text-anchor="middle" font-family="Caveat, cursive" font-size="16" fill="#888">Type-safe queries</text>
+
+  <rect x="760" y="585" width="250" height="50" rx="8" fill="#FFF3E0" stroke="#FF9800" stroke-width="1.5" filter="url(#sketch)"/>
+  <text x="885" y="610" text-anchor="middle" font-family="Caveat, cursive" font-size="20" fill="#BF360C" font-weight="600">Zod Validation</text>
+  <text x="885" y="627" text-anchor="middle" font-family="Caveat, cursive" font-size="16" fill="#888">Shared schemas from @repo/core</text>
+
+  <!-- ============================== -->
+  <!--  ARROWS: API → Data Layer      -->
+  <!--  Spread out, no overlap        -->
+  <!-- ============================== -->
+
+  <!-- API → PostgreSQL (left) -->
+  <path d="M 200 660 L 200 720"
+        fill="none" stroke="#1565C0" stroke-width="2" marker-end="url(#arr)"/>
+
+  <!-- API → Resend (center-left) -->
+  <path d="M 430 660 L 430 720"
+        fill="none" stroke="#558B2F" stroke-width="2" marker-end="url(#arr)"/>
+
+  <!-- API → Cloudinary (center-right) -->
+  <path d="M 660 660 L 660 720"
+        fill="none" stroke="#5E35B1" stroke-width="2" marker-end="url(#arr)"/>
+
+  <!-- API → JWT (right) -->
+  <path d="M 900 660 L 900 720"
+        fill="none" stroke="#5D4037" stroke-width="2" marker-end="url(#arr)"/>
+
+  <!-- ============================== -->
+  <!--   ROW 4: DATA & SERVICES       -->
+  <!-- ============================== -->
+  <text x="550" y="735" text-anchor="middle" font-family="Caveat, cursive" font-size="20" fill="#aaa" font-weight="700" letter-spacing="3">DATA & EXTERNAL SERVICES</text>
+
+  <!-- PostgreSQL -->
+  <rect x="80" y="745" width="240" height="90" rx="12" fill="#E3F2FD" stroke="#1565C0" stroke-width="2.5" filter="url(#sketch)"/>
+  <text x="200" y="778" text-anchor="middle" font-family="Caveat, cursive" font-size="28" fill="#0D47A1" font-weight="700">PostgreSQL</text>
+  <text x="200" y="801" text-anchor="middle" font-family="Caveat, cursive" font-size="18" fill="#555">Neon (managed)</text>
+  <text x="200" y="823" text-anchor="middle" font-family="Caveat, cursive" font-size="16" fill="#777">Users · Travels · Expenses</text>
+
+  <!-- Resend -->
+  <rect x="350" y="745" width="180" height="90" rx="12" fill="#F1F8E9" stroke="#558B2F" stroke-width="2" filter="url(#sketch)"/>
+  <text x="440" y="778" text-anchor="middle" font-family="Caveat, cursive" font-size="26" fill="#33691E" font-weight="700">Resend</text>
+  <text x="440" y="801" text-anchor="middle" font-family="Caveat, cursive" font-size="18" fill="#555">Email delivery</text>
+  <text x="440" y="823" text-anchor="middle" font-family="Caveat, cursive" font-size="16" fill="#777">Magic links + PINs</text>
+
+  <!-- Cloudinary -->
+  <rect x="560" y="745" width="200" height="90" rx="12" fill="#EDE7F6" stroke="#5E35B1" stroke-width="2" filter="url(#sketch)"/>
+  <text x="660" y="778" text-anchor="middle" font-family="Caveat, cursive" font-size="26" fill="#4527A0" font-weight="700">Cloudinary</text>
+  <text x="660" y="801" text-anchor="middle" font-family="Caveat, cursive" font-size="18" fill="#555">Image storage</text>
+  <text x="660" y="823" text-anchor="middle" font-family="Caveat, cursive" font-size="16" fill="#777">Avatars · Cover photos</text>
+
+  <!-- JWT Auth -->
+  <rect x="790" y="745" width="230" height="90" rx="12" fill="#EFEBE9" stroke="#5D4037" stroke-width="2" filter="url(#sketch)"/>
+  <text x="905" y="778" text-anchor="middle" font-family="Caveat, cursive" font-size="26" fill="#3E2723" font-weight="700">JWT Auth</text>
+  <text x="905" y="801" text-anchor="middle" font-family="Caveat, cursive" font-size="18" fill="#555">Passwordless</text>
+  <text x="905" y="823" text-anchor="middle" font-family="Caveat, cursive" font-size="16" fill="#777">Magic link + PIN flow</text>
+
+  <!-- ============================== -->
+  <!--     ROW 5: DATA MODEL          -->
+  <!-- ============================== -->
+  <text x="550" y="885" text-anchor="middle" font-family="Caveat, cursive" font-size="20" fill="#aaa" font-weight="700" letter-spacing="3">DATA MODEL</text>
+
+  <!-- Entity boxes in a row with simple horizontal arrows -->
+  <rect x="40" y="900" width="120" height="38" rx="6" fill="#E3F2FD" stroke="#1565C0" stroke-width="1.5" filter="url(#sketch)"/>
+  <text x="100" y="925" text-anchor="middle" font-family="Caveat, cursive" font-size="20" fill="#0D47A1" font-weight="600">User</text>
+
+  <path d="M 160 919 L 195 919" fill="none" stroke="#1565C0" stroke-width="1.5" marker-end="url(#arr)"/>
+
+  <rect x="205" y="900" width="120" height="38" rx="6" fill="#E3F2FD" stroke="#1565C0" stroke-width="1.5" filter="url(#sketch)"/>
+  <text x="265" y="925" text-anchor="middle" font-family="Caveat, cursive" font-size="20" fill="#0D47A1" font-weight="600">Travel</text>
+
+  <path d="M 325 919 L 360 919" fill="none" stroke="#1565C0" stroke-width="1.5" marker-end="url(#arr)"/>
+
+  <rect x="370" y="900" width="150" height="38" rx="6" fill="#E3F2FD" stroke="#1565C0" stroke-width="1.5" filter="url(#sketch)"/>
+  <text x="445" y="925" text-anchor="middle" font-family="Caveat, cursive" font-size="20" fill="#0D47A1" font-weight="600">TravelMember</text>
+
+  <path d="M 520 919 L 555 919" fill="none" stroke="#1565C0" stroke-width="1.5" marker-end="url(#arr)"/>
+
+  <rect x="565" y="900" width="130" height="38" rx="6" fill="#E3F2FD" stroke="#1565C0" stroke-width="1.5" filter="url(#sketch)"/>
+  <text x="630" y="925" text-anchor="middle" font-family="Caveat, cursive" font-size="20" fill="#0D47A1" font-weight="600">Category</text>
+
+  <path d="M 695 919 L 730 919" fill="none" stroke="#1565C0" stroke-width="1.5" marker-end="url(#arr)"/>
+
+  <rect x="740" y="900" width="120" height="38" rx="6" fill="#E3F2FD" stroke="#1565C0" stroke-width="1.5" filter="url(#sketch)"/>
+  <text x="800" y="925" text-anchor="middle" font-family="Caveat, cursive" font-size="20" fill="#0D47A1" font-weight="600">Expense</text>
+
+  <rect x="900" y="900" width="140" height="38" rx="6" fill="#EFEBE9" stroke="#5D4037" stroke-width="1.5" filter="url(#sketch)"/>
+  <text x="970" y="925" text-anchor="middle" font-family="Caveat, cursive" font-size="20" fill="#5D4037" font-weight="600">MagicLink</text>
+
+  <!-- ============================== -->
+  <!--           FOOTER               -->
+  <!-- ============================== -->
+  <text x="550" y="975" text-anchor="middle" font-family="Caveat, cursive" font-size="18" fill="#bbb">
+    Turborepo · TypeScript end-to-end · Zod single source of truth · AI-native development with Claude Code
+  </text>
+
+  <!-- Relationship labels on data model -->
+  <text x="178" y="913" font-family="Caveat, cursive" font-size="14" fill="#90CAF9">1:N</text>
+  <text x="343" y="913" font-family="Caveat, cursive" font-size="14" fill="#90CAF9">1:N</text>
+  <text x="538" y="913" font-family="Caveat, cursive" font-size="14" fill="#90CAF9">N:1</text>
+  <text x="713" y="913" font-family="Caveat, cursive" font-size="14" fill="#90CAF9">1:N</text>
+
+</svg>
+
+</body>
+</html>
