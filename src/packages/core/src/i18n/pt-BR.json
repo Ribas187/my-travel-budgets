@@ -83,6 +83,16 @@
   "expense.noCategoriesMessage": "Você precisa criar pelo menos uma categoria antes de adicionar despesas.",
   "expense.noCategoriesCta": "Ir para Categorias",
 
+  "receipt.scan": "Escanear recibo",
+  "receipt.scanning": "Lendo recibo…",
+  "receipt.success.announce": "Recibo escaneado. Revise os campos preenchidos antes de salvar.",
+  "receipt.error.unreadable": "Não conseguimos ler este recibo. Tente uma foto mais nítida.",
+  "receipt.error.upstream": "O leitor de recibos está indisponível. Tente novamente.",
+  "receipt.error.tooLarge": "Imagem muito grande. Use uma com menos de 5 MB.",
+  "receipt.error.wrongType": "Apenas imagens JPEG e PNG são aceitas.",
+  "receipt.retry": "Tentar novamente",
+  "receipt.continueManually": "Continuar manualmente",
+
   "category.add": "Adicionar Categoria",
   "category.budgetLimit": "Limite de orçamento",
   "category.icon": "Ícone",

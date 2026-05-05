@@ -54,6 +54,19 @@ function createMockClient() {
   client.expenses.update = vi.fn().mockResolvedValue({ id: 'e1' });
   client.expenses.delete = vi.fn().mockResolvedValue({});
   client.dashboard.get = vi.fn().mockResolvedValue(mockDashboard);
+  // `receipts` is a `readonly` member on the ApiClient class — overwrite it
+  // via Object.defineProperty so we keep type-safety elsewhere.
+  Object.defineProperty(client, 'receipts', {
+    value: {
+      extract: vi.fn().mockResolvedValue({
+        total: 42.5,
+        date: '2026-05-05',
+        merchant: 'Café Central',
+      }),
+    },
+    writable: true,
+    configurable: true,
+  });
   return client;
 }
 
@@ -140,5 +153,186 @@ describe('AddExpenseModal', () => {
 
     // The expense data should be passed through to the UI
     expect(capturedProps.expense).toBe(expense);
+  });
+});
+
+describe('AddExpenseModal — scan-receipt orchestration', () => {
+  it('does NOT expose onScanFile when prepareImage is not provided', () => {
+    renderAddExpenseModal();
+    expect(capturedProps.onScanFile).toBeUndefined();
+  });
+
+  it('does NOT expose onScanFile when in edit mode (scan is new-expense only)', () => {
+    const prepareImage = vi.fn(async (f: File) => f);
+    const expense = {
+      id: 'e1',
+      travelId: 't1',
+      categoryId: 'c1',
+      memberId: 'm1',
+      amount: 150,
+      description: 'Existing',
+      date: '2026-01-02',
+      createdAt: '2026-01-02T00:00:00Z',
+      updatedAt: '2026-01-02T00:00:00Z',
+    };
+    renderAddExpenseModal({ prepareImage, expense });
+    expect(capturedProps.onScanFile).toBeUndefined();
+  });
+
+  it('runs prepareImage → extract → sets prefill on the happy path', async () => {
+    const prepareImage = vi.fn(async (file: File) => new Blob([await file.arrayBuffer()], { type: 'image/jpeg' }));
+    const { mockClient } = renderAddExpenseModal({ prepareImage });
+
+    expect(capturedProps.onScanFile).toBeDefined();
+    const handle = capturedProps.onScanFile as (f: File) => void;
+    const file = new File([new Uint8Array([1, 2, 3])], 'r.jpg', { type: 'image/jpeg' });
+
+    await act(async () => {
+      handle(file);
+      // Allow the chained microtasks (prepareImage + mutateAsync) to resolve.
+      await Promise.resolve();
+      await Promise.resolve();
+    });
+
+    await act(async () => {
+      // One more microtask flush for setState after mutateAsync resolves.
+      await Promise.resolve();
+    });
+
+    expect(prepareImage).toHaveBeenCalledWith(file);
+    expect(mockClient.receipts.extract).toHaveBeenCalledTimes(1);
+    expect(capturedProps.prefill).toEqual({
+      total: 42.5,
+      date: '2026-05-05',
+      merchant: 'Café Central',
+    });
+    expect(capturedProps.scanError).toBe(null);
+  });
+
+  it('rejects wrong MIME type locally without calling the API', async () => {
+    const prepareImage = vi.fn(async (f: File) => f);
+    const { mockClient } = renderAddExpenseModal({ prepareImage });
+
+    const handle = capturedProps.onScanFile as (f: File) => void;
+    const file = new File([new Uint8Array([1])], 'r.gif', { type: 'image/gif' });
+
+    await act(async () => {
+      handle(file);
+      await Promise.resolve();
+    });
+
+    expect(prepareImage).not.toHaveBeenCalled();
+    expect(mockClient.receipts.extract).not.toHaveBeenCalled();
+    expect(capturedProps.scanError).toBe('receipt.error.wrongType');
+  });
+
+  it('rejects oversized files locally without calling the API', async () => {
+    const prepareImage = vi.fn(async (f: File) => f);
+    const { mockClient } = renderAddExpenseModal({ prepareImage });
+
+    const handle = capturedProps.onScanFile as (f: File) => void;
+    // Build a File whose .size > 5 MB. Using a sparse Uint8Array keeps memory
+    // reasonable in tests.
+    const big = new File([new Uint8Array(5 * 1024 * 1024 + 1)], 'big.jpg', { type: 'image/jpeg' });
+
+    await act(async () => {
+      handle(big);
+      await Promise.resolve();
+    });
+
+    expect(prepareImage).not.toHaveBeenCalled();
+    expect(mockClient.receipts.extract).not.toHaveBeenCalled();
+    expect(capturedProps.scanError).toBe('receipt.error.tooLarge');
+  });
+
+  it('maps a 422 from the extract API to receipt.error.unreadable', async () => {
+    const prepareImage = vi.fn(async (f: File) => f);
+    const { mockClient } = renderAddExpenseModal({ prepareImage });
+    (mockClient.receipts.extract as unknown as ReturnType<typeof vi.fn>).mockRejectedValueOnce({
+      statusCode: 422,
+      message: 'unreadable',
+    });
+
+    const handle = capturedProps.onScanFile as (f: File) => void;
+    const file = new File([new Uint8Array([1])], 'r.jpg', { type: 'image/jpeg' });
+
+    await act(async () => {
+      handle(file);
+      await Promise.resolve();
+      await Promise.resolve();
+    });
+
+    expect(capturedProps.scanError).toBe('receipt.error.unreadable');
+    expect(capturedProps.prefill).toBe(null);
+  });
+
+  it('maps a 502 from the extract API to receipt.error.upstream', async () => {
+    const prepareImage = vi.fn(async (f: File) => f);
+    const { mockClient } = renderAddExpenseModal({ prepareImage });
+    (mockClient.receipts.extract as unknown as ReturnType<typeof vi.fn>).mockRejectedValueOnce({
+      statusCode: 502,
+      message: 'upstream',
+    });
+
+    const handle = capturedProps.onScanFile as (f: File) => void;
+    const file = new File([new Uint8Array([1])], 'r.jpg', { type: 'image/jpeg' });
+
+    await act(async () => {
+      handle(file);
+      await Promise.resolve();
+      await Promise.resolve();
+    });
+
+    expect(capturedProps.scanError).toBe('receipt.error.upstream');
+  });
+
+  it('Continue manually clears the prefill and the error', async () => {
+    const prepareImage = vi.fn(async (f: File) => f);
+    renderAddExpenseModal({ prepareImage });
+
+    const handle = capturedProps.onScanFile as (f: File) => void;
+    await act(async () => {
+      handle(new File([new Uint8Array([1])], 'r.jpg', { type: 'image/jpeg' }));
+      await Promise.resolve();
+      await Promise.resolve();
+    });
+
+    expect(capturedProps.prefill).not.toBeNull();
+
+    await act(async () => {
+      (capturedProps.onScanContinueManually as () => void)();
+    });
+
+    expect(capturedProps.prefill).toBe(null);
+    expect(capturedProps.scanError).toBe(null);
+  });
+
+  it('Retry re-runs extraction with the same file', async () => {
+    const prepareImage = vi.fn(async (f: File) => f);
+    const { mockClient } = renderAddExpenseModal({ prepareImage });
+    (mockClient.receipts.extract as unknown as ReturnType<typeof vi.fn>)
+      .mockRejectedValueOnce({ statusCode: 502 })
+      .mockResolvedValueOnce({ total: 7, date: '2026-05-05', merchant: 'X' });
+
+    const handle = capturedProps.onScanFile as (f: File) => void;
+    const file = new File([new Uint8Array([1])], 'r.jpg', { type: 'image/jpeg' });
+
+    await act(async () => {
+      handle(file);
+      await Promise.resolve();
+      await Promise.resolve();
+    });
+    expect(capturedProps.scanError).toBe('receipt.error.upstream');
+    expect(capturedProps.onScanRetry).toBeDefined();
+
+    await act(async () => {
+      (capturedProps.onScanRetry as () => void)();
+      await Promise.resolve();
+      await Promise.resolve();
+    });
+
+    expect(mockClient.receipts.extract).toHaveBeenCalledTimes(2);
+    expect(capturedProps.prefill).toEqual({ total: 7, date: '2026-05-05', merchant: 'X' });
+    expect(capturedProps.scanError).toBe(null);
   });
 });

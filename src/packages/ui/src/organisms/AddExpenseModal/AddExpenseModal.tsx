@@ -3,12 +3,14 @@ import { useForm, Controller } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useTranslation } from 'react-i18next';
 import { styled, XStack, YStack, Text, View, Input, useMedia } from 'tamagui';
-import { CategoryChip, AvatarChip, PrimaryButton, Body, Heading, SectionLabel } from '../../atoms';
-import { BudgetImpactBanner, DatePickerInput, AmountInput, DeleteConfirmDialog } from '../../molecules';
-import { useCalculatorInput } from '../../hooks/useCalculatorInput';
-import { getCurrencySymbol, getMemberDisplayName, getMemberInitial, formatAmount, getAvatarColor } from '../../quarks';
 import { createExpenseSchema } from '@repo/core';
 import type { TravelDetail, Expense } from '@repo/api-client';
+import type { ExtractedReceipt } from '@repo/core';
+
+import { CategoryChip, AvatarChip, PrimaryButton, Body, Heading, SectionLabel } from '../../atoms';
+import { BudgetImpactBanner, DatePickerInput, AmountInput, DeleteConfirmDialog, ScanReceiptButton } from '../../molecules';
+import { useCalculatorInput } from '../../hooks/useCalculatorInput';
+import { getCurrencySymbol, getMemberDisplayName, getMemberInitial, formatAmount, getAvatarColor } from '../../quarks';
 
 interface AddExpenseFormValues {
   categoryId: string;
@@ -37,6 +39,14 @@ interface AddExpenseModalProps {
   onNavigateToCategories: () => void;
   onCategoryChange?: (categoryId: string) => void;
   onAmountChange?: (amount: number) => void;
+  // Scan-receipt integration (new-expense mode only). When `onScanFile` is
+  // omitted, the scan UI is hidden — keeps mobile/non-web consumers unchanged.
+  prefill?: Partial<ExtractedReceipt> | null;
+  onScanFile?: (file: File) => void;
+  scanLoading?: boolean;
+  scanError?: string | null;
+  onScanRetry?: () => void;
+  onScanContinueManually?: () => void;
 }
 
 export type { AddExpenseFormValues };
@@ -93,6 +103,7 @@ const DescriptionInput = styled(Input, {
 export function AddExpenseModal({
   open, travel, expense, budgetImpact, saving, deleting,
   onSave, onDelete, onClose, onNavigateToCategories, onCategoryChange, onAmountChange,
+  prefill, onScanFile, scanLoading, scanError, onScanRetry, onScanContinueManually,
 }: AddExpenseModalProps) {
   const { t, i18n } = useTranslation();
   const locale = i18n.language;
@@ -128,7 +139,30 @@ export function AddExpenseModal({
       calculatorInput.reset(0);
     }
     setShowDeleteDialog(false);
-  }, [expense, reset, travel.members]);
+  }, [calculatorInput, expense, reset, travel.members]);
+
+  // Apply scan-receipt prefill on new-expense mode. Null fields fall back to
+  // current defaults — only non-null extractions overwrite the user's blanks.
+  useEffect(() => {
+    if (expense || !prefill) return;
+    const merchant = prefill.merchant ?? null;
+    const total = prefill.total ?? null;
+    const date = prefill.date ?? null;
+    if (merchant === null && total === null && date === null) return;
+
+    reset({
+      categoryId: '',
+      memberId: travel.members[0]?.id ?? '',
+      amount: total ?? 0,
+      description: merchant ?? '',
+      date: date ?? new Date().toISOString().split('T')[0]!,
+    });
+    calculatorInput.reset(total ?? 0);
+    // Intentionally not depending on `calculatorInput` (it's a stable hook
+    // wrapper) to avoid retriggering on every render — same convention as the
+    // `expense` effect above.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [prefill, expense, reset, travel.members]);
 
   useEffect(() => {
     setValue('amount', calculatorInput.numericValue, { shouldValidate: true });
@@ -191,6 +225,72 @@ export function AddExpenseModal({
           fontFamily="$body" fontSize={1} textAlign="center" borderWidth={0} backgroundColor="transparent" color="transparent"
           position="absolute" top={0} left={0} width="100%" height="100%" opacity={0.01} zIndex={1} tabIndex={0} aria-label={t('expense.amount')} />
       </YStack>
+
+      {/* Scan receipt — new-expense mode only, when a handler is provided */}
+      {!isEditMode && onScanFile && (
+        <YStack gap="$sm" testID="scan-receipt-section">
+          <ScanReceiptButton
+            label={scanLoading ? t('receipt.scanning') : t('receipt.scan')}
+            onFileSelected={onScanFile}
+            loading={scanLoading}
+            disabled={isPending}
+            testID="scan-receipt-button"
+          />
+          {prefill && !scanError && (prefill.merchant || prefill.total != null || prefill.date) && (
+            <Text
+              fontFamily="$body"
+              fontSize={1}
+              opacity={0}
+              role="status"
+              aria-live="polite"
+              testID="scan-receipt-announce"
+            >{t('receipt.success.announce')}</Text>
+          )}
+          {scanError && (
+            <YStack
+              gap="$sm"
+              padding="$md"
+              borderRadius="$lg"
+              backgroundColor="rgba(239, 68, 68, 0.08)"
+              borderWidth={1}
+              borderColor="$coral500"
+              role="alert"
+              aria-live="assertive"
+              testID="scan-receipt-error"
+            >
+              <Text fontFamily="$body" fontSize={14} color="$coral500">{scanError}</Text>
+              <XStack gap="$md" flexWrap="wrap">
+                {onScanRetry && (
+                  <Text
+                    fontFamily="$body"
+                    fontSize={14}
+                    fontWeight="600"
+                    color="$brandPrimary"
+                    cursor="pointer"
+                    role="button"
+                    aria-label={t('receipt.retry')}
+                    onPress={onScanRetry}
+                    testID="scan-receipt-retry"
+                  >{t('receipt.retry')}</Text>
+                )}
+                {onScanContinueManually && (
+                  <Text
+                    fontFamily="$body"
+                    fontSize={14}
+                    fontWeight="600"
+                    color="$textTertiary"
+                    cursor="pointer"
+                    role="button"
+                    aria-label={t('receipt.continueManually')}
+                    onPress={onScanContinueManually}
+                    testID="scan-receipt-continue-manually"
+                  >{t('receipt.continueManually')}</Text>
+                )}
+              </XStack>
+            </YStack>
+          )}
+        </YStack>
+      )}
 
       {/* Description */}
       <YStack gap="$sm">

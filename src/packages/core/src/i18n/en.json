@@ -83,6 +83,16 @@
   "expense.noCategoriesMessage": "You need to create at least one category before adding expenses.",
   "expense.noCategoriesCta": "Go to Categories",
 
+  "receipt.scan": "Scan receipt",
+  "receipt.scanning": "Reading receipt…",
+  "receipt.success.announce": "Receipt scanned. Review the pre-filled fields before saving.",
+  "receipt.error.unreadable": "We couldn't read this receipt. Try a clearer photo.",
+  "receipt.error.upstream": "The receipt scanner is unavailable. Please try again.",
+  "receipt.error.tooLarge": "Image is too large. Please use one under 5 MB.",
+  "receipt.error.wrongType": "Only JPEG and PNG images are supported.",
+  "receipt.retry": "Retry",
+  "receipt.continueManually": "Continue manually",
+
   "category.add": "Add Category",
   "category.budgetLimit": "Budget limit",
   "category.icon": "Icon",

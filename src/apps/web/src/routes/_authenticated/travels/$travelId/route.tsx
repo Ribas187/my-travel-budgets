@@ -9,6 +9,7 @@ import { AddExpenseModal, TravelProvider } from '@repo/features';
 
 import { useAuth } from '@/providers/AuthProvider';
 import { showToast } from '@/lib/toast';
+import { prepareReceiptImage } from '@/utils/prepareReceiptImage';
 
 export const Route = createFileRoute('/_authenticated/travels/$travelId')({
   component: TravelLayout,
@@ -228,6 +229,7 @@ function TravelLayout() {
         onNavigateToCategories={() =>
           navigate({ to: '/travels/$travelId/categories', params: { travelId } })
         }
+        prepareImage={prepareReceiptImage}
       />
     </TravelProvider>
   );
