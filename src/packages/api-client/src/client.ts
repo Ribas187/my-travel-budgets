@@ -257,7 +257,11 @@ export class ApiClient {
   // Receipts methods
 
   readonly receipts = {
-    extract: async (travelId: string, file: Blob): Promise<ExtractedReceipt> => {
+    extract: async (
+      travelId: string,
+      file: Blob,
+      options?: { signal?: AbortSignal },
+    ): Promise<ExtractedReceipt> => {
       const formData = new FormData();
       formData.append('image', file);
 
@@ -273,6 +277,7 @@ export class ApiClient {
           method: 'POST',
           headers,
           body: formData,
+          signal: options?.signal,
         },
       );
 

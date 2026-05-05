@@ -47,6 +47,10 @@ interface AddExpenseModalProps {
   scanError?: string | null;
   onScanRetry?: () => void;
   onScanContinueManually?: () => void;
+  /** Aborts the in-flight extraction (RF 3.7). */
+  onScanCancel?: () => void;
+  /** Discards extracted prefill values and clears the form (RF 4.5). */
+  onScanDiscard?: () => void;
 }
 
 export type { AddExpenseFormValues };
@@ -104,6 +108,7 @@ export function AddExpenseModal({
   open, travel, expense, budgetImpact, saving, deleting,
   onSave, onDelete, onClose, onNavigateToCategories, onCategoryChange, onAmountChange,
   prefill, onScanFile, scanLoading, scanError, onScanRetry, onScanContinueManually,
+  onScanCancel, onScanDiscard,
 }: AddExpenseModalProps) {
   const { t, i18n } = useTranslation();
   const locale = i18n.language;
@@ -125,6 +130,10 @@ export function AddExpenseModal({
   });
 
   useEffect(() => {
+    // Reset on every open transition: the modal returns null when closed but
+    // the component stays mounted, so without this, useForm state from a
+    // previous scan/save would leak into the next open.
+    if (!open) return;
     if (expense) {
       reset({
         categoryId: expense.categoryId, memberId: expense.memberId,
@@ -143,25 +152,43 @@ export function AddExpenseModal({
     // render — including it would re-run this effect on every render and
     // clobber the scan-receipt prefill effect below.
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [expense, reset, travel.members]);
+  }, [open, expense, reset, travel.members]);
 
   // Apply scan-receipt prefill on new-expense mode. Null fields fall back to
   // current defaults — only non-null extractions overwrite the user's blanks.
+  // Also handles the prefill cleared transition (Discard / Continue manually):
+  // when prefill goes from non-null to null, restore form defaults so a stale
+  // merchant/date doesn't linger.
+  const lastPrefillRef = useRef<typeof prefill>(null);
   useEffect(() => {
-    if (expense || !prefill) return;
-    const merchant = prefill.merchant ?? null;
-    const total = prefill.total ?? null;
-    const date = prefill.date ?? null;
-    if (merchant === null && total === null && date === null) return;
+    if (expense) return;
+    const wasSet = !!lastPrefillRef.current;
+    lastPrefillRef.current = prefill ?? null;
 
-    reset({
-      categoryId: '',
-      memberId: travel.members[0]?.id ?? '',
-      amount: total ?? 0,
-      description: merchant ?? '',
-      date: date ?? new Date().toISOString().split('T')[0]!,
-    });
-    calculatorInput.reset(total ?? 0);
+    if (prefill) {
+      const merchant = prefill.merchant ?? null;
+      const total = prefill.total ?? null;
+      const date = prefill.date ?? null;
+      if (merchant === null && total === null && date === null) return;
+
+      reset({
+        categoryId: '',
+        memberId: travel.members[0]?.id ?? '',
+        amount: total ?? 0,
+        description: merchant ?? '',
+        date: date ?? new Date().toISOString().split('T')[0]!,
+      });
+      calculatorInput.reset(total ?? 0);
+    } else if (wasSet) {
+      reset({
+        categoryId: '',
+        memberId: travel.members[0]?.id ?? '',
+        amount: 0,
+        description: '',
+        date: new Date().toISOString().split('T')[0]!,
+      });
+      calculatorInput.reset(0);
+    }
     // Intentionally not depending on `calculatorInput` (it's a stable hook
     // wrapper) to avoid retriggering on every render — same convention as the
     // `expense` effect above.
@@ -241,14 +268,56 @@ export function AddExpenseModal({
             testID="scan-receipt-button"
           />
           {prefill && !scanError && (prefill.merchant || prefill.total != null || prefill.date) && (
-            <Text
-              fontFamily="$body"
-              fontSize={1}
-              opacity={0}
-              role="status"
-              aria-live="polite"
-              testID="scan-receipt-announce"
-            >{t('receipt.success.announce')}</Text>
+            <>
+              <Text
+                fontFamily="$body"
+                fontSize={1}
+                opacity={0}
+                role="status"
+                aria-live="polite"
+                testID="scan-receipt-announce"
+              >{t('receipt.success.announce')}</Text>
+              {onScanDiscard && (
+                <XStack
+                  minHeight={44}
+                  paddingVertical="$sm"
+                  paddingHorizontal="$lg"
+                  borderRadius="$lg"
+                  borderWidth={1}
+                  borderColor="$borderDefault"
+                  alignItems="center"
+                  justifyContent="center"
+                  cursor="pointer"
+                  pressStyle={{ opacity: 0.85 }}
+                  role="button"
+                  aria-label={t('receipt.discard')}
+                  onPress={onScanDiscard}
+                  testID="scan-receipt-discard"
+                >
+                  <Text fontFamily="$body" fontSize={14} fontWeight="600" color="$textPrimary">{t('receipt.discard')}</Text>
+                </XStack>
+              )}
+            </>
+          )}
+          {scanLoading && onScanCancel && (
+            <XStack
+              minHeight={44}
+              paddingVertical="$sm"
+              paddingHorizontal="$lg"
+              borderRadius="$lg"
+              borderWidth={1}
+              borderColor="$borderDefault"
+              alignItems="center"
+              justifyContent="center"
+              cursor="pointer"
+              pressStyle={{ opacity: 0.85 }}
+              role="button"
+              aria-label={t('receipt.cancel')}
+              onPress={onScanCancel}
+              testID="scan-receipt-cancel"
+            >
+              <Text fontFamily="$body" fontSize={14} fontWeight="600" color="$textPrimary">{t('receipt.cancel')}</Text>
+            </XStack>
           )}
           {scanError && (
             <YStack
@@ -263,32 +332,48 @@ export function AddExpenseModal({
               testID="scan-receipt-error"
             >
               <Text fontFamily="$body" fontSize={14} color="$coral500">{scanError}</Text>
-              <XStack gap="$md" flexWrap="wrap">
+              <XStack gap="$sm" flexWrap="wrap">
                 {onScanRetry && (
-                  <Text
-                    fontFamily="$body"
-                    fontSize={14}
-                    fontWeight="600"
-                    color="$brandPrimary"
+                  <XStack
+                    minHeight={44}
+                    paddingVertical="$sm"
+                    paddingHorizontal="$lg"
+                    borderRadius="$lg"
+                    borderWidth={1}
+                    borderColor="$brandPrimary"
+                    backgroundColor="$brandPrimary"
+                    alignItems="center"
+                    justifyContent="center"
                     cursor="pointer"
+                    pressStyle={{ opacity: 0.85 }}
                     role="button"
                     aria-label={t('receipt.retry')}
                     onPress={onScanRetry}
                     testID="scan-receipt-retry"
-                  >{t('receipt.retry')}</Text>
+                  >
+                    <Text fontFamily="$body" fontSize={14} fontWeight="600" color="$white">{t('receipt.retry')}</Text>
+                  </XStack>
                 )}
                 {onScanContinueManually && (
-                  <Text
-                    fontFamily="$body"
-                    fontSize={14}
-                    fontWeight="600"
-                    color="$textTertiary"
+                  <XStack
+                    minHeight={44}
+                    paddingVertical="$sm"
+                    paddingHorizontal="$lg"
+                    borderRadius="$lg"
+                    borderWidth={1}
+                    borderColor="$borderDefault"
+                    backgroundColor="$white"
+                    alignItems="center"
+                    justifyContent="center"
                     cursor="pointer"
+                    pressStyle={{ opacity: 0.85 }}
                     role="button"
                     aria-label={t('receipt.continueManually')}
                     onPress={onScanContinueManually}
                     testID="scan-receipt-continue-manually"
-                  >{t('receipt.continueManually')}</Text>
+                  >
+                    <Text fontFamily="$body" fontSize={14} fontWeight="600" color="$textPrimary">{t('receipt.continueManually')}</Text>
+                  </XStack>
                 )}
               </XStack>
             </YStack>

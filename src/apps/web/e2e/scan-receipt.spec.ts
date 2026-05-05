@@ -255,4 +255,134 @@ test.describe('Scan receipt — accessibility', () => {
     await scanButton.focus();
     await expect(scanButton).toBeFocused();
   });
+
+  // Regression: BUG-03 — Enter on the focused button MUST open the file
+  // picker, not silently no-op (PRD: "Scan receipt action MUST be
+  // keyboard-operable").
+  test('Enter key on focused Scan receipt button opens the file picker', async ({ page }) => {
+    await setupAuthenticatedTravelWithCategory(page);
+
+    await stubReceiptsExtract(page, async (_i, route) => {
+      await route.fulfill({
+        status: 200,
+        contentType: 'application/json',
+        body: JSON.stringify(STUB_EXTRACTION),
+      });
+    });
+
+    await openAddExpenseModal(page);
+
+    // Spy on the hidden file input's click() — the picker open is implemented
+    // by calling .click() on it, so this is a direct, deterministic check that
+    // does not depend on the OS-native file chooser actually appearing.
+    await page.evaluate(() => {
+      const input = document.querySelector(
+        '[data-testid="scan-receipt-button-input"]',
+      ) as HTMLInputElement | null;
+      if (!input) return;
+      (window as unknown as { __pickerClicks: number }).__pickerClicks = 0;
+      const originalClick = input.click.bind(input);
+      input.click = () => {
+        (window as unknown as { __pickerClicks: number }).__pickerClicks += 1;
+        // Don't call original — we don't want a real file chooser dialog.
+        void originalClick;
+      };
+    });
+
+    const scanButton = page.getByRole('button', { name: /scan receipt/i });
+    await scanButton.focus();
+    await page.keyboard.press('Enter');
+
+    const clicksAfterEnter = await page.evaluate(
+      () => (window as unknown as { __pickerClicks: number }).__pickerClicks,
+    );
+    expect(clicksAfterEnter).toBeGreaterThanOrEqual(1);
+
+    // Space should also work.
+    await scanButton.focus();
+    await page.keyboard.press('Space');
+
+    const clicksAfterSpace = await page.evaluate(
+      () => (window as unknown as { __pickerClicks: number }).__pickerClicks,
+    );
+    expect(clicksAfterSpace).toBeGreaterThanOrEqual(2);
+  });
+});
+
+// ─── Stale prefill on reopen (BUG-01) ────────────────────────────────────────
+
+test.describe('Scan receipt — modal reopen behavior', () => {
+  // Regression: BUG-01 — after a successful scan-and-save, reopening the
+  // Add Expense modal MUST start with an empty form (not the previous
+  // merchant/date that came from the scan).
+  test('Add Expense modal reopens with empty fields after a scan-and-save', async ({ page }) => {
+    const state = await setupAuthenticatedTravelWithCategory(page);
+
+    await stubReceiptsExtract(page, async (_i, route) => {
+      await route.fulfill({
+        status: 200,
+        contentType: 'application/json',
+        body: JSON.stringify(STUB_EXTRACTION),
+      });
+    });
+
+    await openAddExpenseModal(page);
+    await selectReceiptFile(page);
+
+    const descriptionInput = page.locator('[data-testid="description-input"]');
+    await expect(descriptionInput).toHaveValue(STUB_EXTRACTION.merchant, { timeout: 10000 });
+
+    // Save the scanned expense through the existing flow.
+    await page.locator('[data-testid="category-chips"]').getByText('Food & Drinks').click();
+    await page.waitForTimeout(200);
+    await page.locator('[data-testid="save-expense-button"]').click({ force: true });
+
+    await expect(async () => {
+      expect(state.expenses.length).toBeGreaterThan(0);
+    }).toPass({ timeout: 10000 });
+
+    // Wait for modal to close.
+    await expect(page.locator('[data-testid="add-expense-modal"]')).toHaveCount(0, { timeout: 5000 });
+
+    // Reopen — and verify the form is fresh, not carrying the previous merchant/date.
+    const addButton = page.getByRole('button', { name: /add expense/i }).first();
+    await addButton.click();
+    await page.waitForSelector('[data-testid="add-expense-modal"]');
+
+    const descriptionInputAfter = page.locator('[data-testid="description-input"]');
+    await expect(descriptionInputAfter).toHaveValue('');
+
+    // Date input should reset to today, not the scanned date.
+    const dateInputAfter = page.locator('[data-testid="expense-date-input-input"]');
+    const today = new Date().toISOString().slice(0, 10);
+    await expect(dateInputAfter).toHaveValue(today);
+  });
+
+  // Regression: BUG-05 / RF 4.5 — user can discard scanned values back to defaults.
+  test('Discard scanned values clears prefill back to defaults', async ({ page }) => {
+    await setupAuthenticatedTravelWithCategory(page);
+
+    await stubReceiptsExtract(page, async (_i, route) => {
+      await route.fulfill({
+        status: 200,
+        contentType: 'application/json',
+        body: JSON.stringify(STUB_EXTRACTION),
+      });
+    });
+
+    await openAddExpenseModal(page);
+    await selectReceiptFile(page);
+
+    const descriptionInput = page.locator('[data-testid="description-input"]');
+    await expect(descriptionInput).toHaveValue(STUB_EXTRACTION.merchant, { timeout: 10000 });
+
+    const discard = page.locator('[data-testid="scan-receipt-discard"]');
+    await expect(discard).toBeVisible();
+    await discard.click();
+
+    await expect(descriptionInput).toHaveValue('');
+    const dateInput = page.locator('[data-testid="expense-date-input-input"]');
+    const today = new Date().toISOString().slice(0, 10);
+    await expect(dateInput).toHaveValue(today);
+  });
 });

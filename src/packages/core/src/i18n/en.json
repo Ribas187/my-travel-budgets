@@ -92,6 +92,8 @@
   "receipt.error.wrongType": "Only JPEG and PNG images are supported.",
   "receipt.retry": "Retry",
   "receipt.continueManually": "Continue manually",
+  "receipt.cancel": "Cancel scan",
+  "receipt.discard": "Discard scanned values",
 
   "category.add": "Add Category",
   "category.budgetLimit": "Budget limit",

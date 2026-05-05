@@ -198,8 +198,41 @@ describe('useExtractReceipt', () => {
 
     await waitFor(() => expect(result.current.isSuccess).toBe(true));
 
-    expect(extractSpy).toHaveBeenCalledWith(TRAVEL_ID, blob);
+    expect(extractSpy).toHaveBeenCalledWith(
+      TRAVEL_ID,
+      blob,
+      expect.objectContaining({ signal: expect.any(AbortSignal) }),
+    );
     expect(result.current.data).toEqual(VALID_RESPONSE);
+  });
+
+  it('exposes a cancel() that aborts the in-flight request', async () => {
+    let abortedFromFetch = false;
+    globalThis.fetch = vi.fn(async (_url: any, init: any) => {
+      const signal: AbortSignal | undefined = init?.signal;
+      // Hang until aborted to simulate an in-flight extraction.
+      return await new Promise((_resolve, reject) => {
+        signal?.addEventListener('abort', () => {
+          abortedFromFetch = true;
+          const err = new Error('Aborted');
+          (err as any).name = 'AbortError';
+          reject(err);
+        });
+      });
+    }) as any;
+
+    const client = createClient();
+    const { wrapper } = createTestWrapper(client);
+    const { result } = renderHook(() => useExtractReceipt(TRAVEL_ID), { wrapper });
+
+    const blob = new Blob(['x'], { type: 'image/jpeg' });
+    result.current.mutate(blob);
+
+    await waitFor(() => expect(result.current.isPending).toBe(true));
+
+    result.current.cancel();
+
+    await waitFor(() => expect(abortedFromFetch).toBe(true));
   });
 
   it('surfaces ApiError on a 422 server response', async () => {

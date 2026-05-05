@@ -335,4 +335,64 @@ describe('AddExpenseModal — scan-receipt orchestration', () => {
     expect(capturedProps.prefill).toEqual({ total: 7, date: '2026-05-05', merchant: 'X' });
     expect(capturedProps.scanError).toBe(null);
   });
+
+  // Regression: BUG-02 / RF 3.7 — wrapper exposes a cancel handler that
+  // aborts the in-flight extraction and clears the related state.
+  it('onScanCancel aborts the request and clears scan state', async () => {
+    const prepareImage = vi.fn(async (f: File) => f);
+    const { mockClient } = renderAddExpenseModal({ prepareImage });
+
+    // Make extract hang so we have an "in-flight" request to cancel.
+    (mockClient.receipts.extract as unknown as ReturnType<typeof vi.fn>)
+      .mockImplementationOnce(
+        (_t: string, _f: Blob, opts?: { signal?: AbortSignal }) =>
+          new Promise((_resolve, reject) => {
+            opts?.signal?.addEventListener('abort', () => {
+              const err = new Error('Aborted');
+              (err as Error & { name: string }).name = 'AbortError';
+              reject(err);
+            });
+          }),
+      );
+
+    const handle = capturedProps.onScanFile as (f: File) => void;
+    await act(async () => {
+      handle(new File([new Uint8Array([1])], 'r.jpg', { type: 'image/jpeg' }));
+      await Promise.resolve();
+    });
+
+    expect(capturedProps.onScanCancel).toBeDefined();
+
+    await act(async () => {
+      (capturedProps.onScanCancel as () => void)();
+      await Promise.resolve();
+      await Promise.resolve();
+    });
+
+    // After cancel, scan state is cleared.
+    expect(capturedProps.scanError).toBe(null);
+    expect(capturedProps.prefill).toBe(null);
+  });
+
+  // Regression: BUG-05 / RF 4.5 — user MUST be able to discard extracted values.
+  it('onScanDiscard clears prefill back to null after a successful scan', async () => {
+    const prepareImage = vi.fn(async (f: File) => f);
+    renderAddExpenseModal({ prepareImage });
+
+    const handle = capturedProps.onScanFile as (f: File) => void;
+    await act(async () => {
+      handle(new File([new Uint8Array([1])], 'r.jpg', { type: 'image/jpeg' }));
+      await Promise.resolve();
+      await Promise.resolve();
+    });
+    expect(capturedProps.prefill).not.toBeNull();
+    expect(capturedProps.onScanDiscard).toBeDefined();
+
+    await act(async () => {
+      (capturedProps.onScanDiscard as () => void)();
+    });
+
+    expect(capturedProps.prefill).toBe(null);
+    expect(capturedProps.scanError).toBe(null);
+  });
 });

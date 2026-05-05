@@ -130,6 +130,8 @@ export function AddExpenseModal({
         const extracted = await extractReceipt.mutateAsync(blob);
         setPrefill(extracted);
       } catch (err) {
+        // User-initiated cancellation must NOT surface as an error message.
+        if ((err as { name?: string } | undefined)?.name === 'AbortError') return;
         const apiErr = err as ApiError | undefined;
         const status = apiErr?.statusCode;
         if (status === 422) {
@@ -166,6 +168,21 @@ export function AddExpenseModal({
     setLastFile(null);
   }, []);
 
+  // RF 3.7: user MUST be able to cancel during in-progress extraction.
+  const handleScanCancel = useCallback(() => {
+    extractReceipt.cancel();
+    extractReceipt.reset();
+    setScanError(null);
+    setLastFile(null);
+  }, [extractReceipt]);
+
+  // RF 4.5: user MUST be able to discard the extracted values and reset to defaults.
+  const handleScanDiscard = useCallback(() => {
+    setPrefill(null);
+    setScanError(null);
+    setLastFile(null);
+  }, []);
+
   const isNewExpense = !expense;
 
   return (
@@ -188,6 +205,8 @@ export function AddExpenseModal({
       scanError={scanError}
       onScanRetry={lastFile ? handleScanRetry : undefined}
       onScanContinueManually={handleScanContinueManually}
+      onScanCancel={handleScanCancel}
+      onScanDiscard={handleScanDiscard}
     />
   );
 }

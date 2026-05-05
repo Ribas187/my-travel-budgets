@@ -112,4 +112,48 @@ describe('AddExpenseModal — scan-receipt props', () => {
     // in @repo/features). Here we just confirm the props pass through.
     expect(element.props.expense).toBe(baseExpense);
   });
+
+  // Regression: BUG-02 / RF 3.7 — cancel handler must flow through.
+  it('passes onScanCancel through (RF 3.7 — cancel during in-progress extraction)', () => {
+    const onScanCancel = vi.fn();
+    const element = React.createElement(AddExpenseModal, {
+      open: true,
+      travel: baseTravel,
+      expense: null,
+      budgetImpact: baseBudgetImpact,
+      saving: false,
+      deleting: false,
+      onSave: vi.fn(),
+      onDelete: vi.fn(),
+      onClose: vi.fn(),
+      onNavigateToCategories: vi.fn(),
+      onScanFile: vi.fn(),
+      onScanCancel,
+      scanLoading: true,
+    });
+
+    expect(element.props.onScanCancel).toBe(onScanCancel);
+  });
+
+  // Regression: BUG-05 / RF 4.5 — discard handler must flow through.
+  it('passes onScanDiscard through (RF 4.5 — discard extracted values)', () => {
+    const onScanDiscard = vi.fn();
+    const element = React.createElement(AddExpenseModal, {
+      open: true,
+      travel: baseTravel,
+      expense: null,
+      budgetImpact: baseBudgetImpact,
+      saving: false,
+      deleting: false,
+      onSave: vi.fn(),
+      onDelete: vi.fn(),
+      onClose: vi.fn(),
+      onNavigateToCategories: vi.fn(),
+      onScanFile: vi.fn(),
+      onScanDiscard,
+      prefill: { merchant: 'Café', total: 10, date: '2026-05-05' },
+    });
+
+    expect(element.props.onScanDiscard).toBe(onScanDiscard);
+  });
 });

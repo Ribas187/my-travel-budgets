@@ -92,6 +92,8 @@
   "receipt.error.wrongType": "Apenas imagens JPEG e PNG são aceitas.",
   "receipt.retry": "Tentar novamente",
   "receipt.continueManually": "Continuar manualmente",
+  "receipt.cancel": "Cancelar leitura",
+  "receipt.discard": "Descartar valores lidos",
 
   "category.add": "Adicionar Categoria",
   "category.budgetLimit": "Limite de orçamento",
