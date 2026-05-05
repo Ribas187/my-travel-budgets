@@ -139,7 +139,11 @@ export function AddExpenseModal({
       calculatorInput.reset(0);
     }
     setShowDeleteDialog(false);
-  }, [calculatorInput, expense, reset, travel.members]);
+    // `calculatorInput` is a hook wrapper whose identity changes on every
+    // render — including it would re-run this effect on every render and
+    // clobber the scan-receipt prefill effect below.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [expense, reset, travel.members]);
 
   // Apply scan-receipt prefill on new-expense mode. Null fields fall back to
   // current defaults — only non-null extractions overwrite the user's blanks.
