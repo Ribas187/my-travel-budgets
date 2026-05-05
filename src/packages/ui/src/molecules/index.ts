@@ -26,3 +26,5 @@ export { TooltipTip } from './TooltipTip';
 export type { TooltipTipProps } from './TooltipTip';
 export { OnboardingProgressBar } from './OnboardingProgressBar';
 export type { OnboardingProgressBarProps } from './OnboardingProgressBar';
+export { ScanReceiptButton } from './ScanReceiptButton';
+export type { ScanReceiptButtonProps } from './ScanReceiptButton';

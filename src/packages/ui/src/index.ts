@@ -67,8 +67,9 @@ export {
   InlineTip,
   TooltipTip,
   OnboardingProgressBar,
+  ScanReceiptButton,
 } from './molecules';
-export type { DatePickerInputProps, SegmentedControlProps, SegmentedControlOption, PinInputProps, InlineTipProps, TooltipTipProps, OnboardingProgressBarProps } from './molecules';
+export type { DatePickerInputProps, SegmentedControlProps, SegmentedControlOption, PinInputProps, InlineTipProps, TooltipTipProps, OnboardingProgressBarProps, ScanReceiptButtonProps } from './molecules';
 // Hooks
 export { useCalculatorInput } from './hooks/useCalculatorInput';
 export type { UseCalculatorInputOptions, UseCalculatorInputReturn } from './hooks/useCalculatorInput';
