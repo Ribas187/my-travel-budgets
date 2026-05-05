@@ -1,8 +1,16 @@
 import { ApiClient } from '@repo/api-client';
 
+import { AUTH_TOKEN_KEY } from './providers/AuthProvider';
+
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:3000';
 
-let tokenGetter: () => string | null = () => null;
+let tokenGetter: () => string | null = () => {
+  try {
+    return localStorage.getItem(AUTH_TOKEN_KEY);
+  } catch {
+    return null;
+  }
+};
 let onUnauthorized: () => void = () => {};
 
 export function setTokenGetter(getter: () => string | null) {

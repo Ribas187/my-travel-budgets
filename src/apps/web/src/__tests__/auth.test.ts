@@ -79,6 +79,105 @@ describe('Auth Flow', () => {
       const handler = vi.fn();
       setOnUnauthorized(handler);
     });
+
+    it('uses the same AUTH_TOKEN_KEY as AuthProvider', async () => {
+      const { AUTH_TOKEN_KEY } = await import('../providers/AuthProvider');
+      expect(AUTH_TOKEN_KEY).toBe('auth_token');
+    });
+
+    it('attaches Authorization header on the very first request when token is in localStorage (no setTokenGetter call)', async () => {
+      // Regression test for the race where module-level tokenGetter started as
+      // () => null and was only patched in <InnerApp>'s useEffect. Route
+      // loaders that fire during initial render beat the effect, the first
+      // request went out unauthenticated, and the SPA logged itself out.
+      vi.resetModules();
+      localStorageMock.clear();
+      localStorageMock.setItem('auth_token', 'jwt-from-storage');
+
+      const fetchMock = vi.fn(async () =>
+        new Response(JSON.stringify({ id: 'u1', email: 'a@b.c' }), {
+          status: 200,
+          headers: { 'Content-Type': 'application/json' },
+        }),
+      );
+      vi.stubGlobal('fetch', fetchMock);
+
+      try {
+        const { apiClient } = await import('../apiClient');
+        await apiClient.users.getMe();
+
+        expect(fetchMock).toHaveBeenCalledTimes(1);
+        const init = (fetchMock.mock.calls[0] as unknown as [string, RequestInit])[1];
+        const headers = init.headers as Record<string, string>;
+        expect(headers.Authorization).toBe('Bearer jwt-from-storage');
+      } finally {
+        vi.unstubAllGlobals();
+      }
+    });
+
+    it('omits Authorization header when localStorage has no token', async () => {
+      vi.resetModules();
+      localStorageMock.clear();
+
+      const fetchMock = vi.fn(async () =>
+        new Response('{}', {
+          status: 200,
+          headers: { 'Content-Type': 'application/json' },
+        }),
+      );
+      vi.stubGlobal('fetch', fetchMock);
+
+      try {
+        const { apiClient } = await import('../apiClient');
+        await apiClient.users.getMe();
+
+        const init = (fetchMock.mock.calls[0] as unknown as [string, RequestInit])[1];
+        const headers = init.headers as Record<string, string>;
+        expect(headers.Authorization).toBeUndefined();
+      } finally {
+        vi.unstubAllGlobals();
+      }
+    });
+
+    it('global fetch wrapper does not call onUnauthorized for /auth/ endpoints', async () => {
+      vi.resetModules();
+      localStorageMock.clear();
+
+      const fetchMock = vi.fn(async () => new Response('Unauthorized', { status: 401 }));
+      vi.stubGlobal('fetch', fetchMock);
+
+      try {
+        const { setOnUnauthorized } = await import('../apiClient');
+        const handler = vi.fn();
+        setOnUnauthorized(handler);
+
+        await fetch('http://api.test/auth/verify-pin');
+
+        expect(handler).not.toHaveBeenCalled();
+      } finally {
+        vi.unstubAllGlobals();
+      }
+    });
+
+    it('global fetch wrapper calls onUnauthorized on 401 from non-auth endpoints', async () => {
+      vi.resetModules();
+      localStorageMock.clear();
+
+      const fetchMock = vi.fn(async () => new Response('Unauthorized', { status: 401 }));
+      vi.stubGlobal('fetch', fetchMock);
+
+      try {
+        const { setOnUnauthorized } = await import('../apiClient');
+        const handler = vi.fn();
+        setOnUnauthorized(handler);
+
+        await fetch('http://api.test/users/me');
+
+        expect(handler).toHaveBeenCalledTimes(1);
+      } finally {
+        vi.unstubAllGlobals();
+      }
+    });
   });
 
   describe('Route modules', () => {
