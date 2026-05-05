@@ -1,3 +1,5 @@
+import type { ExtractedReceipt } from '@repo/core';
+
 import type {
   CreateTravelInput,
   UpdateTravelInput,
@@ -250,5 +252,46 @@ export class ApiClient {
 
     removeAvatar: (): Promise<UserMe> =>
       this.request('DELETE', '/users/me/avatar'),
+  };
+
+  // Receipts methods
+
+  readonly receipts = {
+    extract: async (travelId: string, file: Blob): Promise<ExtractedReceipt> => {
+      const formData = new FormData();
+      formData.append('image', file);
+
+      const headers: Record<string, string> = {};
+      const token = this.getToken();
+      if (token) {
+        headers['Authorization'] = `Bearer ${token}`;
+      }
+
+      const response = await fetch(
+        `${this.baseUrl}/travels/${travelId}/receipts/extract`,
+        {
+          method: 'POST',
+          headers,
+          body: formData,
+        },
+      );
+
+      if (!response.ok) {
+        let errorBody: { message?: string; errors?: string[] } = {};
+        try {
+          errorBody = await response.json();
+        } catch {
+          // response body is not JSON
+        }
+        const apiError: ApiError = {
+          statusCode: response.status,
+          message: errorBody.message ?? response.statusText,
+          errors: errorBody.errors,
+        };
+        throw apiError;
+      }
+
+      return response.json() as Promise<ExtractedReceipt>;
+    },
   };
 }

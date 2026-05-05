@@ -38,7 +38,7 @@ describe('package exports', () => {
     });
   });
 
-  describe('all 22 hooks are importable', () => {
+  describe('all 23 hooks are importable', () => {
     const hookNames = [
       // Travels (6)
       'useTravels',
@@ -68,6 +68,8 @@ describe('package exports', () => {
       'useRemoveAvatar',
       // Dashboard (1)
       'useDashboard',
+      // Receipts (1)
+      'useExtractReceipt',
     ];
 
     it.each(hookNames)('exports %s as a function', (hookName) => {

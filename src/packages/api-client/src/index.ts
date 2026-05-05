@@ -31,6 +31,8 @@ export type {
   MemberRole,
 } from './types';
 
+export type { ExtractedReceipt } from '@repo/core';
+
 // Provider for ApiClient injection
 export { ApiClientProvider, useApiClient } from './provider';
 
