@@ -3,6 +3,7 @@ export * from './schemas/travel';
 export * from './schemas/category';
 export * from './schemas/expense';
 export * from './schemas/member';
+export * from './schemas/receipt';
 export * from './constants/currencies';
 export * from './constants/category-emojis';
 export * from './constants/category-colors';
