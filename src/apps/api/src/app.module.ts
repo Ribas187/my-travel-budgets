@@ -13,6 +13,7 @@ import { CategoriesModule } from './modules/categories/categories.module';
 import { ExpensesModule } from './modules/expenses/expenses.module';
 import { DashboardModule } from './modules/dashboard/dashboard.module';
 import { OnboardingModule } from './modules/onboarding/onboarding.module';
+import { ReceiptsModule } from './modules/receipts/receipts.module';
 
 @Module({
   imports: [
@@ -31,6 +32,7 @@ import { OnboardingModule } from './modules/onboarding/onboarding.module';
     ExpensesModule,
     DashboardModule,
     OnboardingModule,
+    ReceiptsModule,
   ],
   controllers: [AppController],
 })
