@@ -26,3 +26,7 @@ services:
         sync: false
       - key: CORS_ORIGIN
         value: "https://mybudget.cards"
+      - key: OPENROUTER_API_KEY
+        sync: false
+      - key: RECEIPT_VISION_MODEL
+        sync: false
