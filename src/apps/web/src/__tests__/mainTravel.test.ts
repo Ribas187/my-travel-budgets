@@ -144,7 +144,7 @@ describe('useSetMainTravel hook', () => {
 });
 
 describe('Root route redirect logic', () => {
-  it('redirects to summary when mainTravelId is present and travel is accessible', () => {
+  it('redirects to travel detail when mainTravelId is present and travel is accessible', () => {
     const user = MOCK_USER_WITH_MAIN;
     const travels = MOCK_TRAVELS;
     const isAccessible = travels.some((t) => t.id === user.mainTravelId);
@@ -152,17 +152,17 @@ describe('Root route redirect logic', () => {
     expect(isAccessible).toBe(true);
 
     const redirectTo = isAccessible
-      ? `/travels/${user.mainTravelId}/summary`
+      ? `/travels/${user.mainTravelId}`
       : '/travels';
 
-    expect(redirectTo).toBe('/travels/travel-1/summary');
+    expect(redirectTo).toBe('/travels/travel-1');
   });
 
   it('falls back to /travels when mainTravelId is null', () => {
     const user = MOCK_USER_WITHOUT_MAIN;
 
     const redirectTo = user.mainTravelId
-      ? `/travels/${user.mainTravelId}/summary`
+      ? `/travels/${user.mainTravelId}`
       : '/travels';
 
     expect(redirectTo).toBe('/travels');
@@ -179,7 +179,7 @@ describe('Root route redirect logic', () => {
     expect(isAccessible).toBe(false);
 
     const redirectTo = isAccessible
-      ? `/travels/${user.mainTravelId}/summary`
+      ? `/travels/${user.mainTravelId}`
       : '/travels';
 
     expect(redirectTo).toBe('/travels');

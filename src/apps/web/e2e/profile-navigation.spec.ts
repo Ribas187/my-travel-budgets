@@ -141,16 +141,20 @@ test.describe('Login redirect with main travel', () => {
   test('redirects to summary when main travel is set', async ({ page }) => {
     const state = await setupApiMocks(page);
     state.travels.push({ ...TEST_TRAVEL });
-    state.user = { ...state.user, mainTravelId: TRAVEL_ID };
+    state.user = {
+      ...state.user,
+      mainTravelId: TRAVEL_ID,
+      onboardingCompletedAt: '2026-01-01T00:00:00.000Z',
+    };
 
     // Navigate to login first so localStorage is accessible
     await page.goto('/login');
     await authenticatePage(page, TEST_TOKEN);
 
-    // Navigate to root — should redirect to main travel summary
+    // Navigate to root — should redirect to main travel detail page
     await page.goto('/');
-    await page.waitForURL(`**/travels/${TRAVEL_ID}/summary`, { timeout: 15000 });
-    await expect(page).toHaveURL(new RegExp(`/travels/${TRAVEL_ID}/summary`));
+    await page.waitForURL(`**/travels/${TRAVEL_ID}`, { timeout: 15000 });
+    await expect(page).toHaveURL(new RegExp(`/travels/${TRAVEL_ID}$`));
   });
 });
 
@@ -160,6 +164,7 @@ test.describe('Login redirect without main travel', () => {
   test('redirects to travels list when no main travel is set', async ({ page }) => {
     const state = await setupApiMocks(page);
     state.travels.push({ ...TEST_TRAVEL });
+    state.user = { ...state.user, onboardingCompletedAt: '2026-01-01T00:00:00.000Z' };
     // mainTravelId is null by default
 
     await page.goto('/login');
@@ -179,7 +184,11 @@ test.describe('Deleted main travel fallback', () => {
     const state = await setupApiMocks(page);
     state.travels.push({ ...TEST_TRAVEL });
     // Set mainTravelId to a travel that doesn't exist in the list
-    state.user = { ...state.user, mainTravelId: '00000000-0000-4000-8000-999999999999' };
+    state.user = {
+      ...state.user,
+      mainTravelId: '00000000-0000-4000-8000-999999999999',
+      onboardingCompletedAt: '2026-01-01T00:00:00.000Z',
+    };
 
     await page.goto('/login');
     await authenticatePage(page, TEST_TOKEN);

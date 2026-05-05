@@ -16,7 +16,7 @@ function LoginRoute() {
     <LoginPage
       isAuthenticated={isAuthenticated}
       login={login}
-      onLoginSuccess={() => navigate({ to: '/travels' })}
+      onLoginSuccess={() => navigate({ to: '/' })}
       requestMagicLink={(email) => apiClient.auth.requestMagicLink(email)}
       requestPin={(email) => apiClient.auth.requestPin(email)}
       verifyPin={(email, pin) => apiClient.auth.verifyPin(email, pin)}

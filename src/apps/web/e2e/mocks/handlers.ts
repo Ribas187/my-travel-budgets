@@ -50,8 +50,8 @@ export async function setupApiMocks(page: Page): Promise<MockState> {
     dashboard: null,
   };
 
-  // Single catch-all route for the API origin
-  await page.route(/localhost:3000/, async (route) => {
+  // Single catch-all route for the API origin (matches port 3000 on any host)
+  await page.route(/:3000\//, async (route) => {
     const url = route.request().url();
     const method = route.request().method();
     const pathname = new URL(url).pathname;
