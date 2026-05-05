@@ -15,7 +15,7 @@ import { ReceiptsService } from './receipts.service';
 
 import { JwtAuthGuard, TravelMemberGuard } from '@/modules/common/auth';
 
-const MAX_RECEIPT_SIZE = 5 * 1024 * 1024;
+const MAX_RECEIPT_SIZE = 15 * 1024 * 1024;
 
 @Controller('travels/:travelId/receipts')
 @UseGuards(JwtAuthGuard, TravelMemberGuard)

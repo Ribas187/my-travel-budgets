@@ -6,6 +6,7 @@ import { ApiClient, ApiClientProvider } from '@repo/api-client';
 import type { TravelDetail } from '@repo/api-client';
 
 import { TravelProvider } from '../context/TravelContext';
+
 import { AddExpenseModal } from './AddExpenseModal';
 
 let capturedProps: Record<string, unknown> = {};
@@ -231,9 +232,9 @@ describe('AddExpenseModal — scan-receipt orchestration', () => {
     const { mockClient } = renderAddExpenseModal({ prepareImage });
 
     const handle = capturedProps.onScanFile as (f: File) => void;
-    // Build a File whose .size > 5 MB. Using a sparse Uint8Array keeps memory
+    // Build a File whose .size > 15 MB. Using a sparse Uint8Array keeps memory
     // reasonable in tests.
-    const big = new File([new Uint8Array(5 * 1024 * 1024 + 1)], 'big.jpg', { type: 'image/jpeg' });
+    const big = new File([new Uint8Array(15 * 1024 * 1024 + 1)], 'big.jpg', { type: 'image/jpeg' });
 
     await act(async () => {
       handle(big);

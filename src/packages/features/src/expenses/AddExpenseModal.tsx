@@ -16,7 +16,7 @@ import {
 import { useTravelContext } from '../context/TravelContext';
 
 const ACCEPTED_MIME = new Set(['image/jpeg', 'image/png']);
-const MAX_FILE_BYTES = 5 * 1024 * 1024;
+const MAX_FILE_BYTES = 15 * 1024 * 1024;
 
 export interface AddExpenseModalProps {
   open: boolean;

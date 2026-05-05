@@ -31,7 +31,7 @@ const SYSTEM_PROMPT = [
   'Output only the JSON object specified by the schema.',
 ].join('\n');
 
-const USER_PROMPT = 'Extract the receipt fields from the image.';
+const USER_PROMPT = 'Extract the receipt fields from the image. Be careful with the date field, it can be mm/dd/yyyy when the language is English or dd/mm/yyyy when the language is Portuguese.';
 
 const MAX_PARSE_ATTEMPTS = 2;
 
